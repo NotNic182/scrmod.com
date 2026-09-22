@@ -4,6 +4,7 @@ import { type Env } from './env'
 import { registerBoardRoutes } from './routes/boards'
 import { registerHomeRoutes } from './routes/home'
 import { registerMetaRoutes } from './routes/meta'
+import { registerPlayerRoutes } from './routes/players'
 import { registerStatusRoutes } from './routes/status'
 import type { RouteDeps } from './routes/common'
 import { Upstream } from './upstream'
@@ -52,8 +53,8 @@ export function createApp(deps: AppDeps) {
   registerMetaRoutes(app, routeDeps)
   registerHomeRoutes(app, routeDeps)
   registerBoardRoutes(app, routeDeps)
-  // Tasks 12–15 add: registerPlayerRoutes,
-  // registerTournamentRoutes, registerCardRoutes, registerChatRoutes, registerAuthRoutes.
+  registerPlayerRoutes(app, routeDeps)
+  // Tasks 13–15 add: registerTournamentRoutes, registerCardRoutes, registerChatRoutes, registerAuthRoutes.
 
   return { app, cache, upstream, version, deps: routeDeps }
 }
