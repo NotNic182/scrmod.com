@@ -1,0 +1,32 @@
+[
+  {
+    "tournament_id": "a2d3c090-54c9-46ae-a4e2-fa1b85f0f10c",
+    "kind": "async",
+    "format": "double_elim_bo3",
+    "started_at": "2026-08-13T12:34:34.909189+00:00",
+    "ended_at": "2026-09-09T23:30:00.522164+00:00",
+    "prize_tier": "thirty",
+    "winner_display_name": "Sid",
+    "winner_steam_id": "76561198040410653",
+    "runner_up_display_name": "Stan",
+    "runner_up_steam_id": "76561198983423367",
+    "third_place_display_name": "galaxy ice",
+    "third_place_steam_id": "76561199013169799",
+    "signup_count": 8
+  },
+  {
+    "tournament_id": "c3c448f3-d5a8-47ec-8202-65d22dbaf51b",
+    "kind": "async",
+    "format": "double_elim_bo3",
+    "started_at": "2026-05-01T06:20:52.835970+00:00",
+    "ended_at": "2026-05-13T17:16:46.053755+00:00",
+    "prize_tier": "thirty",
+    "winner_display_name": "Sid",
+    "winner_steam_id": "76561198040410653",
+    "runner_up_display_name": "lopidav",
+    "runner_up_steam_id": "76561198041616199",
+    "third_place_display_name": null,
+    "third_place_steam_id": null,
+    "signup_count": 4
+  }
+]

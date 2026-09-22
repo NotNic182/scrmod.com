@@ -1,0 +1,317 @@
+{
+  "entries": [
+    {
+      "mode": "ffa",
+      "id": "914579ea-9a88-4a10-8638-520342bfbfe1",
+      "ended_at": "2026-09-22T08:25:02.104004+00:00",
+      "left_label": "Nix ツ",
+      "right_label": "3-player FFA",
+      "score": "#1 of 3",
+      "left_rating_change": 6.7,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "a3b64eb6-0eb4-4cc9-8c5d-3975bcf7f2a1",
+      "ended_at": "2026-09-22T08:11:28.875939+00:00",
+      "left_label": "NotNic",
+      "right_label": "3-player FFA",
+      "score": "#1 of 3",
+      "left_rating_change": 21.1,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "fff94f3c-66c0-4a5e-92fa-39d76cab1521",
+      "ended_at": "2026-09-22T07:48:40.931747+00:00",
+      "left_label": "Nix ツ",
+      "right_label": "3-player FFA",
+      "score": "#1 of 3",
+      "left_rating_change": 6.5,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "be426cb1-fa4a-4ea4-b3fe-1efee306be55",
+      "ended_at": "2026-09-21T22:20:24.618025+00:00",
+      "left_label": "Sid",
+      "right_label": "5-player FFA",
+      "score": "#1 of 5",
+      "left_rating_change": 13.2,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "2bca095e-73e0-448d-9f78-45145712523e",
+      "ended_at": "2026-09-21T21:44:38.980119+00:00",
+      "left_label": "Sid",
+      "right_label": "5-player FFA",
+      "score": "#1 of 5",
+      "left_rating_change": 14.5,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "32457d38-a353-4ba2-b48f-379e5a17a266",
+      "ended_at": "2026-09-20T22:00:07.660589+00:00",
+      "left_label": "Archnith",
+      "right_label": "4-player FFA",
+      "score": "#1 of 4",
+      "left_rating_change": 18.8,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "4f13ed19-8d3d-4a37-9476-7fedf183ed1e",
+      "ended_at": "2026-09-20T08:27:39.339993+00:00",
+      "left_label": "Sid",
+      "right_label": "4-player FFA",
+      "score": "#1 of 4",
+      "left_rating_change": 6.7,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "1v2",
+      "id": "b34e768d-37f8-4502-8d22-9f142a7fce4c",
+      "ended_at": "2026-09-19T21:34:46.608661+00:00",
+      "left_label": "Archnith",
+      "right_label": "Nix ツ + SlopsOn1",
+      "score": "2-0",
+      "left_rating_change": null,
+      "right_rating_change": null,
+      "rules": {
+        "ff": true,
+        "sc": false,
+        "xp": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "2d8bdc33-8512-4b5f-8dac-cbec8289b538",
+      "ended_at": "2026-09-19T10:44:58.581115+00:00",
+      "left_label": "TechTara",
+      "right_label": "3-player FFA",
+      "score": "#1 of 3",
+      "left_rating_change": 8.4,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "d46de6a0-fd9c-4b37-b809-7e77611e5d6b",
+      "ended_at": "2026-09-19T10:38:55.331539+00:00",
+      "left_label": "NotNic",
+      "right_label": "3-player FFA",
+      "score": "#1 of 3",
+      "left_rating_change": 18.5,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "24653d72-7f0b-4332-8b75-abf4377ca795",
+      "ended_at": "2026-09-19T10:25:49.043591+00:00",
+      "left_label": "SlopsOn1",
+      "right_label": "3-player FFA",
+      "score": "#1 of 3",
+      "left_rating_change": 13.1,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "0032dc06-7a9a-48ba-9f49-a86c967c16b6",
+      "ended_at": "2026-09-17T00:11:35.129996+00:00",
+      "left_label": "Sid",
+      "right_label": "6-player FFA",
+      "score": "#1 of 6",
+      "left_rating_change": 1,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 2,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "04068e8d-99ad-498f-bfad-dc7820691c88",
+      "ended_at": "2026-09-17T00:02:39.388663+00:00",
+      "left_label": "Stan",
+      "right_label": "6-player FFA",
+      "score": "#1 of 6",
+      "left_rating_change": 10.7,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 2,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "2v2",
+      "id": "3b258b8a-3543-4cdd-a17e-f8bcfb01069d",
+      "ended_at": "2026-09-16T23:10:16.882611+00:00",
+      "left_label": "Sid + Spirit",
+      "right_label": "Nix ツ + SlopsOn1",
+      "score": "1-0",
+      "left_rating_change": 11.8,
+      "right_rating_change": -20.5,
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "1v2",
+      "id": "9a298533-27f9-4a84-8e35-08be089e7742",
+      "ended_at": "2026-09-16T21:20:50.769212+00:00",
+      "left_label": "Sid",
+      "right_label": "Nix ツ + SlopsOn1",
+      "score": "2-0",
+      "left_rating_change": null,
+      "right_rating_change": null,
+      "rules": {
+        "ff": true,
+        "sc": false,
+        "xp": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "e5eae7fb-2e42-404c-85fc-43cfed60c892",
+      "ended_at": "2026-09-16T20:06:01.013290+00:00",
+      "left_label": "Spirit",
+      "right_label": "7-player FFA",
+      "score": "#1 of 7",
+      "left_rating_change": 28.7,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    },
+    {
+      "mode": "ffa",
+      "id": "526a80dc-304b-4ce1-8b48-51499398a0e0",
+      "ended_at": "2026-09-16T19:43:29.364301+00:00",
+      "left_label": "Sid",
+      "right_label": "5-player FFA",
+      "score": "#1 of 5",
+      "left_rating_change": 8.4,
+      "right_rating_change": null,
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "bets": []
+    }
+  ]
+}

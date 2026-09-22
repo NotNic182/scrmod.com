@@ -1,0 +1,88 @@
+{
+  "player_steam_id": "76561199311926326",
+  "opponent_steam_id": "76561198040410653",
+  "player_cards": [
+    {
+      "card_name": "Leech",
+      "picks": 7,
+      "wins": 0
+    },
+    {
+      "card_name": "Poison",
+      "picks": 6,
+      "wins": 0
+    },
+    {
+      "card_name": "Homing",
+      "picks": 5,
+      "wins": 1
+    },
+    {
+      "card_name": "Shield Charge",
+      "picks": 5,
+      "wins": 0
+    },
+    {
+      "card_name": "Target Bounce",
+      "picks": 4,
+      "wins": 0
+    },
+    {
+      "card_name": "Shields Up",
+      "picks": 3,
+      "wins": 1
+    },
+    {
+      "card_name": "Decay",
+      "picks": 3,
+      "wins": 0
+    },
+    {
+      "card_name": "Mayhem",
+      "picks": 3,
+      "wins": 0
+    }
+  ],
+  "opponent_cards": [
+    {
+      "card_name": "Leech",
+      "picks": 5,
+      "wins": 5
+    },
+    {
+      "card_name": "Poison",
+      "picks": 4,
+      "wins": 2
+    },
+    {
+      "card_name": "Fastball",
+      "picks": 3,
+      "wins": 3
+    },
+    {
+      "card_name": "Parasite",
+      "picks": 2,
+      "wins": 2
+    },
+    {
+      "card_name": "Empower",
+      "picks": 2,
+      "wins": 2
+    },
+    {
+      "card_name": "Cold Bullets",
+      "picks": 2,
+      "wins": 2
+    },
+    {
+      "card_name": "Radiance",
+      "picks": 2,
+      "wins": 2
+    },
+    {
+      "card_name": "Ricochet",
+      "picks": 2,
+      "wins": 1
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "tiers": [
+    {
+      "floor": 2330,
+      "name": "Grand Master",
+      "color": "#F487A9"
+    },
+    {
+      "floor": 1980,
+      "name": "Master",
+      "color": "#55D846"
+    },
+    {
+      "floor": 1675,
+      "name": "Advanced",
+      "color": "#77A3FC"
+    },
+    {
+      "floor": 1500,
+      "name": "Intermediate",
+      "color": "#FDC777"
+    },
+    {
+      "floor": 0,
+      "name": "Beginner",
+      "color": "#BB79EE"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "version": "1.40.3",
+  "min_version": "1.40.3",
+  "ffa_involuntary_cause": true,
+  "involuntary_leave_cause": true
+}

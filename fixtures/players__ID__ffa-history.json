@@ -1,0 +1,351 @@
+{
+  "games": [
+    {
+      "match_id": "914579ea-9a88-4a10-8638-520342bfbfe1",
+      "player_count": 3,
+      "placement": 3,
+      "rating_change": -12,
+      "kills": 9,
+      "rounds_won": 1,
+      "points_total": 4,
+      "ended_at": "2026-09-22T08:25:02.104004+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Nix ツ",
+        "TechTara"
+      ]
+    },
+    {
+      "match_id": "a3b64eb6-0eb4-4cc9-8c5d-3975bcf7f2a1",
+      "player_count": 3,
+      "placement": 1,
+      "rating_change": 21.1,
+      "kills": 12,
+      "rounds_won": 5,
+      "points_total": 11,
+      "ended_at": "2026-09-22T08:11:28.875939+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Nix ツ",
+        "TechTara"
+      ]
+    },
+    {
+      "match_id": "fff94f3c-66c0-4a5e-92fa-39d76cab1521",
+      "player_count": 3,
+      "placement": 2,
+      "rating_change": 5.5,
+      "kills": 17,
+      "rounds_won": 3,
+      "points_total": 8,
+      "ended_at": "2026-09-22T07:48:40.931747+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Nix ツ",
+        "TechTara"
+      ]
+    },
+    {
+      "match_id": "4f13ed19-8d3d-4a37-9476-7fedf183ed1e",
+      "player_count": 4,
+      "placement": 4,
+      "rating_change": -8.5,
+      "kills": 16,
+      "rounds_won": 0,
+      "points_total": 3,
+      "ended_at": "2026-09-20T08:27:39.339993+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Sid",
+        "Spirit",
+        "TechTara"
+      ]
+    },
+    {
+      "match_id": "2d8bdc33-8512-4b5f-8dac-cbec8289b538",
+      "player_count": 3,
+      "placement": 2,
+      "rating_change": -7.9,
+      "kills": 6,
+      "rounds_won": 2,
+      "points_total": 8,
+      "ended_at": "2026-09-19T10:44:58.581115+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "TechTara",
+        "SlopsOn1"
+      ]
+    },
+    {
+      "match_id": "d46de6a0-fd9c-4b37-b809-7e77611e5d6b",
+      "player_count": 3,
+      "placement": 1,
+      "rating_change": 18.5,
+      "kills": 14,
+      "rounds_won": 5,
+      "points_total": 11,
+      "ended_at": "2026-09-19T10:38:55.331539+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "TechTara",
+        "SlopsOn1"
+      ]
+    },
+    {
+      "match_id": "24653d72-7f0b-4332-8b75-abf4377ca795",
+      "player_count": 3,
+      "placement": 2,
+      "rating_change": 3.3,
+      "kills": 11,
+      "rounds_won": 2,
+      "points_total": 7,
+      "ended_at": "2026-09-19T10:25:49.043591+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "SlopsOn1",
+        "TechTara"
+      ]
+    },
+    {
+      "match_id": "0032dc06-7a9a-48ba-9f49-a86c967c16b6",
+      "player_count": 6,
+      "placement": 4,
+      "rating_change": null,
+      "kills": 0,
+      "rounds_won": 0,
+      "points_total": 0,
+      "ended_at": "2026-09-17T00:11:35.129996+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 2,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Sid",
+        "SlopsOn1",
+        "TechTara",
+        "Stan",
+        "Sparky777"
+      ]
+    },
+    {
+      "match_id": "04068e8d-99ad-498f-bfad-dc7820691c88",
+      "player_count": 6,
+      "placement": 5,
+      "rating_change": 0.1,
+      "kills": 35,
+      "rounds_won": 1,
+      "points_total": 9,
+      "ended_at": "2026-09-17T00:02:39.388663+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 2,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Stan",
+        "Sparky777",
+        "Sid",
+        "TechTara",
+        "SlopsOn1"
+      ]
+    },
+    {
+      "match_id": "fdecf441-cb16-49d5-afad-f70b57422b58",
+      "player_count": 3,
+      "placement": 2,
+      "rating_change": 6.7,
+      "kills": 31,
+      "rounds_won": 4,
+      "points_total": 15,
+      "ended_at": "2026-09-15T06:54:17.329590+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Nix ツ",
+        "TechTara"
+      ]
+    },
+    {
+      "match_id": "41b2c127-dd1b-4664-9c22-c3cc83357cf9",
+      "player_count": 3,
+      "placement": 3,
+      "rating_change": -9.4,
+      "kills": 11,
+      "rounds_won": 1,
+      "points_total": 5,
+      "ended_at": "2026-09-15T06:34:57.651297+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Nix ツ",
+        "TechTara"
+      ]
+    },
+    {
+      "match_id": "e22e29fe-3815-4847-9a29-f313ec4d2011",
+      "player_count": 5,
+      "placement": 4,
+      "rating_change": -12.2,
+      "kills": 7,
+      "rounds_won": 0,
+      "points_total": 3,
+      "ended_at": "2026-09-11T02:07:29.764117+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Stan",
+        "TechTara",
+        "MangoJuice",
+        "embargo"
+      ]
+    },
+    {
+      "match_id": "ee671284-81d8-49b2-b0d7-f80b241a358b",
+      "player_count": 5,
+      "placement": 2,
+      "rating_change": 22.4,
+      "kills": 11,
+      "rounds_won": 1,
+      "points_total": 6,
+      "ended_at": "2026-09-11T01:57:30.067359+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Stan",
+        "TechTara",
+        "MangoJuice",
+        "embargo"
+      ]
+    },
+    {
+      "match_id": "cff88737-b9ef-4f63-95ad-a02bb122a0c2",
+      "player_count": 6,
+      "placement": 6,
+      "rating_change": -15.1,
+      "kills": 14,
+      "rounds_won": 0,
+      "points_total": 1,
+      "ended_at": "2026-08-30T22:44:37.783174+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Archnith",
+        "Spirit",
+        "TechTara",
+        "YeetmyFeet",
+        "global_warrior"
+      ]
+    },
+    {
+      "match_id": "5454fab6-288c-4bc1-855e-52f7a63cbf49",
+      "player_count": 6,
+      "placement": 5,
+      "rating_change": -0.6,
+      "kills": 7,
+      "rounds_won": 0,
+      "points_total": 1,
+      "ended_at": "2026-08-30T22:20:42.029933+00:00",
+      "settings": {
+        "score_target": 5,
+        "card_cap": 5,
+        "initial_picks": 1,
+        "card_candidates": 5,
+        "same_card_rule": false,
+        "sudden_death": false
+      },
+      "participants": [
+        "Spirit",
+        "global_warrior",
+        "YeetmyFeet",
+        "Archnith",
+        "TechTara"
+      ]
+    }
+  ]
+}

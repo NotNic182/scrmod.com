@@ -1,0 +1,170 @@
+{
+  "tournaments": [
+    {
+      "tournament_id": "a2d3c090-54c9-46ae-a4e2-fa1b85f0f10c",
+      "kind": "async",
+      "format": "double_elim_bo3",
+      "started_at": "2026-08-13T12:34:34.909189+00:00",
+      "ended_at": "2026-09-09T23:30:00.522164+00:00",
+      "duration_seconds": 2372125,
+      "signup_count": 8,
+      "prize_gold_1": 1000,
+      "prize_gold_2": 600,
+      "prize_gold_3": 120,
+      "prize_xp_1": 5000,
+      "prize_xp_2": 3000,
+      "prize_xp_3": 150,
+      "participants": [
+        {
+          "steam_id": "76561198040410653",
+          "display_name": "Sid",
+          "seed": 1,
+          "elo": 2455,
+          "placed_rank": 1,
+          "forfeited": false,
+          "wins": 4,
+          "losses": 0,
+          "result_label": "CHAMPION"
+        },
+        {
+          "steam_id": "76561198983423367",
+          "display_name": "Stan",
+          "seed": 2,
+          "elo": 2354,
+          "placed_rank": 2,
+          "forfeited": false,
+          "wins": 3,
+          "losses": 2,
+          "result_label": "eliminated GF R4"
+        },
+        {
+          "steam_id": "76561199013169799",
+          "display_name": "galaxy ice",
+          "seed": 3,
+          "elo": 1748,
+          "placed_rank": 3,
+          "forfeited": false,
+          "wins": 3,
+          "losses": 2,
+          "result_label": "eliminated LB R4"
+        },
+        {
+          "steam_id": "76561198359577677",
+          "display_name": "slarn",
+          "seed": 4,
+          "elo": 1708,
+          "placed_rank": null,
+          "forfeited": true,
+          "wins": 1,
+          "losses": 2,
+          "result_label": "eliminated LB R2"
+        },
+        {
+          "steam_id": "76561199012602040",
+          "display_name": "Lexia",
+          "seed": 5,
+          "elo": 1634,
+          "placed_rank": null,
+          "forfeited": false,
+          "wins": 2,
+          "losses": 2,
+          "result_label": "eliminated LB R3"
+        },
+        {
+          "steam_id": "76561199785555941",
+          "display_name": "egoplan",
+          "seed": 6,
+          "elo": 1444,
+          "placed_rank": null,
+          "forfeited": true,
+          "wins": 0,
+          "losses": 2,
+          "result_label": "eliminated LB R1"
+        },
+        {
+          "steam_id": "76561198041616199",
+          "display_name": "lopidav",
+          "seed": 7,
+          "elo": 1408,
+          "placed_rank": null,
+          "forfeited": false,
+          "wins": 1,
+          "losses": 2,
+          "result_label": "eliminated LB R2"
+        },
+        {
+          "steam_id": "76561199174621164",
+          "display_name": "LeathalGamer",
+          "seed": 8,
+          "elo": 1247,
+          "placed_rank": null,
+          "forfeited": true,
+          "wins": 0,
+          "losses": 2,
+          "result_label": "eliminated LB R1"
+        }
+      ]
+    },
+    {
+      "tournament_id": "c3c448f3-d5a8-47ec-8202-65d22dbaf51b",
+      "kind": "async",
+      "format": "double_elim_bo3",
+      "started_at": "2026-05-01T06:20:52.835970+00:00",
+      "ended_at": "2026-05-13T17:16:46.053755+00:00",
+      "duration_seconds": 1076153,
+      "signup_count": 4,
+      "prize_gold_1": 0,
+      "prize_gold_2": 0,
+      "prize_gold_3": 0,
+      "prize_xp_1": 0,
+      "prize_xp_2": 0,
+      "prize_xp_3": 0,
+      "participants": [
+        {
+          "steam_id": "76561198040410653",
+          "display_name": "Sid",
+          "seed": 1,
+          "elo": 2032,
+          "placed_rank": 1,
+          "forfeited": false,
+          "wins": 3,
+          "losses": 0,
+          "result_label": "CHAMPION"
+        },
+        {
+          "steam_id": "76561198041616199",
+          "display_name": "lopidav",
+          "seed": 4,
+          "elo": 1426,
+          "placed_rank": 2,
+          "forfeited": false,
+          "wins": 2,
+          "losses": 2,
+          "result_label": "eliminated GF R3"
+        },
+        {
+          "steam_id": "76561198000220351",
+          "display_name": "DrunkenWiLL",
+          "seed": 2,
+          "elo": 1669,
+          "placed_rank": null,
+          "forfeited": true,
+          "wins": 0,
+          "losses": 2,
+          "result_label": "eliminated LB R2"
+        },
+        {
+          "steam_id": "76561199013169799",
+          "display_name": "galaxy ice",
+          "seed": 3,
+          "elo": 1539,
+          "placed_rank": null,
+          "forfeited": true,
+          "wins": 0,
+          "losses": 1,
+          "result_label": "eliminated LB R1"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,445 @@
+{
+  "steam_id": "76561199311926326",
+  "achievements": [
+    {
+      "achievement_key": "untouchable",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Untouchable",
+      "global_pct": 0.8,
+      "gold": 100
+    },
+    {
+      "achievement_key": "silent_assassin",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Silent Assassin",
+      "global_pct": 2.9,
+      "gold": 100
+    },
+    {
+      "achievement_key": "total_mayhem",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Total Mayhem",
+      "global_pct": 2.3,
+      "gold": 100
+    },
+    {
+      "achievement_key": "fragile_perfection",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Fragile Perfection",
+      "global_pct": 2.7,
+      "gold": 100
+    },
+    {
+      "achievement_key": "no_escape",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "No Escape",
+      "global_pct": 2.1,
+      "gold": 100
+    },
+    {
+      "achievement_key": "rise_from_the_ashes",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Rise from the Ashes",
+      "global_pct": 1.2,
+      "gold": 500
+    },
+    {
+      "achievement_key": "the_comeback_kid",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "The Comeback Kid",
+      "global_pct": 3.5,
+      "gold": 100
+    },
+    {
+      "achievement_key": "stacked_deck",
+      "unlocked_at": "2026-09-11T01:27:31.902610Z",
+      "unlocked": true,
+      "name": "Stacked Deck",
+      "global_pct": 0.6,
+      "gold": 300
+    },
+    {
+      "achievement_key": "regicide",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Sid Slayer",
+      "global_pct": 0.8,
+      "gold": 1000
+    },
+    {
+      "achievement_key": "stan_slayer",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Stan Slayer",
+      "global_pct": 1,
+      "gold": 1000
+    },
+    {
+      "achievement_key": "pacifist",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Pacifist",
+      "global_pct": 4.1,
+      "gold": 100
+    },
+    {
+      "achievement_key": "immovable_object",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Immovable Object",
+      "global_pct": 2.9,
+      "gold": 100
+    },
+    {
+      "achievement_key": "master_rank",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Master",
+      "global_pct": 0.4,
+      "gold": 500
+    },
+    {
+      "achievement_key": "team_sweep",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Tag Team Sweep",
+      "global_pct": 0.6,
+      "gold": 500
+    },
+    {
+      "achievement_key": "grand_master",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Grand Master",
+      "global_pct": 0.4,
+      "gold": 1000
+    },
+    {
+      "achievement_key": "bullet_hell",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Bullet Hell",
+      "global_pct": 1.2,
+      "gold": 100
+    },
+    {
+      "achievement_key": "spray_and_pray",
+      "unlocked_at": "2026-07-24T14:58:27.925363Z",
+      "unlocked": true,
+      "name": "Spray and Pray",
+      "global_pct": 2.3,
+      "gold": 100
+    },
+    {
+      "achievement_key": "demolitionist",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Demolitionist",
+      "global_pct": 2.7,
+      "gold": 100
+    },
+    {
+      "achievement_key": "controlled_burst",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Controlled Burst",
+      "global_pct": 3.7,
+      "gold": 100
+    },
+    {
+      "achievement_key": "god_build",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "God Build",
+      "global_pct": 0.6,
+      "gold": 100
+    },
+    {
+      "achievement_key": "double_nova",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Double Nova",
+      "global_pct": 1.4,
+      "gold": 100
+    },
+    {
+      "achievement_key": "lumberjack",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Lumberjack",
+      "global_pct": 1.4,
+      "gold": 100
+    },
+    {
+      "achievement_key": "pristine_perfection",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Pristine Perfection",
+      "global_pct": 0.8,
+      "gold": 100
+    },
+    {
+      "achievement_key": "silent_drill",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Silly Drill",
+      "global_pct": 0.2,
+      "gold": 300
+    },
+    {
+      "achievement_key": "double_glass",
+      "unlocked_at": "2026-04-22T04:16:55.072283Z",
+      "unlocked": true,
+      "name": "Living on the Edge",
+      "global_pct": 2.7,
+      "gold": 100
+    },
+    {
+      "achievement_key": "sustained_power",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Sustained Power",
+      "global_pct": 1.2,
+      "gold": 100
+    },
+    {
+      "achievement_key": "field_medic",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Field Medic",
+      "global_pct": 1,
+      "gold": 100
+    },
+    {
+      "achievement_key": "deep_end",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Into the Deep End",
+      "global_pct": 0.2,
+      "gold": 300
+    },
+    {
+      "achievement_key": "clutch",
+      "unlocked_at": "2026-07-31T05:51:08.679391Z",
+      "unlocked": true,
+      "name": "Clutch",
+      "global_pct": 7.6,
+      "gold": 100
+    },
+    {
+      "achievement_key": "collector",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Collector",
+      "global_pct": 1.2,
+      "gold": 100
+    },
+    {
+      "achievement_key": "flawless",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Flawless",
+      "global_pct": 1.7,
+      "gold": 300
+    },
+    {
+      "achievement_key": "rising_star",
+      "unlocked_at": "2026-08-01T21:59:28.044489Z",
+      "unlocked": true,
+      "name": "Rising Star",
+      "global_pct": 9.7,
+      "gold": 100
+    },
+    {
+      "achievement_key": "on_fire",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "On Fire",
+      "global_pct": 0.6,
+      "gold": 100
+    },
+    {
+      "achievement_key": "unstoppable",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Unstoppable",
+      "global_pct": 0.4,
+      "gold": 300
+    },
+    {
+      "achievement_key": "immortal",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Immortal",
+      "global_pct": 0.4,
+      "gold": 500
+    },
+    {
+      "achievement_key": "casual_century",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Century Club",
+      "global_pct": 0.8,
+      "gold": 300
+    },
+    {
+      "achievement_key": "casual_conqueror",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Casual Conqueror",
+      "global_pct": 0.4,
+      "gold": 500
+    },
+    {
+      "achievement_key": "touch_grass",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Touch Grass",
+      "global_pct": 0,
+      "gold": 1000
+    },
+    {
+      "achievement_key": "grounded",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Grounded",
+      "global_pct": 1,
+      "gold": 100
+    },
+    {
+      "achievement_key": "instinct",
+      "unlocked_at": "2026-07-19T00:12:12.543022Z",
+      "unlocked": true,
+      "name": "Instinct",
+      "global_pct": 9.3,
+      "gold": 100
+    },
+    {
+      "achievement_key": "twins",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Twins!",
+      "global_pct": 0,
+      "gold": 500
+    },
+    {
+      "achievement_key": "ffa_shutout_3",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Clean House",
+      "global_pct": 0.8,
+      "gold": 100
+    },
+    {
+      "achievement_key": "ffa_shutout_4",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Party Crasher",
+      "global_pct": 0.4,
+      "gold": 300
+    },
+    {
+      "achievement_key": "ffa_shutout_5",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Hostile Takeover",
+      "global_pct": 0.2,
+      "gold": 500
+    },
+    {
+      "achievement_key": "ffa_kills_50",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Rampage",
+      "global_pct": 1.9,
+      "gold": 100
+    },
+    {
+      "achievement_key": "ffa_kills_100",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Bodycount",
+      "global_pct": 0,
+      "gold": 500
+    },
+    {
+      "achievement_key": "ffa_half_point_heartbreak",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Heartbreak",
+      "global_pct": 0,
+      "gold": 300
+    },
+    {
+      "achievement_key": "rosetta",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Rosetta",
+      "global_pct": 1,
+      "gold": 100
+    },
+    {
+      "achievement_key": "dragoman",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Dragoman",
+      "global_pct": 0.4,
+      "gold": 300
+    },
+    {
+      "achievement_key": "babel",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Babel",
+      "global_pct": 0,
+      "gold": 1000
+    },
+    {
+      "achievement_key": "tourn_champion_sync",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Sync Champion",
+      "global_pct": 0,
+      "gold": 500
+    },
+    {
+      "achievement_key": "tourn_champion_async",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Async Champion",
+      "global_pct": 0.2,
+      "gold": 500
+    },
+    {
+      "achievement_key": "tourn_second_sync",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Sync Finalist",
+      "global_pct": 0,
+      "gold": 300
+    },
+    {
+      "achievement_key": "tourn_second_async",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Async Finalist",
+      "global_pct": 0.4,
+      "gold": 300
+    },
+    {
+      "achievement_key": "tourn_iron_bracket",
+      "unlocked_at": null,
+      "unlocked": false,
+      "name": "Iron Bracket",
+      "global_pct": 1,
+      "gold": 100
+    }
+  ]
+}

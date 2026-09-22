@@ -1,0 +1,1546 @@
+{
+  "series": [
+    {
+      "series_id": "44f54596-9c02-4e67-9eb3-a8f4b755489b",
+      "game_codes": [
+        "18BC90D074F1",
+        "D4D1BB1BDE44",
+        "5057DE935F2D"
+      ],
+      "p1_name": "Zezima",
+      "p1_steam_id": "76561199195193559",
+      "p1_rating": 1480.5,
+      "p1_rating_change": 19.3,
+      "p1_streak": 1,
+      "p2_name": "Necro",
+      "p2_steam_id": "76561198228681248",
+      "p2_rating": 1297.2,
+      "p2_rating_change": -110.2,
+      "p2_streak": -3,
+      "p1_series_wins": 2,
+      "p2_series_wins": 1,
+      "winner_name": "Zezima",
+      "winner_steam_id": "76561199195193559",
+      "completed_at": "2026-09-22T09:57:53.919938+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [
+        {
+          "bettor_name": "Spirit",
+          "bettor_steam_id": "76561198984811435",
+          "amount": 2000,
+          "payout": 0,
+          "odds_multiplier": 1.32,
+          "bet_on_name": "Necro",
+          "bet_on_steam_id": "76561198228681248",
+          "won": false
+        }
+      ],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "a453d5ef-8a91-42ce-ba73-620cc5564052",
+      "game_codes": [
+        "362144219BE1",
+        "331D92FB4405"
+      ],
+      "p1_name": "Spirit",
+      "p1_steam_id": "76561198984811435",
+      "p1_rating": 1868.2,
+      "p1_rating_change": 2.8,
+      "p1_streak": 4,
+      "p2_name": "Zezima",
+      "p2_steam_id": "76561199195193559",
+      "p2_rating": 1480.5,
+      "p2_rating_change": -5.6,
+      "p2_streak": 1,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "Spirit",
+      "winner_steam_id": "76561198984811435",
+      "completed_at": "2026-09-22T09:29:20.485883+00:00",
+      "rules": null,
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "4dc33b3c-3990-4b9a-a766-a8fbba607982",
+      "game_codes": [
+        "135410DEB25A",
+        "BA0931D12F31"
+      ],
+      "p1_name": "Necro",
+      "p1_steam_id": "76561198228681248",
+      "p1_rating": 1297.2,
+      "p1_rating_change": -34.8,
+      "p1_streak": -3,
+      "p2_name": "Spirit",
+      "p2_steam_id": "76561198984811435",
+      "p2_rating": 1868.2,
+      "p2_rating_change": 3,
+      "p2_streak": 4,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "Spirit",
+      "winner_steam_id": "76561198984811435",
+      "completed_at": "2026-09-22T09:21:44.839396+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "99d9e15c-de28-4e8b-af52-ddfb106ac8f5",
+      "game_codes": [
+        "49DF5AC0B1F8",
+        "09C9EBAF38A9"
+      ],
+      "p1_name": "Necro",
+      "p1_steam_id": "76561198228681248",
+      "p1_rating": 1297.2,
+      "p1_rating_change": -57.8,
+      "p1_streak": -3,
+      "p2_name": "Spirit",
+      "p2_steam_id": "76561198984811435",
+      "p2_rating": 1868.2,
+      "p2_rating_change": 3.8,
+      "p2_streak": 4,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "Spirit",
+      "winner_steam_id": "76561198984811435",
+      "completed_at": "2026-09-22T09:07:53.522031+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "dd4e01bc-2756-48a0-b711-0544b50ac2e9",
+      "game_codes": [
+        "838BCDACF9B9",
+        "BC27972D6EE7",
+        "C64264E78D9B"
+      ],
+      "p1_name": "Spirit",
+      "p1_steam_id": "76561198984811435",
+      "p1_rating": 1868.2,
+      "p1_rating_change": 13,
+      "p1_streak": 4,
+      "p2_name": "galaxy ice",
+      "p2_steam_id": "76561199013169799",
+      "p2_rating": 1818.5,
+      "p2_rating_change": -11.4,
+      "p2_streak": -1,
+      "p1_series_wins": 2,
+      "p2_series_wins": 1,
+      "winner_name": "Spirit",
+      "winner_steam_id": "76561198984811435",
+      "completed_at": "2026-09-21T21:18:05.870043+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "59817ff4-25fc-48fd-853d-826c06bda582",
+      "game_codes": [
+        "987655D6A8AE",
+        "6ABCFF9140CE"
+      ],
+      "p1_name": "galaxy ice",
+      "p1_steam_id": "76561199013169799",
+      "p1_rating": 1818.5,
+      "p1_rating_change": 13.5,
+      "p1_streak": -1,
+      "p2_name": "Spirit",
+      "p2_steam_id": "76561198984811435",
+      "p2_rating": 1868.2,
+      "p2_rating_change": -15.6,
+      "p2_streak": 4,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "galaxy ice",
+      "winner_steam_id": "76561199013169799",
+      "completed_at": "2026-09-21T20:57:27.211116+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "b145a066-8791-431f-966f-5627283f2ddc",
+      "game_codes": [
+        "F8E5968BB6F4",
+        "ADE50CB33883",
+        "68559070A666"
+      ],
+      "p1_name": "Spirit",
+      "p1_steam_id": "76561198984811435",
+      "p1_rating": 1868.2,
+      "p1_rating_change": 1.4,
+      "p1_streak": 4,
+      "p2_name": "Nix ツ",
+      "p2_steam_id": "76561199101676330",
+      "p2_rating": 1336.7,
+      "p2_rating_change": -1.4,
+      "p2_streak": -3,
+      "p1_series_wins": 2,
+      "p2_series_wins": 1,
+      "winner_name": "Spirit",
+      "winner_steam_id": "76561198984811435",
+      "completed_at": "2026-09-21T09:55:18.419915+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "e7fbb3eb-67d1-44f6-a48b-64949efe536b",
+      "game_codes": [
+        "FA73ECAEC14B",
+        "8ADADA6005AF"
+      ],
+      "p1_name": "NotNic",
+      "p1_steam_id": "76561199311926326",
+      "p1_rating": 1101.8,
+      "p1_rating_change": 8.9,
+      "p1_streak": 2,
+      "p2_name": "TechTara",
+      "p2_steam_id": "76561199867990884",
+      "p2_rating": 980.3,
+      "p2_rating_change": -8.6,
+      "p2_streak": -2,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "NotNic",
+      "winner_steam_id": "76561199311926326",
+      "completed_at": "2026-09-21T07:17:22.787927+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "08ce29ec-2b46-45a0-b579-56f85a4cf78f",
+      "game_codes": [
+        "76455836CBC8",
+        "4FE6129F9D7C"
+      ],
+      "p1_name": "Sid",
+      "p1_steam_id": "76561198040410653",
+      "p1_rating": 2564.5,
+      "p1_rating_change": 0.2,
+      "p1_streak": 218,
+      "p2_name": "Zezima",
+      "p2_steam_id": "76561199195193559",
+      "p2_rating": 1480.5,
+      "p2_rating_change": -0.2,
+      "p2_streak": 1,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "Sid",
+      "winner_steam_id": "76561198040410653",
+      "completed_at": "2026-09-21T07:12:18.128364+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "71b99eb9-629a-4e0b-9b8c-1521a6f79bfa",
+      "game_codes": [
+        "4936D4E2126A",
+        "F3387F937346",
+        "2F64E5E1240A"
+      ],
+      "p1_name": "NotNic",
+      "p1_steam_id": "76561199311926326",
+      "p1_rating": 1101.8,
+      "p1_rating_change": 9.6,
+      "p1_streak": 2,
+      "p2_name": "TechTara",
+      "p2_steam_id": "76561199867990884",
+      "p2_rating": 980.3,
+      "p2_rating_change": -9.3,
+      "p2_streak": -2,
+      "p1_series_wins": 2,
+      "p2_series_wins": 1,
+      "winner_name": "NotNic",
+      "winner_steam_id": "76561199311926326",
+      "completed_at": "2026-09-21T07:01:59.407339+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "72398105-e43e-4679-8af9-15b68aeb8523",
+      "game_codes": [
+        "192099E67B87",
+        "480907A77740"
+      ],
+      "p1_name": "Sid",
+      "p1_steam_id": "76561198040410653",
+      "p1_rating": 2564.5,
+      "p1_rating_change": 0.2,
+      "p1_streak": 218,
+      "p2_name": "Zezima",
+      "p2_steam_id": "76561199195193559",
+      "p2_rating": 1480.5,
+      "p2_rating_change": -0.2,
+      "p2_streak": 1,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "Sid",
+      "winner_steam_id": "76561198040410653",
+      "completed_at": "2026-09-21T07:00:24.610727+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "dc7a9616-7dea-475f-a50a-e70614febbfe",
+      "game_codes": [
+        "808D1366DA42",
+        "15A0073B2201"
+      ],
+      "p1_name": "Sid",
+      "p1_steam_id": "76561198040410653",
+      "p1_rating": 2564.5,
+      "p1_rating_change": 0.2,
+      "p1_streak": 218,
+      "p2_name": "Zezima",
+      "p2_steam_id": "76561199195193559",
+      "p2_rating": 1480.5,
+      "p2_rating_change": -0.2,
+      "p2_streak": 1,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "Sid",
+      "winner_steam_id": "76561198040410653",
+      "completed_at": "2026-09-21T06:50:44.487351+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "5a421099-e596-4e04-a8c0-939f60ef5add",
+      "game_codes": [
+        "0D5D71AE296B",
+        "35DB9DFB118A",
+        "D10DE3EFFD48"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": -2.9,
+      "p1_streak": -1,
+      "p2_name": "galaxy ice",
+      "p2_steam_id": "76561199013169799",
+      "p2_rating": 1818.5,
+      "p2_rating_change": 2.4,
+      "p2_streak": -1,
+      "p1_series_wins": 1,
+      "p2_series_wins": 2,
+      "winner_name": "galaxy ice",
+      "winner_steam_id": "76561199013169799",
+      "completed_at": "2026-09-21T00:27:38.221254+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "336f7834-8a39-4a7f-a5be-3c4418ea5cd7",
+      "game_codes": [
+        "B8DAAEC6760D",
+        "069FA8EDB54A"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": 7,
+      "p1_streak": -1,
+      "p2_name": "Piginator",
+      "p2_steam_id": "76561198772889989",
+      "p2_rating": 1148,
+      "p2_rating_change": -69.9,
+      "p2_streak": -2,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-20T23:32:32.997221+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "440f568a-724a-41d5-8f0c-5060f2b734a0",
+      "game_codes": [
+        "B7BF8F4921C1",
+        "470B2B5A5E53"
+      ],
+      "p1_name": "Spirit",
+      "p1_steam_id": "76561198984811435",
+      "p1_rating": 1868.2,
+      "p1_rating_change": -11,
+      "p1_streak": 4,
+      "p2_name": "Archnith",
+      "p2_steam_id": "76561199121899818",
+      "p2_rating": 1957.1,
+      "p2_rating_change": 13.1,
+      "p2_streak": 27,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-20T21:39:21.428774+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [
+        {
+          "bettor_name": "SlopsOn1",
+          "bettor_steam_id": "76561199106086874",
+          "amount": 100,
+          "payout": 167,
+          "odds_multiplier": 1.67,
+          "bet_on_name": "Archnith",
+          "bet_on_steam_id": "76561199121899818",
+          "won": true
+        }
+      ],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "35f88534-4bea-43cf-9a52-e290ef6efc03",
+      "game_codes": [
+        "8AE622BA111D",
+        "109D218FA8FF"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": -1.4,
+      "p1_streak": -1,
+      "p2_name": "Archnith",
+      "p2_steam_id": "76561199121899818",
+      "p2_rating": 1957.1,
+      "p2_rating_change": 1.6,
+      "p2_streak": 27,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-20T21:27:21.667950+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "db216c87-1cc0-4aa6-8115-2378b0431710",
+      "game_codes": [
+        "14A6C504DAC8",
+        "55EB6F577E15"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": -1.5,
+      "p1_streak": -1,
+      "p2_name": "Archnith",
+      "p2_steam_id": "76561199121899818",
+      "p2_rating": 1957.1,
+      "p2_rating_change": 1.6,
+      "p2_streak": 27,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-20T21:14:48.523843+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [
+        {
+          "bettor_name": "Spirit",
+          "bettor_steam_id": "76561198984811435",
+          "amount": 500,
+          "payout": 0,
+          "odds_multiplier": 3,
+          "bet_on_name": "SlopsOn1",
+          "bet_on_steam_id": "76561199106086874",
+          "won": false
+        }
+      ],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "9d3662e4-6023-4c32-8a71-ebc60a3c5adc",
+      "game_codes": [
+        "70F5101239A0",
+        "2872E2DA05FB"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": -1.5,
+      "p1_streak": -1,
+      "p2_name": "Archnith",
+      "p2_steam_id": "76561199121899818",
+      "p2_rating": 1957.1,
+      "p2_rating_change": 1.7,
+      "p2_streak": 27,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-20T20:58:17.524133+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "470f3e0e-5eca-4c74-b5af-736317a9b2f0",
+      "game_codes": [
+        "93C30FE81C7E",
+        "3A64E3EF1B9F",
+        "845C389A554C"
+      ],
+      "p1_name": "YeetmyFeet",
+      "p1_steam_id": "76561198425880753",
+      "p1_rating": 1275.8,
+      "p1_rating_change": -22.1,
+      "p1_streak": -7,
+      "p2_name": "SlopsOn1",
+      "p2_steam_id": "76561199106086874",
+      "p2_rating": 1414,
+      "p2_rating_change": 10,
+      "p2_streak": -1,
+      "p1_series_wins": 1,
+      "p2_series_wins": 2,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-20T20:34:24.418971+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "09316eff-4824-40bb-be51-ca23c0f6a088",
+      "game_codes": [
+        "C371D42C9A0D",
+        "1E712B03075E"
+      ],
+      "p1_name": "YeetmyFeet",
+      "p1_steam_id": "76561198425880753",
+      "p1_rating": 1275.8,
+      "p1_rating_change": -27.2,
+      "p1_streak": -7,
+      "p2_name": "SlopsOn1",
+      "p2_steam_id": "76561199106086874",
+      "p2_rating": 1414,
+      "p2_rating_change": 11.5,
+      "p2_streak": -1,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-20T20:15:24.202873+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "b329817e-b8e5-4db7-8d91-af4622941123",
+      "game_codes": [
+        "963B4DBE5607",
+        "6DBECCF16954"
+      ],
+      "p1_name": "YeetmyFeet",
+      "p1_steam_id": "76561198425880753",
+      "p1_rating": 1275.8,
+      "p1_rating_change": -34.4,
+      "p1_streak": -7,
+      "p2_name": "SlopsOn1",
+      "p2_steam_id": "76561199106086874",
+      "p2_rating": 1414,
+      "p2_rating_change": 13.4,
+      "p2_streak": -1,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-20T20:00:47.736751+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "8508b1fe-3d38-4482-9ea5-caffe21de896",
+      "game_codes": [
+        "7DC893AD7F59",
+        "C56119CB14A1",
+        "DDCAD6417953"
+      ],
+      "p1_name": "NotNic",
+      "p1_steam_id": "76561199311926326",
+      "p1_rating": 1101.8,
+      "p1_rating_change": -0.2,
+      "p1_streak": 2,
+      "p2_name": "Archnith",
+      "p2_steam_id": "76561199121899818",
+      "p2_rating": 1957.1,
+      "p2_rating_change": 0.3,
+      "p2_streak": 27,
+      "p1_series_wins": 1,
+      "p2_series_wins": 2,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-20T18:51:32.797357+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [
+        {
+          "bettor_name": "Spirit",
+          "bettor_steam_id": "76561198984811435",
+          "amount": 100,
+          "payout": 0,
+          "odds_multiplier": 3,
+          "bet_on_name": "NotNic",
+          "bet_on_steam_id": "76561199311926326",
+          "won": false
+        }
+      ],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "2f30e74e-41bc-4e99-9d48-72022d40a322",
+      "game_codes": [
+        "4523B74A5B25",
+        "7DDBBE094262",
+        "D333B2BB8249"
+      ],
+      "p1_name": "TechTara",
+      "p1_steam_id": "76561199867990884",
+      "p1_rating": 980.3,
+      "p1_rating_change": 16.2,
+      "p1_streak": -2,
+      "p2_name": "NotNic",
+      "p2_steam_id": "76561199311926326",
+      "p2_rating": 1101.8,
+      "p2_rating_change": -16.3,
+      "p2_streak": 2,
+      "p1_series_wins": 2,
+      "p2_series_wins": 1,
+      "winner_name": "TechTara",
+      "winner_steam_id": "76561199867990884",
+      "completed_at": "2026-09-20T10:37:08.537881+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [
+        {
+          "bettor_name": "Spirit",
+          "bettor_steam_id": "76561198984811435",
+          "amount": 500,
+          "payout": 1458,
+          "odds_multiplier": 2.92,
+          "bet_on_name": "TechTara",
+          "bet_on_steam_id": "76561199867990884",
+          "won": true
+        }
+      ],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "1c5f2bc5-b6dd-42d5-a601-d5882d46c1cb",
+      "game_codes": [
+        "83FA4D85EA58",
+        "1B91FF75D037"
+      ],
+      "p1_name": "Spirit",
+      "p1_steam_id": "76561198984811435",
+      "p1_rating": 1868.2,
+      "p1_rating_change": 1.3,
+      "p1_streak": 4,
+      "p2_name": "logatron.01",
+      "p2_steam_id": "76561198924016866",
+      "p2_rating": 1236.1,
+      "p2_rating_change": -10.4,
+      "p2_streak": -2,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "Spirit",
+      "winner_steam_id": "76561198984811435",
+      "completed_at": "2026-09-20T10:03:02.814489+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "d1e5e4be-5db7-4732-b3ec-0b7363c1cce5",
+      "game_codes": [
+        "D7F9B93E001F",
+        "07480318E6C3"
+      ],
+      "p1_name": "logatron.01",
+      "p1_steam_id": "76561198924016866",
+      "p1_rating": 1236.1,
+      "p1_rating_change": -253.6,
+      "p1_streak": -2,
+      "p2_name": "SlopsOn1",
+      "p2_steam_id": "76561199106086874",
+      "p2_rating": 1414,
+      "p2_rating_change": 12.9,
+      "p2_streak": -1,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-20T09:47:04.750687+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "977fd50b-bdb4-4eb8-98f5-6ec7bd531d3f",
+      "game_codes": [
+        "2AE98084A70D",
+        "ACE4BB352EA8",
+        "99B9090172E6"
+      ],
+      "p1_name": "Nix ツ",
+      "p1_steam_id": "76561199101676330",
+      "p1_rating": 1336.7,
+      "p1_rating_change": -1.4,
+      "p1_streak": -3,
+      "p2_name": "Spirit",
+      "p2_steam_id": "76561198984811435",
+      "p2_rating": 1868.2,
+      "p2_rating_change": 1.4,
+      "p2_streak": 4,
+      "p1_series_wins": 1,
+      "p2_series_wins": 2,
+      "winner_name": "Spirit",
+      "winner_steam_id": "76561198984811435",
+      "completed_at": "2026-09-20T09:35:10.466598+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "af1f260d-023d-4d1c-9ec1-ce6895316e3e",
+      "game_codes": [
+        "816AFDDA5A88",
+        "A281CE54EB19"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": -1.2,
+      "p1_streak": -1,
+      "p2_name": "Archnith",
+      "p2_steam_id": "76561199121899818",
+      "p2_rating": 1957.1,
+      "p2_rating_change": 1.3,
+      "p2_streak": 27,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-19T21:16:37.260086+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "31dd1b75-b319-4e5c-88d0-f16b68c2a9d8",
+      "game_codes": [
+        "5DCBBFCFB952",
+        "4FE329A8E52C"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": -1.2,
+      "p1_streak": -1,
+      "p2_name": "Archnith",
+      "p2_steam_id": "76561199121899818",
+      "p2_rating": 1957.1,
+      "p2_rating_change": 1.3,
+      "p2_streak": 27,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-19T20:57:53.833096+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "c2ebb612-e5ea-4afd-a923-0deb230a8399",
+      "game_codes": [
+        "EF3D5AE5EF5D",
+        "B599B26E1E33"
+      ],
+      "p1_name": "NotNic",
+      "p1_steam_id": "76561199311926326",
+      "p1_rating": 1101.8,
+      "p1_rating_change": -4.7,
+      "p1_streak": 2,
+      "p2_name": "SlopsOn1",
+      "p2_steam_id": "76561199106086874",
+      "p2_rating": 1414,
+      "p2_rating_change": 5.5,
+      "p2_streak": -1,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-19T20:07:07.143962+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "53fe9149-4629-406b-a9b5-99d7127c1352",
+      "game_codes": [
+        "71A6DBD65EFB",
+        "55904A49DC2A",
+        "E209CBB876D6"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": -1.2,
+      "p1_streak": -1,
+      "p2_name": "Archnith",
+      "p2_steam_id": "76561199121899818",
+      "p2_rating": 1957.1,
+      "p2_rating_change": 1.2,
+      "p2_streak": 27,
+      "p1_series_wins": 1,
+      "p2_series_wins": 2,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-19T19:51:30.823741+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [
+        {
+          "bettor_name": "Spirit",
+          "bettor_steam_id": "76561198984811435",
+          "amount": 500,
+          "payout": 0,
+          "odds_multiplier": 3,
+          "bet_on_name": "SlopsOn1",
+          "bet_on_steam_id": "76561199106086874",
+          "won": false
+        }
+      ],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "63e7a01c-7a6f-4b14-931a-f04be9e6e1af",
+      "game_codes": [
+        "A8F5924AD36D",
+        "9230603EA848",
+        "D9A7CA73199C"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": -1.1,
+      "p1_streak": -1,
+      "p2_name": "Archnith",
+      "p2_steam_id": "76561199121899818",
+      "p2_rating": 1957.1,
+      "p2_rating_change": 1.2,
+      "p2_streak": 27,
+      "p1_series_wins": 1,
+      "p2_series_wins": 2,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-19T19:19:29.621027+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "34931e3e-a091-4f49-bd24-10d9e0a0f186",
+      "game_codes": [
+        "038A487B820F",
+        "70EAB8A586E0",
+        "1D1870A26014"
+      ],
+      "p1_name": "Spirit",
+      "p1_steam_id": "76561198984811435",
+      "p1_rating": 1868.2,
+      "p1_rating_change": -12.1,
+      "p1_streak": 4,
+      "p2_name": "Archnith",
+      "p2_steam_id": "76561199121899818",
+      "p2_rating": 1957.1,
+      "p2_rating_change": 13.6,
+      "p2_streak": 27,
+      "p1_series_wins": 1,
+      "p2_series_wins": 2,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-19T18:59:36.399420+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "45932551-6f45-459f-8178-1974e942c35d",
+      "game_codes": [
+        "6734E39E52FB",
+        "FC44FD4E274E"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": 20.2,
+      "p1_streak": -1,
+      "p2_name": "Melooone",
+      "p2_steam_id": "76561198305845931",
+      "p2_rating": 1483.5,
+      "p2_rating_change": -46.8,
+      "p2_streak": -2,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-19T16:18:38.717657+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "78d8c9be-2858-43fb-96ba-1c77dfd8c05b",
+      "game_codes": [
+        "F48AA94D78EE",
+        "6887F3896751"
+      ],
+      "p1_name": "Archnith",
+      "p1_steam_id": "76561199121899818",
+      "p1_rating": 1957.1,
+      "p1_rating_change": 3,
+      "p1_streak": 27,
+      "p2_name": "Jani",
+      "p2_steam_id": "76561199395607452",
+      "p2_rating": 1422.7,
+      "p2_rating_change": -30.4,
+      "p2_streak": -2,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-19T01:43:20.343373+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "58e333aa-e8d0-4464-bd04-1157b7e0dfa0",
+      "game_codes": [
+        "B99C6C8166AB",
+        "E0D1FAC13CC3"
+      ],
+      "p1_name": "Archnith",
+      "p1_steam_id": "76561199121899818",
+      "p1_rating": 1957.1,
+      "p1_rating_change": 3.6,
+      "p1_streak": 27,
+      "p2_name": "Jani",
+      "p2_steam_id": "76561199395607452",
+      "p2_rating": 1422.7,
+      "p2_rating_change": -46.9,
+      "p2_streak": -2,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-19T01:30:56.953921+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "f9cc3312-aeb3-43e6-9bf6-fc601ffe7889",
+      "game_codes": [
+        "E7F11DE56808",
+        "E7FF7AF02B2F",
+        "ED0983E3BCCF"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": 6.2,
+      "p1_streak": -1,
+      "p2_name": "NotNic",
+      "p2_steam_id": "76561199311926326",
+      "p2_rating": 1101.8,
+      "p2_rating_change": -5.3,
+      "p2_streak": 2,
+      "p1_series_wins": 2,
+      "p2_series_wins": 1,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-18T20:21:25.994095+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "556e5062-c737-42bf-acb8-91935254a1a2",
+      "game_codes": [
+        "6BA8E15CCEE0",
+        "DF21235AB7AE",
+        "2633B3482F76"
+      ],
+      "p1_name": "NotNic",
+      "p1_steam_id": "76561199311926326",
+      "p1_rating": 1101.8,
+      "p1_rating_change": -5.6,
+      "p1_streak": 2,
+      "p2_name": "SlopsOn1",
+      "p2_steam_id": "76561199106086874",
+      "p2_rating": 1414,
+      "p2_rating_change": 6.6,
+      "p2_streak": -1,
+      "p1_series_wins": 1,
+      "p2_series_wins": 2,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-18T16:06:19.321926+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "1418dda0-e46f-4b29-8b97-686dc2ab9577",
+      "game_codes": [
+        "65EE2AEB7A41",
+        "672EBD875261"
+      ],
+      "p1_name": "mowie",
+      "p1_steam_id": "76561199106464129",
+      "p1_rating": 1497.8,
+      "p1_rating_change": -2.2,
+      "p1_streak": -1,
+      "p2_name": "Sid",
+      "p2_steam_id": "76561198040410653",
+      "p2_rating": 2564.5,
+      "p2_rating_change": 1,
+      "p2_streak": 218,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "Sid",
+      "winner_steam_id": "76561198040410653",
+      "completed_at": "2026-09-18T03:56:51.926955+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "65cd81a0-7f1d-4448-8285-7cbd5c55100f",
+      "game_codes": [
+        "0B454A147C30",
+        "232CB610B39A"
+      ],
+      "p1_name": "Levity",
+      "p1_steam_id": "76561198054619780",
+      "p1_rating": 1515.4,
+      "p1_rating_change": 6.9,
+      "p1_streak": 4,
+      "p2_name": "Misty",
+      "p2_steam_id": "76561198448864585",
+      "p2_rating": 1295.8,
+      "p2_rating_change": -32.7,
+      "p2_streak": -7,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "Levity",
+      "winner_steam_id": "76561198054619780",
+      "completed_at": "2026-09-18T02:22:53.569120+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "6fed1ddb-0b5c-45e0-b29b-7cb0d44944a9",
+      "game_codes": [
+        "BE8809C6EA0E",
+        "6236BD5F736F",
+        "9AFC5DA71556"
+      ],
+      "p1_name": "Levity",
+      "p1_steam_id": "76561198054619780",
+      "p1_rating": 1515.4,
+      "p1_rating_change": 8.3,
+      "p1_streak": 4,
+      "p2_name": "Misty",
+      "p2_steam_id": "76561198448864585",
+      "p2_rating": 1295.8,
+      "p2_rating_change": -46.8,
+      "p2_streak": -7,
+      "p1_series_wins": 2,
+      "p2_series_wins": 1,
+      "winner_name": "Levity",
+      "winner_steam_id": "76561198054619780",
+      "completed_at": "2026-09-18T02:11:48.439935+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "141f3bc9-559a-4b6f-900e-c8a96b6f0fa8",
+      "game_codes": [
+        "CD19211282ED",
+        "4F0167486C69"
+      ],
+      "p1_name": "Misty",
+      "p1_steam_id": "76561198448864585",
+      "p1_rating": 1295.8,
+      "p1_rating_change": -76.2,
+      "p1_streak": -7,
+      "p2_name": "Levity",
+      "p2_steam_id": "76561198054619780",
+      "p2_rating": 1515.4,
+      "p2_rating_change": 10.5,
+      "p2_streak": 4,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "Levity",
+      "winner_steam_id": "76561198054619780",
+      "completed_at": "2026-09-18T01:56:10.782996+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "68afea58-2116-4557-88cc-71b6b996c418",
+      "game_codes": [
+        "9F0384281A72",
+        "B3EC8B0CD9CF",
+        "50B3D4FC9AA7"
+      ],
+      "p1_name": "Archnith",
+      "p1_steam_id": "76561199121899818",
+      "p1_rating": 1957.1,
+      "p1_rating_change": 1.2,
+      "p1_streak": 27,
+      "p2_name": "SlopsOn1",
+      "p2_steam_id": "76561199106086874",
+      "p2_rating": 1414,
+      "p2_rating_change": -1.1,
+      "p2_streak": -1,
+      "p1_series_wins": 2,
+      "p2_series_wins": 1,
+      "winner_name": "Archnith",
+      "winner_steam_id": "76561199121899818",
+      "completed_at": "2026-09-18T00:34:27.296767+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "b527b6e9-0af7-4860-83e2-82792a6c0070",
+      "game_codes": [
+        "D749FC22E12F",
+        "761C505D3921"
+      ],
+      "p1_name": "Raycraft Wolf",
+      "p1_steam_id": "76561198068140600",
+      "p1_rating": 1664.4,
+      "p1_rating_change": 51.4,
+      "p1_streak": 2,
+      "p2_name": "SlopsOn1",
+      "p2_steam_id": "76561199106086874",
+      "p2_rating": 1414,
+      "p2_rating_change": -5.2,
+      "p2_streak": -1,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "Raycraft Wolf",
+      "winner_steam_id": "76561198068140600",
+      "completed_at": "2026-09-17T23:45:04.428490+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "6011f165-c927-4430-8812-560bc395843e",
+      "game_codes": [
+        "CAACE7C2335D",
+        "B779478CB591"
+      ],
+      "p1_name": "Raycraft Wolf",
+      "p1_steam_id": "76561198068140600",
+      "p1_rating": 1664.4,
+      "p1_rating_change": 112.9,
+      "p1_streak": 2,
+      "p2_name": "SlopsOn1",
+      "p2_steam_id": "76561199106086874",
+      "p2_rating": 1414,
+      "p2_rating_change": -7,
+      "p2_streak": -1,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "Raycraft Wolf",
+      "winner_steam_id": "76561198068140600",
+      "completed_at": "2026-09-17T23:34:25.554292+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "13d38f2f-4245-41ca-8e46-28359ba3e56d",
+      "game_codes": [
+        "24A17C2F9C9E",
+        "0A5C293A7E45",
+        "F2E77A9B03BA"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": 6.5,
+      "p1_streak": -1,
+      "p2_name": "NotNic",
+      "p2_steam_id": "76561199311926326",
+      "p2_rating": 1101.8,
+      "p2_rating_change": -5.6,
+      "p2_streak": 2,
+      "p1_series_wins": 2,
+      "p2_series_wins": 1,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-17T21:50:41.650914+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "3434e068-55b4-407e-8e90-1492a141d934",
+      "game_codes": [
+        "18C43E0E6113",
+        "B24B8780D3A3"
+      ],
+      "p1_name": "ap_suuri",
+      "p1_steam_id": "76561199066742867",
+      "p1_rating": 1246.5,
+      "p1_rating_change": -165.2,
+      "p1_streak": -3,
+      "p2_name": "SlopsOn1",
+      "p2_steam_id": "76561199106086874",
+      "p2_rating": 1414,
+      "p2_rating_change": 13.2,
+      "p2_streak": -1,
+      "p1_series_wins": 0,
+      "p2_series_wins": 2,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-17T21:00:45.187423+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [
+        {
+          "bettor_name": "Spirit",
+          "bettor_steam_id": "76561198984811435",
+          "amount": 500,
+          "payout": 615,
+          "odds_multiplier": 1.29,
+          "bet_on_name": "SlopsOn1",
+          "bet_on_steam_id": "76561199106086874",
+          "won": true
+        }
+      ],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "90e4dcc2-de0f-42b2-92a2-67c1166042f1",
+      "game_codes": [
+        "3DE5B36074D5",
+        "5AD885699ED4"
+      ],
+      "p1_name": "Spirit",
+      "p1_steam_id": "76561198984811435",
+      "p1_rating": 1868.2,
+      "p1_rating_change": 2.9,
+      "p1_streak": 4,
+      "p2_name": "ap_suuri",
+      "p2_steam_id": "76561199066742867",
+      "p2_rating": 1246.5,
+      "p2_rating_change": -33.6,
+      "p2_streak": -3,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "Spirit",
+      "winner_steam_id": "76561198984811435",
+      "completed_at": "2026-09-17T20:32:24.967158+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "9cdc2ea8-b0c1-479f-9672-c8c56603bd4b",
+      "game_codes": [
+        "755092D6552C",
+        "F510F3AA3364",
+        "D116B960B07D"
+      ],
+      "p1_name": "ap_suuri",
+      "p1_steam_id": "76561199066742867",
+      "p1_rating": 1246.5,
+      "p1_rating_change": -54.6,
+      "p1_streak": -3,
+      "p2_name": "Spirit",
+      "p2_steam_id": "76561198984811435",
+      "p2_rating": 1868.2,
+      "p2_rating_change": 3.6,
+      "p2_streak": 4,
+      "p1_series_wins": 1,
+      "p2_series_wins": 2,
+      "winner_name": "Spirit",
+      "winner_steam_id": "76561198984811435",
+      "completed_at": "2026-09-17T20:17:26.978802+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "086d763f-3334-4e1b-b021-5f77ef2f91c0",
+      "game_codes": [
+        "89A7C04A5C15",
+        "577C315AEECB"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": 6.5,
+      "p1_streak": -1,
+      "p2_name": "LotiKaroti85",
+      "p2_steam_id": "76561199562880155",
+      "p2_rating": 1071.9,
+      "p2_rating_change": -32.1,
+      "p2_streak": -6,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-17T18:20:49.086986+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    },
+    {
+      "series_id": "33d840db-ab9b-44a1-af7d-c84a4661f58f",
+      "game_codes": [
+        "FBF22B04ECF8",
+        "CEA766D23701"
+      ],
+      "p1_name": "SlopsOn1",
+      "p1_steam_id": "76561199106086874",
+      "p1_rating": 1414,
+      "p1_rating_change": 7.9,
+      "p1_streak": -1,
+      "p2_name": "LotiKaroti85",
+      "p2_steam_id": "76561199562880155",
+      "p2_rating": 1071.9,
+      "p2_rating_change": -46.5,
+      "p2_streak": -6,
+      "p1_series_wins": 2,
+      "p2_series_wins": 0,
+      "winner_name": "SlopsOn1",
+      "winner_steam_id": "76561199106086874",
+      "completed_at": "2026-09-17T18:11:15.663401+00:00",
+      "rules": {
+        "ff": true,
+        "sc": false
+      },
+      "bets": [],
+      "tournament": false,
+      "tournament_label": ""
+    }
+  ]
+}

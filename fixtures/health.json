@@ -1,0 +1,13 @@
+{
+  "status": "ok",
+  "version": "1.0.0",
+  "database": "connected",
+  "pc_renderer_fp": "b21cb173941ea906",
+  "pc_raqm": true,
+  "pc_steam_sweep": "running",
+  "pc_pool_rule": 3,
+  "pc_steam_render": "ok",
+  "pc_fold": "v4.14",
+  "ffa_hold_fences": 1,
+  "replica": false
+}

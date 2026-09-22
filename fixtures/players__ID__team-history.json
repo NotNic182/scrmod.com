@@ -1,0 +1,43 @@
+{
+  "series": [
+    {
+      "series_id": "43a49fd1-1602-4bd9-aa30-0b014b530d02",
+      "won": false,
+      "score": "0-2",
+      "mate": "MangoJuice",
+      "opponents": [
+        "Stan",
+        "embargo"
+      ],
+      "rating_change": -72.9,
+      "completed_at": "2026-09-11T01:34:56.379188+00:00",
+      "rules": null
+    },
+    {
+      "series_id": "f46c7e8a-e70f-4978-88c2-d968fb1baef1",
+      "won": false,
+      "score": "0-1",
+      "mate": "Spicypeppersauce",
+      "opponents": [
+        "Stan",
+        "Nix ツ"
+      ],
+      "rating_change": -195.6,
+      "completed_at": "2026-08-19T21:23:09.599438+00:00",
+      "rules": null
+    },
+    {
+      "series_id": "e2a4bc43-0df0-4ee5-8bfb-abc1798f418a",
+      "won": true,
+      "score": "2-1",
+      "mate": "galaxy ice",
+      "opponents": [
+        "Spirit",
+        "Nix ツ"
+      ],
+      "rating_change": 212.5,
+      "completed_at": "2026-08-01T21:59:27.986233+00:00",
+      "rules": null
+    }
+  ]
+}

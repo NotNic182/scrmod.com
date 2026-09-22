@@ -1,0 +1,224 @@
+{
+  "achievements": {
+    "untouchable": {
+      "name": "Untouchable",
+      "desc": "Win a game without taking any damage"
+    },
+    "silent_assassin": {
+      "name": "Silent Assassin",
+      "desc": "5-0 someone with Sneaky"
+    },
+    "total_mayhem": {
+      "name": "Total Mayhem",
+      "desc": "5-0 someone with Mayhem"
+    },
+    "fragile_perfection": {
+      "name": "Fragile Perfection",
+      "desc": "5-0 someone with Glass Cannon"
+    },
+    "no_escape": {
+      "name": "No Escape",
+      "desc": "5-0 someone with Chase"
+    },
+    "rise_from_the_ashes": {
+      "name": "Rise from the Ashes",
+      "desc": "Win 5-0 with Phoenix without losing a life"
+    },
+    "the_comeback_kid": {
+      "name": "The Comeback Kid",
+      "desc": "Win after being down 0-4"
+    },
+    "stacked_deck": {
+      "name": "Stacked Deck",
+      "desc": "Get 5 copies of one card in a game"
+    },
+    "regicide": {
+      "name": "Sid Slayer",
+      "desc": "Win against Sid in a ranked series"
+    },
+    "stan_slayer": {
+      "name": "Stan Slayer",
+      "desc": "Win against Stan in a ranked series"
+    },
+    "pacifist": {
+      "name": "Pacifist",
+      "desc": "Win a game without firing a single shot"
+    },
+    "immovable_object": {
+      "name": "Immovable Object",
+      "desc": "Win a game without moving or jumping"
+    },
+    "master_rank": {
+      "name": "Master",
+      "desc": "Reach 1980 rating in ranked (1v1 or 2v2)"
+    },
+    "team_sweep": {
+      "name": "Tag Team Sweep",
+      "desc": "Win a 2v2 game 5-0"
+    },
+    "grand_master": {
+      "name": "Grand Master",
+      "desc": "Reach 2330 rating in ranked (1v1 or 2v2)"
+    },
+    "bullet_hell": {
+      "name": "Bullet Hell",
+      "desc": "Win a game 5-0 with Barrage in your build"
+    },
+    "spray_and_pray": {
+      "name": "Spray and Pray",
+      "desc": "Win a game 5-0 with Spray in your build"
+    },
+    "demolitionist": {
+      "name": "Demolitionist",
+      "desc": "Win a game 5-0 with Explosive Bullet in your build"
+    },
+    "controlled_burst": {
+      "name": "Controlled Burst",
+      "desc": "Win a game 5-0 with Burst in your build"
+    },
+    "god_build": {
+      "name": "God Build",
+      "desc": "Win with Shields Up, exactly 1 ammo, and a lightning-fast reload"
+    },
+    "double_nova": {
+      "name": "Double Nova",
+      "desc": "Win with two or more Supernovas"
+    },
+    "lumberjack": {
+      "name": "Lumberjack",
+      "desc": "Win with two or more Saws"
+    },
+    "pristine_perfection": {
+      "name": "Pristine Perfection",
+      "desc": "Win with two or more Pristines"
+    },
+    "silent_drill": {
+      "name": "Silly Drill",
+      "desc": "Win with Sneaky and Drill together"
+    },
+    "double_glass": {
+      "name": "Living on the Edge",
+      "desc": "Win with two Glass Cannons in your build"
+    },
+    "sustained_power": {
+      "name": "Sustained Power",
+      "desc": "Win with Empower and Healing Field together"
+    },
+    "field_medic": {
+      "name": "Field Medic",
+      "desc": "Win a game 5-0 with Healing Field in your build"
+    },
+    "deep_end": {
+      "name": "Into the Deep End",
+      "desc": "Win with Abyssal Countdown as your FIRST pick, activating it every round"
+    },
+    "clutch": {
+      "name": "Clutch",
+      "desc": "Win a game after being down 0-3"
+    },
+    "collector": {
+      "name": "Collector",
+      "desc": "Win with four copies of the same card"
+    },
+    "flawless": {
+      "name": "Flawless",
+      "desc": "Win five games 5-0 in a row"
+    },
+    "rising_star": {
+      "name": "Rising Star",
+      "desc": "Reach 1700 rating in ranked (1v1 or 2v2)"
+    },
+    "on_fire": {
+      "name": "On Fire",
+      "desc": "Win 25 ranked series in a row"
+    },
+    "unstoppable": {
+      "name": "Unstoppable",
+      "desc": "Win 50 ranked series in a row"
+    },
+    "immortal": {
+      "name": "Immortal",
+      "desc": "Win 100 ranked series in a row"
+    },
+    "casual_century": {
+      "name": "Century Club",
+      "desc": "Win 100 casual games in a row"
+    },
+    "casual_conqueror": {
+      "name": "Casual Conqueror",
+      "desc": "Win 200 casual games in a row"
+    },
+    "touch_grass": {
+      "name": "Touch Grass",
+      "desc": "Win 500 casual games in a row"
+    },
+    "grounded": {
+      "name": "Grounded",
+      "desc": "Win a game without ever jumping"
+    },
+    "instinct": {
+      "name": "Instinct",
+      "desc": "Win taking only the left-most card on every pick, without ever looking at the others"
+    },
+    "twins": {
+      "name": "Twins!",
+      "desc": "Finish a game with the exact same 5 cards (and copies) as your opponent"
+    },
+    "ffa_shutout_3": {
+      "name": "Clean House",
+      "desc": "Win a ranked FFA 5-0 with 3 or more players (nobody else takes a point)"
+    },
+    "ffa_shutout_4": {
+      "name": "Party Crasher",
+      "desc": "Win a ranked FFA 5-0 with 4 or more players (nobody else takes a point)"
+    },
+    "ffa_shutout_5": {
+      "name": "Hostile Takeover",
+      "desc": "Win a ranked FFA 5-0 with 5 or more players (nobody else takes a point)"
+    },
+    "ffa_kills_50": {
+      "name": "Rampage",
+      "desc": "Get over 50 kills in a single ranked FFA"
+    },
+    "ffa_kills_100": {
+      "name": "Bodycount",
+      "desc": "Get over 100 kills in a single ranked FFA"
+    },
+    "ffa_half_point_heartbreak": {
+      "name": "Heartbreak",
+      "desc": "Lose a ranked FFA holding 10 or more half points that never became a point"
+    },
+    "rosetta": {
+      "name": "Rosetta",
+      "desc": "Get 10 translations approved (yours, or ones you reviewed)"
+    },
+    "dragoman": {
+      "name": "Dragoman",
+      "desc": "Get 100 translations approved (yours, or ones you reviewed)"
+    },
+    "babel": {
+      "name": "Babel",
+      "desc": "Get 1000 translations approved (yours, or ones you reviewed)"
+    },
+    "tourn_champion_sync": {
+      "name": "Sync Champion",
+      "desc": "Win a live (sync) tournament"
+    },
+    "tourn_champion_async": {
+      "name": "Async Champion",
+      "desc": "Win an async tournament"
+    },
+    "tourn_second_sync": {
+      "name": "Sync Finalist",
+      "desc": "Take 2nd place in a live (sync) tournament"
+    },
+    "tourn_second_async": {
+      "name": "Async Finalist",
+      "desc": "Take 2nd place in an async tournament"
+    },
+    "tourn_iron_bracket": {
+      "name": "Iron Bracket",
+      "desc": "Play a tournament through to the end without forfeiting a single match"
+    }
+  }
+}
