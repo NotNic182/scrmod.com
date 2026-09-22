@@ -5,7 +5,12 @@ const BASE = (process.env.SCR_UPSTREAM_BASE || 'https://competitive-rounds.duckd
 const UA = 'scr-hub-contract/0.1'
 
 async function main() {
-  const mv = await (await fetch(`${BASE}/api/v1/mod-version`, { headers: { 'User-Agent': UA } })).json()
+  const mvRes = await fetch(`${BASE}/api/v1/mod-version`, { headers: { 'User-Agent': UA } })
+  if (!mvRes.ok) {
+    console.error(`Bootstrap /mod-version failed: HTTP ${mvRes.status}`)
+    process.exit(1)
+  }
+  const mv = await mvRes.json()
   const version = process.env.SCR_MOD_VERSION || mv.version
   let failures = 0
   for (const c of CHECKS) {
