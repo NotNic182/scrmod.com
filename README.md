@@ -38,6 +38,7 @@ npm run contract  # hits the live API once per endpoint and checks the shapes (m
 | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `SESSION_SECRET` | unset | All three enable Discord sign-in |
 | `SCR_FIXTURES` | unset | `1` answers from `fixtures/` (demo, tests) |
 | `PORT` | `8080` | Node listen port |
+| `SCR_WEB_ROOT` | `dist/web` | Directory the built SPA is served from |
 
 ## API (served to the frontend)
 

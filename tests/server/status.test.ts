@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { createApp } from '../../src/server/app'
+import { MemoryCacheStore } from '../../src/server/cache'
 import { parseEnv } from '../../src/server/env'
+import { fakeUpstream } from './helpers/fakeUpstream'
 import { makeApp } from './helpers/makeApp'
 
 describe('GET /api/_status', () => {
@@ -43,5 +45,39 @@ describe('GET /api/_status (full)', () => {
     expect(fake.calls.length).toBe(0)
     const body = await (await app.request('/api/_status?probe=1')).json()
     expect(body.upstream.reachable).toBe(true)
+  })
+
+  it('reports the discovered version after a probe on a cold process', async () => {
+    const fake = fakeUpstream({
+      '/mod-version': { version: '1.40.3', min_version: '1.40.3' },
+      '/health': { status: 'ok' },
+    })
+    const { app } = createApp({
+      env: parseEnv({ SCR_UPSTREAM_BASE: 'https://up.test' }),
+      fetchImpl: fake.fetchImpl,
+      store: new MemoryCacheStore(),
+    })
+    const body = await (await app.request('/api/_status?probe=1')).json()
+    expect(body.upstream.reachable).toBe(true)
+    expect(body.upstream.version).toEqual({
+      version: '1.40.3',
+      fetched_at: expect.any(String),
+      source: 'discovered',
+    })
+  })
+
+  it('reports source "none" without a probe and makes no upstream calls', async () => {
+    const fake = fakeUpstream({
+      '/mod-version': { version: '1.40.3', min_version: '1.40.3' },
+      '/health': { status: 'ok' },
+    })
+    const { app } = createApp({
+      env: parseEnv({ SCR_UPSTREAM_BASE: 'https://up.test' }),
+      fetchImpl: fake.fetchImpl,
+      store: new MemoryCacheStore(),
+    })
+    const body = await (await app.request('/api/_status')).json()
+    expect(body.upstream.version).toEqual({ version: null, fetched_at: null, source: 'none' })
+    expect(fake.calls.length).toBe(0)
   })
 })

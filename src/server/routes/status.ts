@@ -20,6 +20,7 @@ export function registerStatusRoutes(app: Hono, d: RouteDeps) {
       } catch {
         body.upstream.reachable = false
       }
+      body.upstream.version = d.version.state()
     }
     c.header('Cache-Control', 'no-store')
     return c.json(body)
