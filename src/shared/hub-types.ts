@@ -1,0 +1,78 @@
+import type {
+  ActiveSeries,
+  ActiveTeamSeries,
+  AlertItem,
+  FfaLobby,
+  ModVersion,
+  MultimodeEntry,
+  PlayerProfile,
+  PresenceOnline,
+  ReleasePost,
+  SpectateGame,
+} from './api-types'
+import type { RankTier } from './rank'
+
+/** Every hub JSON response has this envelope. */
+export interface HubEnvelope<T> {
+  data: T
+  fetched_at: string // ISO timestamp of the oldest upstream item in `data`
+  stale: boolean
+}
+
+export interface HomeData {
+  presence: PresenceOnline
+  queue: { ranked_searching: number; team_searching: number; online: number }
+  live: {
+    series_1v1: ActiveSeries[]
+    series_2v2: ActiveTeamSeries[]
+    ffa_lobbies: FfaLobby[]
+    spectate: SpectateGame[]
+  }
+  results: MultimodeEntry[]
+  maintenance: boolean
+  alerts: AlertItem[]
+}
+
+export interface HomeEnvelope extends HubEnvelope<HomeData> {
+  errors: string[] // keys of upstream items that failed with nothing cached
+}
+
+export interface MetaData {
+  rank_tiers: RankTier[]
+  achievement_definitions: Record<string, { name: string; desc: string }>
+  mod_version: ModVersion | null
+  releases: ReleasePost[]
+}
+
+export interface MetaEnvelope extends HubEnvelope<MetaData> {
+  errors: string[]
+}
+
+/** PlayerProfile after privacy masking (spec 6.4). */
+export type HubProfile = Omit<
+  PlayerProfile,
+  'discord_id' | 'discord_username' | 'appear_offline' | 'hide_gold'
+> & { gold_hidden: boolean }
+
+export interface MeData {
+  discord: { id: string; username: string; avatar: string | null; global_name: string | null } | null
+  player: { steam_id: string; display_name: string; rating: number; peak_rating: number; level: number } | null
+}
+
+export interface MeResponse {
+  data: MeData
+  auth_enabled: boolean
+}
+
+export interface StatusResponse {
+  mode: 'community' | 'hosted' | 'fixtures'
+  app_version: string
+  features: string[]
+  auth_enabled: boolean
+  upstream: {
+    base: string
+    version: { version: string | null; fetched_at: string | null; source: 'override' | 'discovered' | 'none' }
+    reachable?: boolean
+  }
+  cache: { size: number }
+}
