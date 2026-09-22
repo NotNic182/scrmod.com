@@ -215,6 +215,8 @@ export interface ActiveTeamSeries {
   t2b_rating: number
   t1_wins: number
   t2_wins: number
+  live_t1_points?: number
+  live_t2_points?: number
   t1_odds: number
   t2_odds: number
   t1_bettable: boolean
