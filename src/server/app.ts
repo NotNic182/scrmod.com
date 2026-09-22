@@ -1,23 +1,55 @@
 import { Hono } from 'hono'
-import { type Env, modeOf } from './env'
+import { Cache, MemoryCacheStore, type CacheStore } from './cache'
+import { type Env } from './env'
+import { registerMetaRoutes } from './routes/meta'
+import { registerStatusRoutes } from './routes/status'
+import type { RouteDeps } from './routes/common'
+import { Upstream } from './upstream'
+import { ModVersionSource } from './version'
 
 export interface AppDeps {
   env: Env
+  fetchImpl?: typeof fetch
+  store?: CacheStore
+  now?: () => number
+  /** fetch used for Discord's own API (Task 15); defaults to fetchImpl or global fetch. */
+  discordFetch?: typeof fetch
 }
 
 export function createApp(deps: AppDeps) {
   const { env } = deps
+  const now = deps.now ?? (() => Date.now())
+  const version = new ModVersionSource({
+    baseUrl: env.upstreamBase,
+    userAgent: env.userAgent,
+    override: env.modVersionOverride,
+    fetchImpl: deps.fetchImpl,
+    now,
+  })
+  const upstream = new Upstream({
+    baseUrl: env.upstreamBase,
+    userAgent: env.userAgent,
+    internalKey: env.internalKey,
+    version,
+    fetchImpl: deps.fetchImpl,
+  })
+  const cache = new Cache(deps.store ?? new MemoryCacheStore(), now)
+  const routeDeps: RouteDeps = { env, upstream, cache, version }
+
   const app = env.basePath === '/' ? new Hono() : new Hono().basePath(env.basePath)
 
   app.notFound((c) =>
-    c.req.path.includes('/api/')
-      ? c.json({ error: 'not_found' }, 404)
-      : c.text('Not found', 404),
+    c.req.path.includes('/api/') ? c.json({ error: 'not_found' }, 404) : c.text('Not found', 404),
   )
+  app.onError((err, c) => {
+    console.error('[hub] unhandled', err)
+    return c.json({ error: 'internal' }, 500)
+  })
 
-  app.get('/api/_status', (c) =>
-    c.json({ mode: modeOf(env), app_version: env.appVersion, features: [...env.features] }),
-  )
+  registerStatusRoutes(app, routeDeps)
+  registerMetaRoutes(app, routeDeps)
+  // Tasks 10–15 add: registerHomeRoutes, registerBoardRoutes, registerPlayerRoutes,
+  // registerTournamentRoutes, registerCardRoutes, registerChatRoutes, registerAuthRoutes.
 
-  return { app }
+  return { app, cache, upstream, version, deps: routeDeps }
 }

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { createApp } from '../../src/server/app'
 import { parseEnv } from '../../src/server/env'
+import { makeApp } from './helpers/makeApp'
 
 describe('GET /api/_status', () => {
   it('reports community mode when no internal key is configured', async () => {
@@ -23,5 +24,24 @@ describe('GET /api/_status', () => {
     const { app } = createApp({ env: parseEnv({ BASE_PATH: '/hub/' }) })
     expect((await app.request('/hub/api/_status')).status).toBe(200)
     expect((await app.request('/api/_status')).status).toBe(404)
+  })
+})
+
+describe('GET /api/_status (full)', () => {
+  it('reports the version source, cache size and auth flag', async () => {
+    const { app } = makeApp({})
+    const body = await (await app.request('/api/_status')).json()
+    expect(body.upstream.base).toBe('https://up.test')
+    expect(body.upstream.version).toMatchObject({ version: '1.40.3', source: 'override' })
+    expect(body.cache.size).toBe(0)
+    expect(body.auth_enabled).toBe(false)
+  })
+
+  it('probes /health only when asked', async () => {
+    const { app, fake } = makeApp({ '/health': { status: 'ok' } })
+    await app.request('/api/_status')
+    expect(fake.calls.length).toBe(0)
+    const body = await (await app.request('/api/_status?probe=1')).json()
+    expect(body.upstream.reachable).toBe(true)
   })
 })
