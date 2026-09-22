@@ -3,6 +3,7 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import type { PlayerByDiscord } from '../../shared/api-types'
 import type { MeResponse } from '../../shared/hub-types'
 import { TTL } from '../cache'
+import type { Env } from '../env'
 import { randomState, signSession, verifySession } from '../session'
 import { UpstreamError } from '../upstream'
 import { errorResponse, type RouteDeps } from './common'
@@ -12,7 +13,9 @@ const STATE_COOKIE = 'scrhub_oauth_state'
 const SESSION_DAYS = 30
 const DISCORD_ID_RE = /^\d{1,32}$/
 
-function isHttps(c: Context): boolean {
+/** A configured https site is https even when the proxy forwards no header. */
+function isHttps(c: Context, env: Env): boolean {
+  if (env.publicBaseUrl?.startsWith('https://')) return true
   if (c.req.url.startsWith('https://')) return true
   const proto = c.req.header('x-forwarded-proto')?.split(',')[0]?.trim()
   return proto === 'https'
@@ -22,6 +25,8 @@ export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: ty
   const cfg = d.env.discord
   const prefix = d.env.basePath === '/' ? '' : d.env.basePath
   const home = prefix ? `${prefix}/` : '/'
+  // Cookies belong to this mount only, so two hubs behind one host cannot see each other's.
+  const cookiePath = prefix || '/'
 
   if (!cfg) {
     app.get('/auth/*', (c) => c.json({ error: 'auth_disabled' }, 404))
@@ -32,13 +37,15 @@ export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: ty
 
   const f = d.discordFetch ?? fetch
   const redirectUri = (c: Context) => {
-    const origin = d.env.publicBaseUrl ?? `${isHttps(c) ? 'https' : 'http'}://${c.req.header('host') ?? new URL(c.req.url).host}`
+    // `publicBaseUrl` is an origin by the time parseEnv is done, so the prefix is added once.
+    const origin =
+      d.env.publicBaseUrl ?? `${isHttps(c, d.env) ? 'https' : 'http'}://${c.req.header('host') ?? new URL(c.req.url).host}`
     return `${origin}${prefix}/auth/discord/callback`
   }
 
   app.get('/auth/discord/login', (c) => {
     const state = randomState()
-    setCookie(c, STATE_COOKIE, state, { httpOnly: true, sameSite: 'Lax', secure: isHttps(c), path: '/', maxAge: 600 })
+    setCookie(c, STATE_COOKIE, state, { httpOnly: true, sameSite: 'Lax', secure: isHttps(c, d.env), path: cookiePath, maxAge: 600 })
     const u = new URL('https://discord.com/oauth2/authorize')
     u.searchParams.set('client_id', cfg.clientId)
     u.searchParams.set('redirect_uri', redirectUri(c))
@@ -52,7 +59,7 @@ export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: ty
     const code = c.req.query('code')
     const state = c.req.query('state')
     const expected = getCookie(c, STATE_COOKIE)
-    deleteCookie(c, STATE_COOKIE, { path: '/' })
+    deleteCookie(c, STATE_COOKIE, { path: cookiePath })
     if (!code || !state || !expected || state !== expected) return c.redirect(`${home}?auth=failed`)
     try {
       const tokenRes = await f('https://discord.com/api/oauth2/token', {
@@ -88,7 +95,7 @@ export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: ty
         },
         cfg.sessionSecret,
       )
-      setCookie(c, SESSION_COOKIE, token, { httpOnly: true, sameSite: 'Lax', secure: isHttps(c), path: '/', maxAge: SESSION_DAYS * 86400 })
+      setCookie(c, SESSION_COOKIE, token, { httpOnly: true, sameSite: 'Lax', secure: isHttps(c, d.env), path: cookiePath, maxAge: SESSION_DAYS * 86400 })
       return c.redirect(`${home}?auth=ok`)
     } catch (err) {
       console.error('[auth] discord exchange failed', err)
@@ -97,7 +104,7 @@ export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: ty
   })
 
   app.post('/auth/logout', (c) => {
-    deleteCookie(c, SESSION_COOKIE, { path: '/' })
+    deleteCookie(c, SESSION_COOKIE, { path: cookiePath })
     return c.json({ ok: true })
   })
 

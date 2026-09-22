@@ -1,11 +1,12 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { createApp } from '../../src/server/app'
 import { parseEnv } from '../../src/server/env'
 import { MemoryCacheStore } from '../../src/server/cache'
 import { fakeUpstream, json } from './helpers/fakeUpstream'
 
 const DISCORD_ID = '1299197810780143656'
-const AUTH_ENV = { DISCORD_CLIENT_ID: 'cid', DISCORD_CLIENT_SECRET: 'csecret', SESSION_SECRET: 'ssecret', SCR_MOD_VERSION_OVERRIDE: '1.40.3', SCR_UPSTREAM_BASE: 'https://up.test', PUBLIC_BASE_URL: 'https://hub.test' }
+const SESSION_SECRET = 'ssecret-at-least-32-characters-long'
+const AUTH_ENV = { DISCORD_CLIENT_ID: 'cid', DISCORD_CLIENT_SECRET: 'csecret', SESSION_SECRET, SCR_MOD_VERSION_OVERRIDE: '1.40.3', SCR_UPSTREAM_BASE: 'https://up.test', PUBLIC_BASE_URL: 'https://hub.test' }
 
 function discordFake(opts: { tokenFails?: boolean } = {}) {
   const calls: Array<{ url: string; body?: string; auth?: string }> = []
@@ -27,7 +28,7 @@ function cookieOf(res: Response, name: string): string | undefined {
   return raw?.split(';')[0].slice(name.length + 1)
 }
 
-function make(envExtra: Record<string, string> = {}, discordOpts: { tokenFails?: boolean } = {}) {
+function make(envExtra: Record<string, string | undefined> = {}, discordOpts: { tokenFails?: boolean } = {}) {
   const fake = fakeUpstream({ [`/players/by-discord/${DISCORD_ID}`]: { steam_id: '76561199311926326', display_name: 'NotNic', discord_id: DISCORD_ID, rating: 1101.8, peak_rating: 1337.7, level: 40 } })
   const discord = discordFake(discordOpts)
   const { app } = createApp({ env: parseEnv({ ...AUTH_ENV, ...envExtra }), fetchImpl: fake.fetchImpl, store: new MemoryCacheStore(), discordFetch: discord.discordFetch })
@@ -115,6 +116,52 @@ describe('Discord sign-in', () => {
     const state = cookieOf(login, 'scrhub_oauth_state')!
     const cb = await app.request(`/hub/auth/discord/callback?code=abc&state=${state}`, { headers: { cookie: `scrhub_oauth_state=${state}` } })
     expect(cb.headers.get('location')).toBe('/hub/?auth=ok')
+  })
+
+  it('appends BASE_PATH once when PUBLIC_BASE_URL already carries it (spec 9.2 compose)', async () => {
+    const { app } = make({ BASE_PATH: '/hub', PUBLIC_BASE_URL: 'https://hub.test/hub' })
+    const login = await app.request('/hub/auth/discord/login')
+    expect(new URL(login.headers.get('location')!).searchParams.get('redirect_uri')).toBe(
+      'https://hub.test/hub/auth/discord/callback',
+    )
+  })
+
+  it('marks the cookies Secure from PUBLIC_BASE_URL and scopes them to BASE_PATH', async () => {
+    const { app } = make({ BASE_PATH: '/hub' })
+    const login = await app.request('/hub/auth/discord/login')
+    const state = login.headers.getSetCookie().find((c) => c.startsWith('scrhub_oauth_state='))!
+    expect(state).toContain('Secure')
+    expect(state).toContain('Path=/hub')
+    const cookie = cookieOf(login, 'scrhub_oauth_state')!
+    const cb = await app.request(`/hub/auth/discord/callback?code=abc&state=${cookie}`, {
+      headers: { cookie: `scrhub_oauth_state=${cookie}` },
+    })
+    const session = cb.headers.getSetCookie().find((c) => c.startsWith('scrhub_session='))!
+    expect(session).toContain('Secure')
+    expect(session).toContain('Path=/hub')
+    const out = await app.request('/hub/auth/logout', { method: 'POST' })
+    expect(out.headers.getSetCookie().find((c) => c.startsWith('scrhub_session='))).toContain('Path=/hub')
+  })
+
+  it('leaves the cookies insecure on plain http with no forwarded header, and honours the header', async () => {
+    const { app } = make({ PUBLIC_BASE_URL: undefined })
+    const plain = await app.request('/auth/discord/login')
+    const plainCookie = plain.headers.getSetCookie().find((c) => c.startsWith('scrhub_oauth_state='))!
+    expect(plainCookie).not.toContain('Secure')
+    expect(new URL(plain.headers.get('location')!).searchParams.get('redirect_uri')).toBe(
+      'http://localhost/auth/discord/callback',
+    )
+    const fwd = await app.request('/auth/discord/login', { headers: { 'x-forwarded-proto': 'https, http' } })
+    expect(fwd.headers.getSetCookie().find((c) => c.startsWith('scrhub_oauth_state='))).toContain('Secure')
+  })
+
+  it('is disabled with a SESSION_SECRET under 32 characters', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { app } = make({ SESSION_SECRET: 'tooshort' })
+    expect((await app.request('/auth/discord/login')).status).toBe(404)
+    expect((await (await app.request('/api/me')).json()).auth_enabled).toBe(false)
+    expect(warn).toHaveBeenCalled()
+    warn.mockRestore()
   })
 
   it('redirects to failed when the token exchange fails', async () => {
