@@ -58,7 +58,7 @@ export function registerCardRoutes(app: Hono, d: RouteDeps) {
   })
 
   app.get('/api/cards/:name/pickers', async (c) => {
-    const name = decodeURIComponent(c.req.param('name')).trim()
+    const name = c.req.param('name').trim()
     if (name.length < 1 || name.length > 64) return c.json({ error: 'bad_card_name' }, 400)
     try {
       return ok(c, await loaderFor(d, c)(`cards:pickers:${name.toLowerCase()}`, TTL.REF, '/cards/top-pickers', { card_name: name, limit: 10 }))

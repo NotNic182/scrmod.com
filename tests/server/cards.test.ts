@@ -31,4 +31,11 @@ describe('cards', () => {
     expect(Object.fromEntries(fake.calls[0].url.searchParams)).toEqual({ card_name: 'Poison', limit: '10' })
     expect((await app.request('/api/cards/' + 'x'.repeat(65) + '/pickers')).status).toBe(400)
   })
+
+  it('does not double-decode an already-decoded card name param', async () => {
+    const { app, fake } = makeApp({ '/cards/top-pickers': { card_name: '%', display_names: [], steam_ids: [], picks: [], win_rates: [] } })
+    const res = await app.request('/api/cards/%25/pickers')
+    expect(res.status).toBe(200)
+    expect(fake.calls[0].url.searchParams.get('card_name')).toBe('%')
+  })
 })
