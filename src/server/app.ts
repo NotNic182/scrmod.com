@@ -50,7 +50,7 @@ export function createApp(deps: AppDeps) {
   registerStatusRoutes(app, routeDeps)
   registerMetaRoutes(app, routeDeps)
   registerHomeRoutes(app, routeDeps)
-  // Tasks 10–15 add: registerHomeRoutes, registerBoardRoutes, registerPlayerRoutes,
+  // Tasks 11–15 add: registerBoardRoutes, registerPlayerRoutes,
   // registerTournamentRoutes, registerCardRoutes, registerChatRoutes, registerAuthRoutes.
 
   return { app, cache, upstream, version, deps: routeDeps }

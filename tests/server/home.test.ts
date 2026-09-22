@@ -19,14 +19,14 @@ const RESULTS = { entries: [{ mode: 'ffa', id: 'm1', ended_at: '2026-09-22T08:25
 
 const ALL = {
   '/presence/online': PRESENCE,
-  '/queue/count': { searching: 1, total: 1, online: 2 },
+  '/queue/count': { searching: 1, total: 1, online: 7 },
   '/team/queue/count': { searching: 4 },
   '/series/active': SERIES,
-  '/team/series/active': { series: [] },
-  '/ffa/lobbies': { lobbies: [], count: 0 },
-  '/spectate/games': { games: [] },
+  '/team/series/active': { series: [{ series_id: 't1', t1a_name: 'A', t1b_name: 'B', t2a_name: 'C', t2b_name: 'D', t1_wins: 1, t2_wins: 0 }] },
+  '/ffa/lobbies': { lobbies: [{ lobby_id: 'l1', host_name: 'Nix', player_count: 3, max_players: 10, has_password: false, age_seconds: 40, bets_open: true, bet_targets: [], members: [] }], count: 1 },
+  '/spectate/games': { games: [{ game_id: 'g1', mode: '1v1', names: 'NotNic, Sid', spectatable: true, spectator_count: 0, spectator_cap: 4 }] },
   '/series/recent-multimode': RESULTS,
-  '/admin/maintenance/status': { in_maintenance: false },
+  '/admin/maintenance/status': { in_maintenance: true },
   '/alerts/active': { rev: 1, alerts: [{ category: 'info', message: 'Server restart at 9pm', expires_at: null }] },
 }
 
@@ -38,11 +38,13 @@ describe('GET /api/home', () => {
     const body = await res.json()
     expect(body.errors).toEqual([])
     expect(body.data.presence.online[0].display_name).toBe('Spirit')
-    expect(body.data.queue).toEqual({ ranked_searching: 1, team_searching: 4, online: 2 })
+    expect(body.data.queue).toEqual({ ranked_searching: 1, team_searching: 4, online: 7 })
     expect(body.data.live.series_1v1[0].p1_name).toBe('NotNic')
-    expect(body.data.live.series_2v2).toEqual([])
+    expect(body.data.live.series_2v2[0].series_id).toBe('t1')
+    expect(body.data.live.ffa_lobbies[0].host_name).toBe('Nix')
+    expect(body.data.live.spectate[0].game_id).toBe('g1')
     expect(body.data.results[0].score).toBe('#1 of 3')
-    expect(body.data.maintenance).toBe(false)
+    expect(body.data.maintenance).toBe(true)
     expect(body.data.alerts[0].message).toBe('Server restart at 9pm')
     const upstreamPaths = fake.calls.map((c) => c.url.pathname).sort()
     expect(upstreamPaths).toContain('/api/v1/series/recent-multimode')
@@ -63,5 +65,13 @@ describe('GET /api/home', () => {
     expect(body.data.live.series_1v1).toEqual([])
     expect(body.errors).toEqual(['series_1v1'])
     expect(body.data.presence.online_count).toBe(2)
+  })
+
+  it('falls back to the presence count when queue/count fails', async () => {
+    const { app } = makeApp({ ...ALL, '/queue/count': () => json({ detail: 'down' }, 500) })
+    const body = await (await app.request('/api/home')).json()
+    expect(body.data.queue.online).toBe(PRESENCE.online_count)
+    expect(body.data.queue.ranked_searching).toBe(0)
+    expect(body.errors).toEqual(['queue'])
   })
 })
