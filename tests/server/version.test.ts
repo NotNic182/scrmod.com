@@ -29,6 +29,13 @@ describe('ModVersionSource', () => {
     expect(src.state()).toMatchObject({ version: '1.40.3', source: 'discovered' })
   })
 
+  it('falls back to min_version when version is absent', async () => {
+    const { fetchImpl } = fakeFetch([{ body: { min_version: '1.40.3' } }])
+    const src = new ModVersionSource({ baseUrl: 'https://up.test', userAgent: 'ua', fetchImpl })
+    expect(await src.current()).toBe('1.40.3')
+    expect(src.state().source).toBe('discovered')
+  })
+
   it('caches for refreshMs and refreshes afterwards', async () => {
     let now = 1_000_000
     const { fetchImpl } = fakeFetch([{ body: { version: '1.40.3' } }, { body: { version: '1.41.0' } }])

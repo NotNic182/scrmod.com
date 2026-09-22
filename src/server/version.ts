@@ -17,7 +17,8 @@ export interface ModVersionSourceOptions {
 /**
  * Discovers the mod version the upstream currently expects (spec 6.2).
  * `current()` serves a cached value for refreshMs (default 10 min); `refresh()` forces
- * a fetch and coalesces concurrent callers. A failed refresh keeps the last value.
+ * a fetch and coalesces concurrent callers. `current()` keeps serving the last value
+ * when a refresh fails; `refresh()` itself rejects.
  */
 export class ModVersionSource {
   private version: string | null
