@@ -4,9 +4,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-# `build` = build:web + build:server once the web plan lands; until then build:server alone.
-RUN npm run build 2>/dev/null || npm run build:server
-RUN mkdir -p dist/web && [ -f dist/web/index.html ] || echo '<!doctype html><title>SCR Hub</title><p>Frontend not built.</p>' > dist/web/index.html
+# Server only for now; the web plan adds a `build` script that runs both.
+RUN npm run build:server
 
 FROM node:26-alpine
 WORKDIR /app

@@ -20,7 +20,7 @@ export interface AppDeps {
   fetchImpl?: typeof fetch
   store?: CacheStore
   now?: () => number
-  /** fetch used for Discord's own API (Task 15); defaults to fetchImpl or global fetch. */
+  /** fetch used for Discord's own API; defaults to fetchImpl or global fetch. */
   discordFetch?: typeof fetch
 }
 

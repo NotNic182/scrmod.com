@@ -37,14 +37,25 @@ npm run contract  # hits the live API once per endpoint and checks the shapes (m
 | `PUBLIC_BASE_URL` | derived | Absolute site URL for OAuth redirects |
 | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `SESSION_SECRET` | unset | All three enable Discord sign-in |
 | `SCR_FIXTURES` | unset | `1` answers from `fixtures/` (demo, tests) |
+| `SCR_FIXTURES_DIR` | `fixtures` | Where fixture mode reads from |
+| `SCR_APP_VERSION` | `0.1.0` | Reported by `/api/_status` and sent in the `User-Agent` |
+| `SCR_RATE_LIMIT` | on | `off` disables the per-client limit (`/api/*` 60 per 10 s, `/auth/*` 10 per 60 s; `/api/_status` is exempt) |
 | `PORT` | `8080` | Node listen port |
 | `SCR_WEB_ROOT` | `dist/web` | Directory the built SPA is served from |
 
+`PUBLIC_BASE_URL` may be given with or without `BASE_PATH` on the end (spec 9.2's compose
+snippet includes it); it is reduced to an origin either way. `SESSION_SECRET` must be at
+least 32 characters or sign-in stays disabled with a warning on startup.
+
 ## API (served to the frontend)
 
-`/api/home`, `/api/leaderboard/:mode`, `/api/results`, `/api/results/1v1`, `/api/players/search?q=`, `/api/players/:id`, `/api/players/:id/{matches,matches-summary,rating-history,team-history,ffa-history,ovt-history,team-stats,achievements,tournaments}`, `/api/players/:id/vs/:opp`, `/api/tournaments`, `/api/tournaments/history`, `/api/tournaments/:id/bracket`, `/api/cards`, `/api/cards/leaders`, `/api/cards/:name/pickers`, `/api/chat/recent` (feature `chat`), `/api/meta`, `/api/me`, `/api/_status`. Every response is `{ data, fetched_at, stale }`.
+`/api/home`, `/api/leaderboard/:mode`, `/api/results`, `/api/results/1v1`, `/api/players/search?q=`, `/api/players/:id`, `/api/players/:id/{matches,matches-summary,rating-history,team-history,ffa-history,ovt-history,team-stats,achievements,tournaments}`, `/api/players/:id/vs/:opp`, `/api/tournaments`, `/api/tournaments/history`, `/api/tournaments/:id/bracket`, `/api/cards`, `/api/cards/leaders`, `/api/cards/:name/pickers`, `/api/chat/recent` (feature `chat`), `/api/meta`, `/api/me`, `/api/_status`.
+
+Data routes answer with `{ data, fetched_at, stale }`. The aggregates (`/api/home`, `/api/meta`,
+`/api/tournaments`, `/api/tournaments/history`) add `errors[]`, naming the upstream items that
+failed with nothing cached. `/api/me` and `/api/_status` have their own shapes.
 
 ## Deploy
 
 - Railway (community): config in `railway.json`; `npx @railway/cli login` once, then `npx @railway/cli up --detach`.
-- Docker (hosted): `docker build -t scr-hub .` and the compose snippet in `docs/for-sid.md`.
+- Docker (hosted): `docker build -t scr-hub .`, plus the compose and nginx snippet in spec section 9.2 (`docs/superpowers/specs/2026-09-22-scr-hub-design.md`).

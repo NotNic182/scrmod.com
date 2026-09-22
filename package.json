@@ -1,11 +1,14 @@
 {
   "name": "scr-hub",
   "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
+  "description": "A browser companion for Sid's Competitive Rounds: presence, leaderboards, player stats, results, tournaments and card stats.",
+  "type": "module",
+  "private": true,
+  "keywords": [
+    "rounds",
+    "competitive-rounds",
+    "hono"
+  ],
   "scripts": {
     "dev:server": "tsx watch src/server/node.ts",
     "build:server": "esbuild src/server/node.ts --bundle --platform=node --target=node22 --format=esm --outfile=dist/server/node.js --banner:js=\"import { createRequire } from 'module'; const require = createRequire(import.meta.url);\"",
@@ -16,9 +19,6 @@
     "capture": "node scripts/capture-fixtures.mjs",
     "contract": "node scripts/contract-check.mjs"
   },
-  "keywords": [],
-  "type": "module",
-  "private": "true",
   "dependencies": {
     "@hono/node-server": "^2.1.1",
     "hono": "^4.13.8"
