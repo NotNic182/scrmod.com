@@ -68,6 +68,12 @@ describe('allowlist', () => {
     '/players/76561199311926326/../../admin/actions',
     'players/search', // must start with /
     '/leaderboard?limit=5', // query strings are not part of the path
+    '/queue/recent-joins',
+    '/team/series/recent',
+    '/ffa/recent',
+    '/ovt/recent',
+    '/compare/player-nemesis',
+    '/records',
   ])('rejects %s', (p) => {
     expect(isAllowed(p)).toBe(false)
   })
