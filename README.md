@@ -47,6 +47,14 @@ npm run contract  # hits the live API once per endpoint and checks the shapes (m
 snippet includes it); it is reduced to an origin either way. `SESSION_SECRET` must be at
 least 32 characters or sign-in stays disabled with a warning on startup.
 
+The rate limiter keys on the client address the fronting proxy forwards: the **last** hop of
+`X-Forwarded-For` (the element that proxy appended) or `X-Real-IP`. Railway sets this
+automatically. A self-hosted nginx must add
+`proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;` (or
+`proxy_set_header X-Real-IP $remote_addr;`) to the `location` block; without it the hub sees no
+client address, logs a warning once and does not limit those requests, rather than throttling
+every visitor against one shared bucket.
+
 ## API (served to the frontend)
 
 `/api/home`, `/api/leaderboard/:mode`, `/api/results`, `/api/results/1v1`, `/api/players/search?q=`, `/api/players/:id`, `/api/players/:id/{matches,matches-summary,rating-history,team-history,ffa-history,ovt-history,team-stats,achievements,tournaments}`, `/api/players/:id/vs/:opp`, `/api/tournaments`, `/api/tournaments/history`, `/api/tournaments/:id/bracket`, `/api/cards`, `/api/cards/leaders`, `/api/cards/:name/pickers`, `/api/chat/recent` (feature `chat`), `/api/meta`, `/api/me`, `/api/_status`.
