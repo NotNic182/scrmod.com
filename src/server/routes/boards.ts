@@ -17,7 +17,7 @@ const MODES: Record<string, { path: string; query: Query }> = {
 export function registerBoardRoutes(app: Hono, d: RouteDeps) {
   app.get('/api/leaderboard/:mode', async (c) => {
     const mode = c.req.param('mode')
-    const spec = MODES[mode]
+    const spec = Object.hasOwn(MODES, mode) ? MODES[mode] : undefined
     if (!spec) return c.json({ error: 'unknown_mode', modes: Object.keys(MODES) }, 404)
     const inactive = c.req.query('inactive') === '1'
     try {

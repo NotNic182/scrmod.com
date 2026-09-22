@@ -32,6 +32,16 @@ describe('leaderboards', () => {
     expect(res.status).toBe(404)
     expect((await res.json()).modes).toContain('1v1')
   })
+
+  it('rejects prototype-chain keys as unknown modes', async () => {
+    const { app, fake } = makeApp({})
+    for (const mode of ['constructor', '__proto__', 'toString', 'hasOwnProperty']) {
+      const res = await app.request(`/api/leaderboard/${mode}`)
+      expect(res.status).toBe(404)
+      expect((await res.json()).error).toBe('unknown_mode')
+    }
+    expect(fake.calls.length).toBe(0)
+  })
 })
 
 describe('results', () => {
