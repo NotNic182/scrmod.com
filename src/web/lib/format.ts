@@ -54,3 +54,13 @@ export function goldText(gold: number | null | undefined, hidden: boolean): stri
   if (gold === null || gold === undefined) return '–'
   return `${num(gold)}g`
 }
+
+/** Minutes-since as "5m ago" / "2h ago" / "3d ago", for endpoints that give minutes directly. */
+export function agoFromMinutes(m: number | null | undefined): string {
+  if (m == null || !Number.isFinite(m)) return ''
+  const mins = Math.max(0, Math.round(m))
+  if (mins < 60) return `${mins}m ago`
+  const h = Math.floor(mins / 60)
+  if (h < 24) return `${h}h ago`
+  return `${Math.floor(h / 24)}d ago`
+}

@@ -1,6 +1,6 @@
 # SCR Hub — a browser companion for Sid's Competitive Rounds
 
-Hi Sid. NotNic here. I built a website that shows what the F5 menu and the bot show — who's online, live games, leaderboards, player pages, results, tournaments, card stats — from any browser or phone, without launching the game. It only reads your public API, the same endpoints the mod and the bot already use, and it honours appear-offline, hide-gold and show-Discord exactly like the game does. Source: <repo link>. Live demo: <site link>.
+Hi Sid. NotNic here. I built a website that shows what the F5 menu and the bot show — who's online, live games, leaderboards, player pages, results, tournaments, card stats — from any browser or phone, without launching the game. It only reads your public API, the same endpoints the mod and the bot already use, and it honours appear-offline, hide-gold and show-Discord exactly like the game does. Source: https://github.com/NotNic182/SCR-Hub. Live demo: https://scr-hub-production.up.railway.app.
 
 ## How it talks to your server
 

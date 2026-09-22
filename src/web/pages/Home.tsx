@@ -4,7 +4,7 @@ import { QueryState } from '../components/QueryState'
 import { PlayerLink } from '../components/PlayerLink'
 import { FfaLobbyCard, LiveSeries1v1, LiveSeries2v2, SpectateCard } from '../components/LiveSeriesCard'
 import { useIdentity } from '../lib/identity'
-import { relTime, signed } from '../lib/format'
+import { relTime, signed, agoFromMinutes } from '../lib/format'
 import type { MultimodeEntry } from '../../shared/api-types'
 
 const MODE_LABEL: Record<string, string> = { '1v1': '1v1', '2v2': '2v2', ffa: 'FFA', ovt: '1v2' }
@@ -124,7 +124,7 @@ export function Home() {
                           <li key={p.steam_id} className="row" style={{ minHeight: 32 }}>
                             <PlayerLink steamId={p.steam_id} name={p.display_name} title={p.title} titleColor={p.title_color} me={id.me?.steam_id === p.steam_id} />
                             <span className="spacer" />
-                            <span className="faint">{p.minutes_ago}m ago</span>
+                            <span className="faint">{agoFromMinutes(p.minutes_ago)}</span>
                           </li>
                         ))}
                       </ul>
