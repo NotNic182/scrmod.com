@@ -15,7 +15,8 @@ export const FALLBACK_TIERS: RankTier[] = [
 ]
 
 export function tierFor(rating: number, tiers: RankTier[]): RankTier {
-  const sorted = [...tiers].sort((a, b) => b.floor - a.floor)
+  // A degenerate list still has to produce a tier: the return type promises one.
+  const sorted = [...(tiers.length ? tiers : FALLBACK_TIERS)].sort((a, b) => b.floor - a.floor)
   const r = Number.isFinite(rating) ? rating : 0
   return sorted.find((t) => r >= t.floor) ?? sorted[sorted.length - 1]
 }

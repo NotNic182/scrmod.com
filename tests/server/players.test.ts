@@ -1,6 +1,16 @@
 import { describe, it, expect } from 'vitest'
 import { makeApp } from './helpers/makeApp'
 import { json } from './helpers/fakeUpstream'
+import { type CacheEntry, MemoryCacheStore } from '../../src/server/cache'
+
+/** Remembers what actually went into the cache, so a test can assert on the stored value. */
+class RecordingStore extends MemoryCacheStore {
+  readonly sets: Array<{ key: string; value: unknown }> = []
+  override async set<T>(key: string, entry: CacheEntry<T>): Promise<void> {
+    this.sets.push({ key, value: entry.value })
+    await super.set(key, entry)
+  }
+}
 
 const ME = '76561199311926326'
 const SID = '76561198040410653'
@@ -34,6 +44,34 @@ describe('GET /api/players/:id', () => {
     expect((await app.request('/api/players/notanid')).status).toBe(400)
   })
 
+  it('never caches the discord ids of a profile, and still reports gold_hidden', async () => {
+    const store = new RecordingStore()
+    const { app } = makeApp({ [`/players/${ME}`]: PROFILE }, {}, undefined, store)
+    const body = await (await app.request(`/api/players/${ME}`)).json()
+    const cached = store.sets.find((s) => s.key.startsWith('player:'))!
+    expect(JSON.stringify(cached.value)).not.toContain('discord_id')
+    expect(JSON.stringify(cached.value)).not.toContain('discord_username')
+    expect(body.data.gold_hidden).toBe(true)
+  })
+
+  it('serves stale data with stale: true and an older fetched_at once the upstream fails', async () => {
+    const nowRef = { now: 1_700_000_000_000 }
+    const { app, fake } = makeApp({ [`/players/${ME}`]: PROFILE }, {}, nowRef)
+    const first = await (await app.request(`/api/players/${ME}`)).json()
+    expect(first.stale).toBe(false)
+    fake.map[`/players/${ME}`] = () => json({ detail: 'down' }, 500)
+    nowRef.now += 120_000
+    const res = await app.request(`/api/players/${ME}`)
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body.stale).toBe(true)
+    expect(body.fetched_at).toBe(first.fetched_at)
+    expect(new Date(body.fetched_at).getTime()).toBeLessThan(nowRef.now)
+    expect(body.data).not.toHaveProperty('discord_id')
+    expect(body.data).not.toHaveProperty('hide_gold')
+    expect(body.data.gold_hidden).toBe(true)
+  })
+
   it('maps upstream 404 to 404', async () => {
     const { app } = makeApp({ [`/players/${ME}`]: () => json({ detail: 'Player not found' }, 404) })
     const res = await app.request(`/api/players/${ME}`)
@@ -48,6 +86,31 @@ describe('GET /api/players/:id/:sub', () => {
     const body = await (await app.request(`/api/players/${ME}/matches?limit=5000&offset=-3`)).json()
     expect(body.data[0]).toEqual({ match_id: 'm', opponent_name: 'TechTara', won: true, cards_picked: [] })
     expect(Object.fromEntries(fake.calls[0].url.searchParams)).toEqual({ limit: '200', offset: '0' })
+  })
+
+  it('caches the slimmed rows rather than the raw upstream page', async () => {
+    const store = new RecordingStore()
+    const { app } = makeApp({ [`/players/${ME}/matches`]: [MATCH] }, {}, undefined, store)
+    await app.request(`/api/players/${ME}/matches`)
+    const cached = store.sets.find((s) => s.key.includes(':matches:'))!
+    expect(cached.value).toEqual([{ match_id: 'm', opponent_name: 'TechTara', won: true, cards_picked: [] }])
+    expect(JSON.stringify(cached.value)).not.toContain('point_timeline')
+  })
+
+  it('quantizes the match limit to 50/100/200 and caps the offset', async () => {
+    const { app, fake } = makeApp({ [`/players/${ME}/matches`]: [] })
+    await app.request(`/api/players/${ME}/matches?limit=37&offset=99999`)
+    expect(Object.fromEntries(fake.calls[0].url.searchParams)).toEqual({ limit: '50', offset: '2000' })
+    const { app: app2, fake: fake2 } = makeApp({ [`/players/${ME}/matches`]: [] })
+    await app2.request(`/api/players/${ME}/matches?limit=101`)
+    expect(fake2.calls[0].url.searchParams.get('limit')).toBe('200')
+  })
+
+  it('reuses one cache entry for every limit that quantizes the same way', async () => {
+    const { app, fake } = makeApp({ [`/players/${ME}/matches`]: [MATCH] })
+    await app.request(`/api/players/${ME}/matches?limit=60`)
+    await app.request(`/api/players/${ME}/matches?limit=99`)
+    expect(fake.calls.length).toBe(1)
   })
 
   it.each([

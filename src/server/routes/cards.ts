@@ -35,7 +35,7 @@ export function registerCardRoutes(app: Hono, d: RouteDeps) {
     try {
       return ok(
         c,
-        await loaderFor(d, c)(`cards:${filter}:${sort}:${order}`, TTL.REF, '/cards', {
+        await loaderFor(d)(`cards:${filter}:${sort}:${order}`, TTL.REF, '/cards', {
           limit: 200,
           min_picks: 5,
           sort_by: sort,
@@ -50,7 +50,7 @@ export function registerCardRoutes(app: Hono, d: RouteDeps) {
 
   app.get('/api/cards/leaders', async (c) => {
     try {
-      const r = await loaderFor(d, c)<CardLeadersSummary>('cards:leaders', TTL.REF, '/cards/leaders-summary', { limit_per_card: 5 })
+      const r = await loaderFor(d)<CardLeadersSummary>('cards:leaders', TTL.REF, '/cards/leaders-summary', { limit_per_card: 5 })
       return ok(c, { ...r, value: { sweepers: parseLeaders(r.value.sweepers), winners: parseLeaders(r.value.winners) } })
     } catch (err) {
       return errorResponse(c, err)
@@ -61,7 +61,8 @@ export function registerCardRoutes(app: Hono, d: RouteDeps) {
     const name = c.req.param('name').trim()
     if (name.length < 1 || name.length > 64) return c.json({ error: 'bad_card_name' }, 400)
     try {
-      return ok(c, await loaderFor(d, c)(`cards:pickers:${name.toLowerCase()}`, TTL.REF, '/cards/top-pickers', { card_name: name, limit: 10 }))
+      // Keyed on the exact name, because that is what is forwarded upstream.
+      return ok(c, await loaderFor(d)(`cards:pickers:${name}`, TTL.REF, '/cards/top-pickers', { card_name: name, limit: 10 }))
     } catch (err) {
       return errorResponse(c, err)
     }

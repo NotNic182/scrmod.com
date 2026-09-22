@@ -18,4 +18,10 @@ describe('tierFor', () => {
     expect(tierFor(-5, FALLBACK_TIERS).name).toBe('Beginner')
     expect(tierFor(Number.NaN, FALLBACK_TIERS).name).toBe('Beginner')
   })
+
+  it('falls back to the captured tiers when handed an empty list', () => {
+    expect(tierFor(1700, []).name).toBe('Advanced')
+    expect(tierFor(2564, []).name).toBe('Grand Master')
+    expect(tierFor(Number.NaN, []).name).toBe('Beginner')
+  })
 })

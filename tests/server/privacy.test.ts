@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { maskProfile, maskRecentSeries, maskChatMessage, slimMatch } from '../../src/shared/privacy'
+import {
+  KEEP_FOR_PROFILE_MASK,
+  maskProfile,
+  maskRecentSeries,
+  maskChatMessage,
+  scrubPrivate,
+  slimMatch,
+} from '../../src/shared/privacy'
 
 const base = {
   steam_id: '76561199311926326',
@@ -55,6 +62,39 @@ describe('maskRecentSeries / maskChatMessage', () => {
     expect(s).toEqual({ series_id: 'x', p1_name: 'A' })
     const m = maskChatMessage({ id: 1, discord_id: '2', message: 'hi' })
     expect(m).toEqual({ id: 1, message: 'hi' })
+  })
+})
+
+describe('scrubPrivate', () => {
+  it('drops every private key recursively through objects and arrays', () => {
+    const out = scrubPrivate({
+      profile: { discord_id: '1', discord_username: 'ntnic', discord_display_name: 'Nic', display_name: 'NotNic' },
+      rows: [
+        { p1_discord_id: '1', p2_discord_id: '2', p1_name: 'A' },
+        { hide_gold: true, appear_offline: true, nested: [{ discord_id: '9', n: 1 }] },
+      ],
+      count: 3,
+    })
+    expect(out).toEqual({
+      profile: { discord_display_name: 'Nic', display_name: 'NotNic' },
+      rows: [{ p1_name: 'A' }, { nested: [{ n: 1 }] }],
+      count: 3,
+    })
+  })
+
+  it('passes primitives and null through and does not mutate its input', () => {
+    expect(scrubPrivate(null)).toBeNull()
+    expect(scrubPrivate(7)).toBe(7)
+    expect(scrubPrivate('x')).toBe('x')
+    const input = { discord_id: '1', keep: true }
+    scrubPrivate(input)
+    expect(input).toEqual({ discord_id: '1', keep: true })
+  })
+
+  it('keeps the named keys so maskProfile can still read hide_gold', () => {
+    const out = scrubPrivate({ discord_id: '1', hide_gold: true, show_discord: false }, KEEP_FOR_PROFILE_MASK)
+    expect(out).toEqual({ hide_gold: true, show_discord: false })
+    expect(maskProfile(out).gold_hidden).toBe(true)
   })
 })
 

@@ -13,23 +13,26 @@ import type {
 } from '../../shared/api-types'
 import type { HomeData } from '../../shared/hub-types'
 import { TTL } from '../cache'
-import { gather, loaderFor, type RouteDeps } from './common'
+import { gather, gathered, loaderFor, type RouteDeps } from './common'
 
 export function registerHomeRoutes(app: Hono, d: RouteDeps) {
   app.get('/api/home', async (c) => {
-    const load = loaderFor(d, c)
-    const g = await gather({
-      presence: load<PresenceOnline>('home:presence', TTL.LIVE, '/presence/online'),
-      queue: load<QueueCount>('home:queue', TTL.LIVE, '/queue/count'),
-      team_queue: load<TeamQueueCount>('home:team-queue', TTL.LIVE, '/team/queue/count'),
-      series_1v1: load<ActiveSeriesList>('home:series-1v1', TTL.LIVE, '/series/active'),
-      series_2v2: load<ActiveTeamSeriesList>('home:series-2v2', TTL.LIVE, '/team/series/active'),
-      ffa_lobbies: load<FfaLobbies>('home:ffa-lobbies', TTL.LIVE, '/ffa/lobbies'),
-      spectate: load<SpectateGames>('home:spectate', TTL.LIVE, '/spectate/games'),
-      results: load<MultimodeRecent>('results:20', TTL.RESULTS, '/series/recent-multimode', { limit: 20 }),
-      maintenance: load<MaintenanceStatus>('home:maintenance', TTL.LIVE, '/admin/maintenance/status'),
-      alerts: load<AlertsActive>('home:alerts', TTL.LIVE, '/alerts/active'),
-    })
+    const load = loaderFor(d)
+    const g = await gather(
+      {
+        presence: load<PresenceOnline>('home:presence', TTL.LIVE, '/presence/online'),
+        queue: load<QueueCount>('home:queue', TTL.LIVE, '/queue/count'),
+        team_queue: load<TeamQueueCount>('home:team-queue', TTL.LIVE, '/team/queue/count'),
+        series_1v1: load<ActiveSeriesList>('home:series-1v1', TTL.LIVE, '/series/active'),
+        series_2v2: load<ActiveTeamSeriesList>('home:series-2v2', TTL.LIVE, '/team/series/active'),
+        ffa_lobbies: load<FfaLobbies>('home:ffa-lobbies', TTL.LIVE, '/ffa/lobbies'),
+        spectate: load<SpectateGames>('home:spectate', TTL.LIVE, '/spectate/games'),
+        results: load<MultimodeRecent>('results:20', TTL.RESULTS, '/series/recent-multimode', { limit: 20 }),
+        maintenance: load<MaintenanceStatus>('home:maintenance', TTL.LIVE, '/admin/maintenance/status'),
+        alerts: load<AlertsActive>('home:alerts', TTL.LIVE, '/alerts/active'),
+      },
+      d.now,
+    )
     const v = g.values
     const data: HomeData = {
       presence: v.presence ?? { online_count: 0, online: [], recent: [] },
@@ -48,7 +51,6 @@ export function registerHomeRoutes(app: Hono, d: RouteDeps) {
       maintenance: v.maintenance?.in_maintenance ?? false,
       alerts: v.alerts?.alerts ?? [],
     }
-    c.header('Cache-Control', 'public, max-age=5')
-    return c.json({ data, fetched_at: new Date(g.fetched_at).toISOString(), stale: g.stale, errors: g.errors })
+    return gathered(c, g, data, 5)
   })
 }

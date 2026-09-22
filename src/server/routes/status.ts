@@ -11,7 +11,7 @@ export function registerStatusRoutes(app: Hono, d: RouteDeps) {
       features: [...d.env.features],
       auth_enabled: !!d.env.discord,
       upstream: { base: d.env.upstreamBase, version: d.version.state() },
-      cache: { size: d.cache.size() },
+      cache: { size: d.cache.size(), bytes: d.cache.bytes() },
     }
     if (c.req.query('probe') === '1') {
       try {

@@ -7,34 +7,63 @@ export interface CacheStore {
   get<T>(key: string): Promise<CacheEntry<T> | undefined>
   set<T>(key: string, entry: CacheEntry<T>): Promise<void>
   size(): number
+  /** Approximate bytes held, when the store can measure them. */
+  bytes?(): number
 }
 
-/** LRU in-memory store. Node uses it directly; the Worker layers the Cache API on top. */
-export class MemoryCacheStore implements CacheStore {
-  private readonly map = new Map<string, CacheEntry<unknown>>()
+/** Approximate JSON size of a cached value; unserialisable values count as free. */
+function approxBytes(value: unknown): number {
+  try {
+    return JSON.stringify(value)?.length ?? 0
+  } catch {
+    return 0
+  }
+}
 
-  constructor(private readonly max = 1000) {}
+/** LRU in-memory store, bounded both by entry count and by an approximate byte budget. */
+export class MemoryCacheStore implements CacheStore {
+  private readonly map = new Map<string, { entry: CacheEntry<unknown>; bytes: number }>()
+  private total = 0
+
+  constructor(
+    private readonly max = 1000,
+    private readonly maxBytes = 64 * 1024 * 1024,
+  ) {}
 
   async get<T>(key: string): Promise<CacheEntry<T> | undefined> {
-    const e = this.map.get(key) as CacheEntry<T> | undefined
-    if (e) {
-      this.map.delete(key)
-      this.map.set(key, e)
-    }
-    return e
+    const held = this.map.get(key)
+    if (!held) return undefined
+    this.map.delete(key)
+    this.map.set(key, held)
+    return held.entry as CacheEntry<T>
   }
 
   async set<T>(key: string, entry: CacheEntry<T>): Promise<void> {
-    this.map.delete(key)
-    this.map.set(key, entry)
-    if (this.map.size > this.max) {
+    this.drop(key)
+    const bytes = approxBytes(entry.value)
+    this.map.set(key, { entry, bytes })
+    this.total += bytes
+    while (this.map.size > this.max || this.total > this.maxBytes) {
       const oldest = this.map.keys().next().value
-      if (oldest !== undefined) this.map.delete(oldest)
+      // One entry larger than the whole budget stays: the count bound still caps growth.
+      if (oldest === undefined || oldest === key) break
+      this.drop(oldest)
     }
   }
 
   size(): number {
     return this.map.size
+  }
+
+  bytes(): number {
+    return this.total
+  }
+
+  private drop(key: string): void {
+    const held = this.map.get(key)
+    if (!held) return
+    this.total -= held.bytes
+    this.map.delete(key)
   }
 }
 
@@ -49,6 +78,7 @@ export const TTL = {
   BOARD: { ttlMs: 30_000, staleMs: 120_000 },
   RESULTS: { ttlMs: 20_000, staleMs: 120_000 },
   PLAYER: { ttlMs: 60_000, staleMs: 300_000 },
+  TOURNAMENT: { ttlMs: 30_000, staleMs: 300_000 },
   REF: { ttlMs: 600_000, staleMs: 3_600_000 },
 } as const satisfies Record<string, TtlSpec>
 
@@ -58,37 +88,28 @@ export interface CachedResult<T> {
   stale: boolean
 }
 
-export type Background = (p: Promise<unknown>) => void
-
 /**
  * Fresh within ttl; stale-while-revalidate within ttl+stale; single-flight loads;
  * stale-on-error at any age (spec 6.3).
  */
 export class Cache {
   private readonly inflight = new Map<string, Promise<CacheEntry<unknown>>>()
-  /** Used when a caller passes no `background`. Swallows rejections. */
-  defaultBackground: Background = (p) => {
-    p.catch(() => {})
-  }
 
   constructor(
     private readonly store: CacheStore,
     private readonly now: () => number = () => Date.now(),
+    /** Test hook: receives every fire-and-forget background refresh, already caught. */
+    private readonly onBackground?: (p: Promise<unknown>) => void,
   ) {}
 
-  async get<T>(
-    key: string,
-    spec: TtlSpec,
-    loader: () => Promise<T>,
-    background: Background = this.defaultBackground,
-  ): Promise<CachedResult<T>> {
+  async get<T>(key: string, spec: TtlSpec, loader: () => Promise<T>): Promise<CachedResult<T>> {
     const entry = await this.store.get<T>(key)
     const age = entry ? this.now() - entry.fetched_at : Number.POSITIVE_INFINITY
     if (entry && age < spec.ttlMs) {
       return { value: entry.value, fetched_at: entry.fetched_at, stale: false }
     }
     if (entry && age < spec.ttlMs + spec.staleMs) {
-      background(this.refresh(key, loader).catch(() => undefined))
+      this.background(this.refresh(key, loader))
       return { value: entry.value, fetched_at: entry.fetched_at, stale: true }
     }
     try {
@@ -98,6 +119,12 @@ export class Cache {
       if (entry) return { value: entry.value, fetched_at: entry.fetched_at, stale: true }
       throw err
     }
+  }
+
+  /** Background refreshes are fire-and-forget: a failure leaves the stale entry in place. */
+  private background(p: Promise<unknown>): void {
+    const settled = p.catch(() => undefined)
+    this.onBackground?.(settled)
   }
 
   private refresh<T>(key: string, loader: () => Promise<T>): Promise<CacheEntry<T>> {
@@ -119,5 +146,9 @@ export class Cache {
 
   size(): number {
     return this.store.size()
+  }
+
+  bytes(): number | undefined {
+    return this.store.bytes?.()
   }
 }

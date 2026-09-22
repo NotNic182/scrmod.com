@@ -21,7 +21,7 @@ export function registerBoardRoutes(app: Hono, d: RouteDeps) {
     if (!spec) return c.json({ error: 'unknown_mode', modes: Object.keys(MODES) }, 404)
     const inactive = c.req.query('inactive') === '1'
     try {
-      const r = await loaderFor(d, c)(`lb:${mode}:${inactive ? 1 : 0}`, TTL.BOARD, spec.path, {
+      const r = await loaderFor(d)(`lb:${mode}:${inactive ? 1 : 0}`, TTL.BOARD, spec.path, {
         ...spec.query,
         include_inactive: inactive ? true : undefined,
       })
@@ -34,7 +34,7 @@ export function registerBoardRoutes(app: Hono, d: RouteDeps) {
   app.get('/api/results', async (c) => {
     const limit = intParam(c, 'limit', 60, 1, 200)
     try {
-      return ok(c, await loaderFor(d, c)(`results:${limit}`, TTL.RESULTS, '/series/recent-multimode', { limit }))
+      return ok(c, await loaderFor(d)(`results:${limit}`, TTL.RESULTS, '/series/recent-multimode', { limit }))
     } catch (err) {
       return errorResponse(c, err)
     }
@@ -43,11 +43,11 @@ export function registerBoardRoutes(app: Hono, d: RouteDeps) {
   app.get('/api/results/1v1', async (c) => {
     const limit = intParam(c, 'limit', 50, 1, 200)
     try {
-      const r = await loaderFor(d, c)<RecentSeriesList>(`results:1v1:${limit}`, TTL.RESULTS, '/series/recent', {
+      const r = await loaderFor(d)<RecentSeriesList>(`results:1v1:${limit}`, TTL.RESULTS, '/series/recent', {
         minutes: 43200,
         limit,
       })
-      const series = (r.value.series ?? []).map((s) => maskRecentSeries(s as unknown as Record<string, unknown>))
+      const series = (r.value.series ?? []).map((s) => maskRecentSeries(s))
       return ok(c, { ...r, value: { series } })
     } catch (err) {
       return errorResponse(c, err)
@@ -58,7 +58,7 @@ export function registerBoardRoutes(app: Hono, d: RouteDeps) {
     const q = (c.req.query('q') ?? '').trim()
     if (q.length < 1 || q.length > 40) return c.json({ error: 'bad_query', detail: 'q must be 1-40 characters' }, 400)
     try {
-      return ok(c, await loaderFor(d, c)(`search:${q.toLowerCase()}`, TTL.BOARD, '/players/search', { q, limit: 8 }))
+      return ok(c, await loaderFor(d)(`search:${q.toLowerCase()}`, TTL.BOARD, '/players/search', { q, limit: 8 }))
     } catch (err) {
       return errorResponse(c, err)
     }

@@ -61,6 +61,7 @@ describe('GET /api/_status (full)', () => {
     expect(body.upstream.reachable).toBe(true)
     expect(body.upstream.version).toEqual({
       version: '1.40.3',
+      min_version: '1.40.3',
       fetched_at: expect.any(String),
       source: 'discovered',
     })
@@ -77,7 +78,7 @@ describe('GET /api/_status (full)', () => {
       store: new MemoryCacheStore(),
     })
     const body = await (await app.request('/api/_status')).json()
-    expect(body.upstream.version).toEqual({ version: null, fetched_at: null, source: 'none' })
+    expect(body.upstream.version).toEqual({ version: null, min_version: null, fetched_at: null, source: 'none' })
     expect(fake.calls.length).toBe(0)
   })
 })

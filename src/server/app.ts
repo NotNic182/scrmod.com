@@ -41,7 +41,7 @@ export function createApp(deps: AppDeps) {
     fetchImpl: deps.fetchImpl,
   })
   const cache = new Cache(deps.store ?? new MemoryCacheStore(), now)
-  const routeDeps: RouteDeps = { env, upstream, cache, version }
+  const routeDeps: RouteDeps = { env, upstream, cache, version, now }
 
   const app = env.basePath === '/' ? new Hono() : new Hono().basePath(env.basePath)
 

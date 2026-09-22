@@ -1,5 +1,5 @@
 import type { Context, Hono } from 'hono'
-import { maskProfile, slimMatch } from '../../shared/privacy'
+import { KEEP_FOR_PROFILE_MASK, maskProfile, scrubPrivate, slimMatch } from '../../shared/privacy'
 import { TTL, type TtlSpec } from '../cache'
 import type { Query } from '../upstream'
 import { errorResponse, intParam, isSteamId, loaderFor, ok, type RouteDeps } from './common'
@@ -11,10 +11,21 @@ interface SubSpec {
   transform?: (v: unknown) => unknown
 }
 
+/** Fixed page sizes, so `limit` is not a free dimension an anonymous visitor can enumerate. */
+const MATCH_LIMITS = [50, 100, 200]
+const MAX_MATCH_OFFSET = 2000
+
+function quantizeLimit(n: number): number {
+  return MATCH_LIMITS.find((l) => n <= l) ?? MATCH_LIMITS[MATCH_LIMITS.length - 1]
+}
+
 const SUB: Record<string, SubSpec> = {
   matches: {
     path: (id) => `/players/${id}/matches`,
-    query: (c) => ({ limit: intParam(c, 'limit', 100, 1, 200), offset: intParam(c, 'offset', 0, 0, 100_000) }),
+    query: (c) => ({
+      limit: quantizeLimit(intParam(c, 'limit', 100, 1, 200)),
+      offset: intParam(c, 'offset', 0, 0, MAX_MATCH_OFFSET),
+    }),
     spec: TTL.PLAYER,
     transform: (v) => (Array.isArray(v) ? v.map((m) => slimMatch(m as Record<string, unknown>)) : []),
   },
@@ -35,11 +46,14 @@ export function registerPlayerRoutes(app: Hono, d: RouteDeps) {
     const me = c.req.query('me')
     const viewer = isSteamId(me) && me !== id ? me : undefined
     try {
-      const r = await loaderFor(d, c)<Record<string, unknown>>(
+      // The cache holds the profile with the discord fields already gone; `hide_gold` is
+      // held back so `maskProfile` can still turn it into `gold_hidden` on the way out.
+      const r = await loaderFor(d)<Record<string, unknown>>(
         `player:${id}:${viewer ?? ''}`,
         TTL.PLAYER,
         `/players/${id}`,
         { viewer_steam_id: viewer },
+        (raw) => scrubPrivate(raw as Record<string, unknown>, KEEP_FOR_PROFILE_MASK),
       )
       return ok(c, { ...r, value: maskProfile(r.value) })
     } catch (err) {
@@ -52,7 +66,7 @@ export function registerPlayerRoutes(app: Hono, d: RouteDeps) {
     const opp = c.req.param('opp')
     if (!isSteamId(id) || !isSteamId(opp)) return c.json({ error: 'bad_steam_id' }, 400)
     try {
-      return ok(c, await loaderFor(d, c)(`vs:${id}:${opp}`, TTL.PLAYER, `/players/${id}/vs/${opp}/top-cards`))
+      return ok(c, await loaderFor(d)(`vs:${id}:${opp}`, TTL.PLAYER, `/players/${id}/vs/${opp}/top-cards`))
     } catch (err) {
       return errorResponse(c, err)
     }
@@ -67,8 +81,7 @@ export function registerPlayerRoutes(app: Hono, d: RouteDeps) {
     const query = spec.query?.(c)
     const key = `player:${id}:${sub}:${JSON.stringify(query ?? {})}`
     try {
-      const r = await loaderFor(d, c)<unknown>(key, spec.spec, spec.path(id), query)
-      return ok(c, spec.transform ? { ...r, value: spec.transform(r.value) } : r)
+      return ok(c, await loaderFor(d)<unknown>(key, spec.spec, spec.path(id), query, spec.transform))
     } catch (err) {
       return errorResponse(c, err)
     }

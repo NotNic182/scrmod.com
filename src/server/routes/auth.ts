@@ -5,7 +5,7 @@ import type { MeResponse } from '../../shared/hub-types'
 import { TTL } from '../cache'
 import { randomState, signSession, verifySession } from '../session'
 import { UpstreamError } from '../upstream'
-import { backgroundFor, errorResponse, type RouteDeps } from './common'
+import { errorResponse, type RouteDeps } from './common'
 
 export const SESSION_COOKIE = 'scrhub_session'
 const STATE_COOKIE = 'scrhub_oauth_state'
@@ -113,7 +113,6 @@ export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: ty
         `by-discord:${s.id}`,
         TTL.PLAYER,
         () => d.upstream.getJson<PlayerByDiscord>(`/players/by-discord/${s.id}`),
-        backgroundFor(c),
       )
       const p = r.value
       player = { steam_id: p.steam_id, display_name: p.display_name, rating: p.rating, peak_rating: p.peak_rating, level: p.level }

@@ -6,8 +6,9 @@ const SPEC = { ttlMs: 10_000, staleMs: 60_000 }
 
 function make() {
   let now = 1_000_000
-  const cache = new Cache(new MemoryCacheStore(), () => now)
-  return { cache, tick: (ms: number) => (now += ms), now: () => now }
+  const background: Promise<unknown>[] = []
+  const cache = new Cache(new MemoryCacheStore(), () => now, (p) => background.push(p))
+  return { cache, background, tick: (ms: number) => (now += ms), now: () => now }
 }
 
 describe('Cache', () => {
@@ -23,13 +24,12 @@ describe('Cache', () => {
   })
 
   it('serves stale immediately inside the stale window and refreshes in the background', async () => {
-    const { cache, tick } = make()
+    const { cache, background: bg, tick } = make()
     let n = 0
     const loader = vi.fn(async () => ({ n: ++n }))
-    const bg: Promise<unknown>[] = []
     await cache.get('k', SPEC, loader)
     tick(20_000)
-    const r = await cache.get('k', SPEC, loader, (p) => bg.push(p))
+    const r = await cache.get('k', SPEC, loader)
     expect(r).toMatchObject({ value: { n: 1 }, stale: true })
     expect(bg.length).toBe(1)
     await Promise.all(bg)
@@ -65,15 +65,28 @@ describe('Cache', () => {
   })
 
   it('does not let a failed background refresh reject the caller', async () => {
-    const { cache, tick } = make()
+    const { cache, background, tick } = make()
     await cache.get('k', SPEC, async () => ({ n: 1 }))
     tick(20_000)
     const r = await cache.get('k', SPEC, async () => {
       throw new Error('boom')
     })
     expect(r.stale).toBe(true)
+    await Promise.all(background)
     await new Promise((res) => setTimeout(res, 0))
     expect(cache.size()).toBe(1)
+  })
+
+  it('swallows a failed background refresh with no hook attached', async () => {
+    let now = 1_000_000
+    const cache = new Cache(new MemoryCacheStore(), () => now)
+    await cache.get('k', SPEC, async () => ({ n: 1 }))
+    now += 20_000
+    const r = await cache.get('k', SPEC, async () => {
+      throw new Error('boom')
+    })
+    expect(r.stale).toBe(true)
+    await new Promise((res) => setTimeout(res, 0))
   })
 
   it('MemoryCacheStore evicts the least recently used entry past max', async () => {
@@ -87,11 +100,46 @@ describe('Cache', () => {
     expect(store.size()).toBe(2)
   })
 
+  it('MemoryCacheStore evicts by an approximate byte budget and reports bytes()', async () => {
+    const store = new MemoryCacheStore(1000, 250)
+    const big = 'x'.repeat(100) // 102 bytes as JSON
+    await store.set('a', { value: big, fetched_at: 0 })
+    await store.set('b', { value: big, fetched_at: 0 })
+    expect(store.size()).toBe(2)
+    expect(store.bytes()).toBe(204)
+    await store.set('c', { value: big, fetched_at: 0 })
+    expect(await store.get('a')).toBeUndefined()
+    expect(store.size()).toBe(2)
+    expect(store.bytes()).toBeLessThanOrEqual(250)
+  })
+
+  it('keeps a single oversized entry rather than evicting what it just stored', async () => {
+    const store = new MemoryCacheStore(1000, 10)
+    await store.set('a', { value: 'x'.repeat(100), fetched_at: 0 })
+    expect((await store.get('a'))?.value).toBe('x'.repeat(100))
+    expect(store.size()).toBe(1)
+  })
+
+  it('releases the bytes of a replaced or evicted entry', async () => {
+    const store = new MemoryCacheStore(1000, 1_000_000)
+    await store.set('a', { value: 'x'.repeat(100), fetched_at: 0 })
+    await store.set('a', { value: 'y', fetched_at: 1 })
+    expect(store.size()).toBe(1)
+    expect(store.bytes()).toBe(3)
+  })
+
+  it('Cache.bytes() reports the store budget for _status', async () => {
+    const { cache } = make()
+    await cache.get('k', SPEC, async () => ({ n: 1 }))
+    expect(cache.bytes()).toBe(JSON.stringify({ n: 1 }).length)
+  })
+
   it('exports the spec TTLs', () => {
     expect(TTL.LIVE).toEqual({ ttlMs: 10_000, staleMs: 60_000 })
     expect(TTL.BOARD).toEqual({ ttlMs: 30_000, staleMs: 120_000 })
     expect(TTL.RESULTS).toEqual({ ttlMs: 20_000, staleMs: 120_000 })
     expect(TTL.PLAYER).toEqual({ ttlMs: 60_000, staleMs: 300_000 })
+    expect(TTL.TOURNAMENT).toEqual({ ttlMs: 30_000, staleMs: 300_000 })
     expect(TTL.REF).toEqual({ ttlMs: 600_000, staleMs: 3_600_000 })
   })
 })

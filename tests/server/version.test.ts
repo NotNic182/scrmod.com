@@ -82,4 +82,39 @@ describe('ModVersionSource', () => {
     await expect(empty.current()).rejects.toThrow()
     expect(empty.state().source).toBe('none')
   })
+
+  it('backs off for retryMs after a failed refresh instead of refetching every call', async () => {
+    const { fetchImpl } = fakeFetch([{ body: { version: '1.40.3' } }, { status: 500, body: { error: 'x' } }])
+    let now = 0
+    const src = new ModVersionSource({
+      baseUrl: 'https://up.test', userAgent: 'ua', fetchImpl, now: () => now, refreshMs: 10, retryMs: 30_000,
+    })
+    expect(await src.current()).toBe('1.40.3')
+    now = 100
+    expect(await src.current()).toBe('1.40.3') // refresh fails here
+    expect(fetchImpl).toHaveBeenCalledTimes(2)
+    now = 20_000
+    expect(await src.current()).toBe('1.40.3') // still backing off, no fetch
+    expect(fetchImpl).toHaveBeenCalledTimes(2)
+    now = 30_101
+    expect(await src.current()).toBe('1.40.3')
+    expect(fetchImpl).toHaveBeenCalledTimes(3)
+  })
+
+  it('rejects during the backoff window when nothing is known yet', async () => {
+    const { fetchImpl } = fakeFetch([{ status: 500, body: {} }])
+    let now = 0
+    const src = new ModVersionSource({ baseUrl: 'https://up.test', userAgent: 'ua', fetchImpl, now: () => now, retryMs: 30_000 })
+    await expect(src.current()).rejects.toThrow()
+    now = 1_000
+    await expect(src.current()).rejects.toThrow()
+    expect(fetchImpl).toHaveBeenCalledTimes(1)
+  })
+
+  it('reports min_version alongside the version', async () => {
+    const { fetchImpl } = fakeFetch([{ body: { version: '1.40.3', min_version: '1.40.0' } }])
+    const src = new ModVersionSource({ baseUrl: 'https://up.test', userAgent: 'ua', fetchImpl })
+    await src.current()
+    expect(src.state()).toMatchObject({ version: '1.40.3', min_version: '1.40.0', source: 'discovered' })
+  })
 })

@@ -1,6 +1,7 @@
 import type { Context } from 'hono'
+import { scrubPrivate } from '../../shared/privacy'
 import { NotAllowedError } from '../allowlist'
-import { type Background, type Cache, type CachedResult, type TtlSpec } from '../cache'
+import { type Cache, type CachedResult, type TtlSpec } from '../cache'
 import type { Env } from '../env'
 import { type Query, type Upstream, UpstreamError, UpstreamNetworkError } from '../upstream'
 import type { ModVersionSource } from '../version'
@@ -10,15 +11,33 @@ export interface RouteDeps {
   upstream: Upstream
   cache: Cache
   version: ModVersionSource
+  now: () => number
 }
 
 export function envelope<T>(r: CachedResult<T>) {
   return { data: r.value, fetched_at: new Date(r.fetched_at).toISOString(), stale: r.stale }
 }
 
+/** Single-source response. Every body leaves through the generic scrub (spec 12). */
 export function ok<T>(c: Context, r: CachedResult<T>, extra: Record<string, unknown> = {}) {
   c.header('Cache-Control', 'public, max-age=5')
-  return c.json({ ...envelope(r), ...extra })
+  return c.json({ ...envelope({ ...r, value: scrubPrivate(r.value) }), ...extra })
+}
+
+/** The aggregate counterpart of `ok()`: the same envelope plus the failed keys. */
+export function gathered<T>(
+  c: Context,
+  g: { errors: string[]; stale: boolean; fetched_at: number },
+  data: T,
+  maxAge: number,
+) {
+  c.header('Cache-Control', `public, max-age=${maxAge}`)
+  return c.json({
+    data: scrubPrivate(data),
+    fetched_at: new Date(g.fetched_at).toISOString(),
+    stale: g.stale,
+    errors: g.errors,
+  })
 }
 
 /** Maps upstream and network failures to hub status codes (spec 11). */
@@ -50,20 +69,16 @@ export function errorResponse(c: Context, err: unknown) {
   return c.json({ error: 'internal' }, 500)
 }
 
-/** Serverless hosts expose an execution context that background work must attach to; on Node this is undefined. */
-export function backgroundFor(c: Context): Background | undefined {
-  try {
-    const ctx = c.executionCtx
-    return (p) => ctx.waitUntil(p.catch(() => {}))
-  } catch {
-    return undefined
-  }
-}
-
-export function loaderFor(d: RouteDeps, c: Context) {
-  const bg = backgroundFor(c)
-  return <T>(key: string, spec: TtlSpec, path: string, query?: Query) =>
-    d.cache.get<T>(key, spec, () => d.upstream.getJson<T>(path, query), bg)
+/**
+ * A cached upstream load. `transform` runs before the value is stored, so the cache
+ * holds what the route serves rather than the raw upstream page (spec 6.3).
+ */
+export function loaderFor(d: RouteDeps) {
+  return <T>(key: string, spec: TtlSpec, path: string, query?: Query, transform?: (raw: unknown) => T) =>
+    d.cache.get<T>(key, spec, async () => {
+      const raw = await d.upstream.getJson<T>(path, query)
+      return transform ? transform(raw) : raw
+    })
 }
 
 export const STEAM_ID_RE = /^\d{17}$/
@@ -86,13 +101,16 @@ export function intParam(c: Context, name: string, def: number, min: number, max
 }
 
 /** Runs several cached loads in parallel; returns values, the oldest fetched_at, stale flag, and failed keys. */
-export async function gather<T extends Record<string, Promise<CachedResult<unknown>>>>(jobs: T) {
+export async function gather<T extends Record<string, Promise<CachedResult<unknown>>>>(
+  jobs: T,
+  now: () => number = () => Date.now(),
+) {
   const keys = Object.keys(jobs) as Array<keyof T & string>
   const settled = await Promise.allSettled(Object.values(jobs))
   const values: Partial<{ [K in keyof T]: Awaited<T[K]>['value'] }> = {}
   const errors: string[] = []
   let stale = false
-  let oldest = Date.now()
+  let oldest = now()
   settled.forEach((s, i) => {
     const k = keys[i]
     if (s.status === 'fulfilled') {

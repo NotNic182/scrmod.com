@@ -18,11 +18,11 @@ export function registerChatRoutes(app: Hono, d: RouteDeps) {
       .filter((s) => CHAT_CHANNELS.has(s))
       .join(',')
     try {
-      const r = await loaderFor(d, c)<ChatRecent>(`chat:${limit}:${channels}`, TTL.LIVE, '/chat/recent', {
+      const r = await loaderFor(d)<ChatRecent>(`chat:${limit}:${channels}`, TTL.LIVE, '/chat/recent', {
         limit,
         channels: channels || undefined,
       })
-      const messages = (r.value.messages ?? []).map((m) => maskChatMessage(m as unknown as Record<string, unknown>))
+      const messages = (r.value.messages ?? []).map((m) => maskChatMessage(m))
       return ok(c, { ...r, value: { messages } })
     } catch (err) {
       return errorResponse(c, err)

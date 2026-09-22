@@ -1,5 +1,6 @@
 export interface VersionState {
   version: string | null
+  min_version: string | null
   fetched_at: string | null
   source: 'override' | 'discovered' | 'none'
 }
@@ -10,6 +11,8 @@ export interface ModVersionSourceOptions {
   override?: string
   fetchImpl?: typeof fetch
   refreshMs?: number
+  /** How long `current()` stays quiet after a failed refresh (default 30 s). */
+  retryMs?: number
   now?: () => number
   timeoutMs?: number
 }
@@ -18,12 +21,16 @@ export interface ModVersionSourceOptions {
  * Discovers the mod version the upstream currently expects (spec 6.2).
  * `current()` serves a cached value for refreshMs (default 10 min); `refresh()` forces
  * a fetch and coalesces concurrent callers. `current()` keeps serving the last value
- * when a refresh fails; `refresh()` itself rejects.
+ * when a refresh fails and then backs off for retryMs before trying again;
+ * `refresh()` itself always tries, and rejects.
  */
 export class ModVersionSource {
   private version: string | null
+  private minVersion: string | null = null
   private fetchedAt: number | null = null
   private inflight: Promise<string> | null = null
+  private nextRetryAt: number | null = null
+  private lastError: unknown = null
 
   constructor(private readonly opts: ModVersionSourceOptions) {
     this.version = opts.override ?? null
@@ -38,6 +45,11 @@ export class ModVersionSource {
     const refreshMs = this.opts.refreshMs ?? 600_000
     if (this.version && this.fetchedAt !== null && this.now() - this.fetchedAt < refreshMs) {
       return this.version
+    }
+    if (this.nextRetryAt !== null && this.now() < this.nextRetryAt) {
+      // A refresh just failed: do not hammer /mod-version once per request.
+      if (this.version) return this.version
+      throw this.lastError instanceof Error ? this.lastError : new Error('mod-version unavailable')
     }
     try {
       return await this.refresh()
@@ -62,8 +74,15 @@ export class ModVersionSource {
         const v = body.version || body.min_version
         if (!v) throw new Error('mod-version: body has no version')
         this.version = v
+        this.minVersion = body.min_version ?? null
         this.fetchedAt = this.now()
+        this.nextRetryAt = null
+        this.lastError = null
         return v
+      } catch (err) {
+        this.nextRetryAt = this.now() + (this.opts.retryMs ?? 30_000)
+        this.lastError = err
+        throw err
       } finally {
         this.inflight = null
       }
@@ -72,14 +91,17 @@ export class ModVersionSource {
   }
 
   state(): VersionState {
-    if (this.opts.override) return { version: this.opts.override, fetched_at: null, source: 'override' }
+    if (this.opts.override) {
+      return { version: this.opts.override, min_version: null, fetched_at: null, source: 'override' }
+    }
     if (this.version) {
       return {
         version: this.version,
+        min_version: this.minVersion,
         fetched_at: this.fetchedAt === null ? null : new Date(this.fetchedAt).toISOString(),
         source: 'discovered',
       }
     }
-    return { version: null, fetched_at: null, source: 'none' }
+    return { version: null, min_version: null, fetched_at: null, source: 'none' }
   }
 }

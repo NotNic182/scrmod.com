@@ -71,8 +71,16 @@ export interface StatusResponse {
   auth_enabled: boolean
   upstream: {
     base: string
-    version: { version: string | null; fetched_at: string | null; source: 'override' | 'discovered' | 'none' }
+    version: {
+      version: string | null
+      min_version: string | null
+      fetched_at: string | null
+      source: 'override' | 'discovered' | 'none'
+    }
     reachable?: boolean
+    /** Spec 11: the version gate, so NotNic hears about a 426 fast. */
+    last_426_at?: string | null
+    count_426?: number
   }
-  cache: { size: number }
+  cache: { size: number; bytes?: number }
 }
