@@ -101,8 +101,8 @@
       "duo_wins": 5,
       "duo_losses": 6,
       "level": 41,
-      "title": "Poisoner",
-      "title_color": "#66CC44",
+      "title": "Beta",
+      "title_color": "#2A66B5",
       "last_played": "2026-08-20T21:16:30.107899+00:00"
     },
     {
@@ -569,6 +569,6 @@
     }
   ],
   "total_players": 27,
-  "last_updated": "2026-09-22T15:07:41.999590Z",
+  "last_updated": "2026-09-22T18:53:49.826579Z",
   "is_ranked": false
 }

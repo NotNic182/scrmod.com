@@ -4,6 +4,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fixtureNameFor } from '../src/shared/fixture-name.mjs'
+import { scrubFixture } from '../src/shared/fixture-privacy.mjs'
 
 const BASE = (process.env.SCR_UPSTREAM_BASE || 'https://competitive-rounds.duckdns.org:8444').replace(/\/+$/, '')
 const UA = 'scr-hub-capture/0.1 (+https://github.com/NotNic/scr-hub)'
@@ -16,20 +17,6 @@ async function modVersion() {
   const r = await fetch(`${BASE}/api/v1/mod-version`, { headers: { 'User-Agent': UA } })
   const j = await r.json()
   return j.version
-}
-
-const DROP_KEYS = /^(p1_|p2_)?discord_id$|^discord_username$/
-function scrub(v) {
-  if (Array.isArray(v)) return v.map(scrub)
-  if (v && typeof v === 'object') {
-    const o = {}
-    for (const [k, x] of Object.entries(v)) {
-      if (DROP_KEYS.test(k)) continue
-      o[k] = scrub(x)
-    }
-    return o
-  }
-  return v
 }
 
 const STATIC = [
@@ -46,7 +33,8 @@ const STATIC = [
   '/cards?limit=200&min_picks=5', '/cards/leaders-summary?limit_per_card=5', '/cards/top-pickers?card_name=Poison',
   '/tournaments/current?kind=sync', '/tournaments/history', '/tournaments/history-detail?limit=8',
   `/tournaments/players/${ME}/tournaments`,
-  '/chat/recent?limit=50', '/releases/recent?limit=3',
+  // A handful of real chat lines is enough for the demo; 50 would commit a transcript.
+  '/chat/recent?limit=5', '/releases/recent?limit=3',
 ]
 
 async function get(version, p) {
@@ -77,7 +65,7 @@ async function main() {
       console.log(`skip ${p} -> ${status}`)
       continue
     }
-    await writeFile(file, JSON.stringify(scrub(body), null, 2) + '\n')
+    await writeFile(file, JSON.stringify(scrubFixture(body), null, 2) + '\n')
     ok++
     console.log(`ok   ${p} -> ${path.basename(file)}`)
     await new Promise((r) => setTimeout(r, 150))

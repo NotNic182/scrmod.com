@@ -1,3 +1,31 @@
 {
-  "series": []
+  "series": [
+    {
+      "series_id": "9c813d76-e54a-40da-83bd-31603d732dca",
+      "p1_steam_id": "76561198984811435",
+      "p1_name": "Spirit",
+      "p1_rating": 1852,
+      "p1_rd": 69.9,
+      "p1_wins": 0,
+      "p1_odds": 1.89,
+      "p1_bettable": true,
+      "p2_steam_id": "76561199013169799",
+      "p2_name": "galaxy ice",
+      "p2_rating": 1832,
+      "p2_rd": 64.9,
+      "p2_wins": 1,
+      "p2_odds": 2.12,
+      "p2_bettable": true,
+      "live_p1_points": 2,
+      "live_p2_points": 2,
+      "bets_locked": true,
+      "lock_reason": "game_in_progress",
+      "is_private": false,
+      "is_tournament": false,
+      "tournament_kind": null,
+      "tournament_label": "",
+      "phase": "live",
+      "started_at": "2026-09-22T18:19:32.004477+00:00"
+    }
+  ]
 }

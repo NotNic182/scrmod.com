@@ -1215,8 +1215,8 @@
       "avg_placement": 3.37,
       "win_rate": 0.075,
       "level": 41,
-      "title": "Poisoner",
-      "title_color": "#66CC44",
+      "title": "Beta",
+      "title_color": "#2A66B5",
       "ffa_gold_earned": 4048,
       "ffa_xp_earned": 169803
     },
@@ -1642,6 +1642,6 @@
     }
   ],
   "total_players": 82,
-  "last_updated": "2026-09-22T15:07:41.758854Z",
+  "last_updated": "2026-09-22T18:53:49.594484Z",
   "is_ranked": true
 }

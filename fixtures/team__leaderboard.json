@@ -474,8 +474,8 @@
       "series_losses": 2,
       "win_rate": 0.3333,
       "level": 41,
-      "title": "Poisoner",
-      "title_color": "#66CC44",
+      "title": "Beta",
+      "title_color": "#2A66B5",
       "avg_teammate_elo": 1375,
       "team_gold_earned": 222,
       "team_xp_earned": 7200
@@ -882,5 +882,5 @@
     }
   ],
   "total_players": 44,
-  "last_updated": "2026-09-22T15:07:41.511322Z"
+  "last_updated": "2026-09-22T18:53:49.362994Z"
 }
