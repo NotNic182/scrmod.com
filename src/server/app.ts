@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { Cache, MemoryCacheStore, type CacheStore } from './cache'
 import { type Env } from './env'
+import { registerAuthRoutes } from './routes/auth'
 import { registerBoardRoutes } from './routes/boards'
 import { registerCardRoutes } from './routes/cards'
 import { registerChatRoutes } from './routes/chat'
@@ -60,7 +61,7 @@ export function createApp(deps: AppDeps) {
   registerTournamentRoutes(app, routeDeps)
   registerCardRoutes(app, routeDeps)
   registerChatRoutes(app, routeDeps)
-  // Task 15 adds: registerAuthRoutes.
+  registerAuthRoutes(app, { ...routeDeps, discordFetch: deps.discordFetch ?? deps.fetchImpl })
 
   return { app, cache, upstream, version, deps: routeDeps }
 }
