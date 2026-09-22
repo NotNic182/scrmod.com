@@ -88,13 +88,13 @@ The frontend only ever talks to `/api/*` on its own origin. The server is the on
 |---|---|---|
 | `GET /api/home` | presence/online, queue/count, team/queue/count, series/active, team/series/active, ffa/lobbies, spectate/games, series/recent-multimode, admin/maintenance/status, alerts/active | 10 s / 60 s. Each upstream item is cached independently; the aggregate returns whatever succeeded plus an `errors[]` list. |
 | `GET /api/leaderboard/:mode` for 1v1, 2v2, ffa, 1v2 | leaderboard?limit=500, team/leaderboard, ffa/leaderboard, ovt/leaderboard | 30 s / 120 s |
-| `GET /api/results` | series/recent-multimode | 20 s / 120 s |
+| `GET /api/results`, `GET /api/results/1v1` | series/recent-multimode; series/recent with the Discord ids stripped | 20 s / 120 s |
 | `GET /api/players/search?q=` | players/search | 30 s / 120 s |
 | `GET /api/players/:id` with optional `?me=` | players/{id}?viewer_steam_id=me, masked per 6.4 | 60 s / 300 s |
 | `GET /api/players/:id/matches`, `/team-history`, `/ffa-history`, `/ovt-history`, `/rating-history`, `/achievements`, `/tournaments`, `/team-stats` | the matching player endpoint | 60 s / 300 s |
-| `GET /api/players/:id/h2h/:opp` | h2h/{id}/{opp}, players/{id}/vs/{opp}/top-cards | 60 s / 300 s |
-| `GET /api/tournaments`, `/api/tournaments/history`, `/api/tournaments/:id` | tournaments router: current, history, history-detail, bracket-detail | 30 s / 300 s |
-| `GET /api/cards?filter=` | cards, cards/leaders-summary, cards/top-pickers | 600 s / 3600 s |
+| `GET /api/players/:id/vs/:opp` | players/{id}/vs/{opp}/top-cards. The head-to-head record itself comes from `/api/players/:id?me=`, which forwards the viewer to the profile endpoint; the upstream `h2h` endpoint needs a game session and is not used. | 60 s / 300 s |
+| `GET /api/tournaments`, `/api/tournaments/history`, `/api/tournaments/:id/bracket` | tournaments router: current (sync and async), history, history-detail, bracket-detail | 30 s / 300 s |
+| `GET /api/cards?filter=&sort=&order=`, `/api/cards/leaders`, `/api/cards/:name/pickers` | cards, cards/leaders-summary (pipe strings parsed into objects), cards/top-pickers | 600 s / 3600 s |
 | `GET /api/meta` | rank-tiers, achievements/definitions, mod-version, releases/recent | 600 s / 3600 s |
 | `GET /api/chat/recent` (behind the `chat` feature flag) | chat/recent | 10 s / 60 s |
 | `GET /api/me` | players/by-discord/{id} for the signed-in Discord user | 60 s / 300 s |
@@ -106,13 +106,14 @@ The server holds an explicit allowlist of upstream paths. Anything not on it can
 
 - Base URL from `SCR_UPSTREAM_BASE`. Default is the DuckDNS HTTPS origin; inside Sid's compose network it is `http://api:8000`.
 - Headers: `X-Mod-Version: <discovered>` in community mode, `X-Internal-Key: <key>` in hosted mode, and always `User-Agent: scr-hub/<version> (+<site url>)` so Sid can recognise, rate-limit, or block the site's traffic independently of real mod clients.
-- Version discovery: fetch `/api/v1/mod-version` at start and every 10 minutes. On any 426, refresh immediately and retry the request once. `SCR_MOD_VERSION_OVERRIDE` pins it for tests and emergencies.
+- Version discovery: fetch `/api/v1/mod-version` at boot (best effort) and lazily whenever the cached value is older than 10 minutes; after a failed refresh the last known value is served and a 30 s backoff prevents hammering. On any 426, refresh immediately and retry the request once; if the refresh itself fails, the request answers 503 `upstream_version_gate` and `/api/_status` counts it. `SCR_MOD_VERSION_OVERRIDE` pins it for tests and emergencies.
 - Concurrency cap of 8 in-flight upstream requests. Timeout 8 s per request, the same bound the Discord bot uses.
-- On 429 or 5xx: serve stale if present, otherwise return 503 with `retry_after`.
+- On 429 or 5xx (or any unmapped status): serve stale if present, otherwise return 503 with `retry_after`. A 200 whose body is not JSON is 502 `upstream_bad_response`.
+- Per-client rate limit: a token bucket keyed on the client address the fronting proxy forwards (last `X-Forwarded-For` hop, else `X-Real-IP`): 60 requests per 10 s on `/api/*`, 10 per 60 s on `/auth/*`, `/api/_status` exempt. With no forwarded address the limiter fails open and warns once; `SCR_RATE_LIMIT=off` disables it.
 
 ### 6.3 Cache
 
-One `CacheStore` interface with an in-memory LRU implementation. The service runs as a single long-lived process, so one cache is shared by every visitor. Semantics:
+One `CacheStore` interface with an in-memory LRU implementation, bounded by entry count and by an approximate byte budget (64 MiB). The service runs as a single long-lived process, so one cache is shared by every visitor. Routes cache what they serve (slimmed match rows, never raw pages), and match-page keys are quantized so a visitor cannot mint unbounded entries. Semantics:
 
 - Fresh within TTL: serve from cache.
 - Stale within the stale window: serve immediately and refresh in the background (stale-while-revalidate).
@@ -131,6 +132,7 @@ Applied on the server to every profile-shaped object before it leaves:
 - Remove `appear_offline` and `hide_gold` themselves. The settings are private; only their effects are public.
 - The profile page never shows an online state. Only leaderboard rows carry `is_online`, and Sid's server decides that.
 - Player-private views are never proxied: inventory, bets, blocks, mail, gold sources, card tiers, queue polls.
+- In addition to the shape-specific rules, every hub response passes through a recursive scrub that drops `discord_id`, `discord_username`, `hide_gold`, `appear_offline`, `p1_discord_id` and `p2_discord_id` wherever they appear, so an upstream shape nobody has looked at cannot leak them. Captured fixtures are scrubbed the same way before they are committed.
 
 ### 6.5 Configuration
 
@@ -141,9 +143,14 @@ Applied on the server to every profile-shaped object before it leaves:
 | `SCR_MOD_VERSION_OVERRIDE` | unset | Pin the version header |
 | `SCR_FEATURES` | empty | Comma list of optional features, for example `chat` |
 | `BASE_PATH` | `/` | Sub-path when Sid mounts the site under his nginx, for example `/hub/` |
-| `PUBLIC_BASE_URL` | derived from the request | Absolute site URL for OAuth redirects and the User-Agent |
-| `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `SESSION_SECRET` | unset | Presence of all three enables Discord sign-in |
+| `PUBLIC_BASE_URL` | derived from the proxy scheme and Host header | The site's origin (for example `https://hub.example.com`) for OAuth redirects and the User-Agent. A trailing base path is stripped, so `https://host/hub` with `BASE_PATH=/hub` is accepted. |
+| `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `SESSION_SECRET` | unset | Presence of all three enables Discord sign-in. `SESSION_SECRET` must be at least 32 characters, otherwise sign-in stays disabled with a warning. |
+| `SCR_RATE_LIMIT` | on | `off` disables the per-client rate limit |
 | `SCR_FIXTURES` | unset | Serve responses from `fixtures/` instead of the upstream (demo and tests) |
+| `SCR_FIXTURES_DIR` | `fixtures` | Where fixture mode reads from |
+| `SCR_WEB_ROOT` | `dist/web` | Directory the built SPA is served from |
+| `PORT` | `8080` | Listen port (Railway injects its own) |
+| `SCR_APP_VERSION` | `0.1.0` | Reported in `/api/_status` and the User-Agent |
 
 ## 7. Frontend design
 
@@ -179,7 +186,7 @@ Dark by default with a light theme, the rank-tier colors the server sends, bold 
 
 Standard OAuth2 authorization-code flow with the `identify` scope, implemented in the server:
 
-- `GET /auth/discord/login` redirects to Discord. `GET /auth/discord/callback` exchanges the code, then sets an HttpOnly, Secure, SameSite=Lax cookie holding a signed token: Discord user id, username, avatar hash, 30-day expiry. No server-side session store.
+- `GET /auth/discord/login` redirects to Discord. `GET /auth/discord/callback` exchanges the code, then sets an HttpOnly, Secure, SameSite=Lax cookie scoped to the base path, holding a signed token: a `typ: session` claim, Discord user id, username, avatar hash, 30-day expiry. No server-side session store. Secure is derived from the request scheme, the proxy's `X-Forwarded-Proto`, or an https `PUBLIC_BASE_URL`.
 - `GET /api/me` returns the Discord identity and the linked SCR player via `players/by-discord/{id}`, or `player: null` with a hint to run the in-game link.
 - `POST /auth/logout` clears the cookie.
 - The Discord client secret and the session secret never reach the browser.
@@ -209,7 +216,7 @@ A multi-stage `Dockerfile` builds the SPA and the server and runs Node. Sid adds
     ports: ["127.0.0.1:8081:8080"]
 ```
 
-plus one nginx `location /hub/` block proxying to the container. Same origin, so no CORS change is needed. If Sid prefers a distinct key with narrower rights, only the environment value changes.
+plus one nginx `location /hub/` block proxying to the container with `proxy_set_header X-Forwarded-Proto $scheme;` and `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`, so cookies are marked Secure and the rate limiter sees real client addresses. Same origin, so no CORS change is needed. If Sid prefers a distinct key with narrower rights, only the environment value changes.
 
 ## 10. Testing
 
@@ -223,7 +230,7 @@ plus one nginx `location /hub/` block proxying to the container. Same origin, so
 
 - Upstream unreachable: pages show cached data with an "as of" age and a banner saying Sid's server is not responding. Nothing crashes on missing fields; every parser tolerates absent keys.
 - Maintenance mode or an active alert: a banner mirroring the mod's text.
-- 426 after a refresh attempt: a banner saying the site needs an update to talk to the new server version, and `_status` reports it so NotNic hears about it fast.
+- 426 after a refresh attempt: a banner saying the site needs an update to talk to the new server version, and `/api/_status` reports `count_426` and `last_426_at` so NotNic hears about it fast.
 - Player not found or deleted (404 or 410): a clear empty state, and the pinned "me" is cleared if it was that player.
 - Sign-in failure: return to the page with a short message. It never blocks read-only use.
 
@@ -251,7 +258,7 @@ plus one nginx `location /hub/` block proxying to the container. Same origin, so
 
 ## 15. Deliverables
 
-1. The `scr-hub` repository: server, SPA, shared types, fixtures, tests, Dockerfile, wrangler config, and a README with a one-command local run in fixture mode.
+1. The `scr-hub` repository: server, SPA, shared types, fixtures, tests, Dockerfile, Railway config, and a README with a one-command local run in fixture mode.
 2. A deployed community instance on Railway under NotNic's own domain.
 3. `docs/for-sid.md`: a one-page proposal covering what the site is, the compose snippet, the three asks (host it or allow the origin, a Discord-identity pull endpoint, a key), and the smaller `/pull` slash-command alternative. Published as a shareable page.
 4. This spec, plus the follow-up gacha spec when its inputs exist.
