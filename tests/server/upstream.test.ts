@@ -58,6 +58,16 @@ describe('Upstream', () => {
     expect(lb[1].headers['x-mod-version']).toBe('1.41.0')
   })
 
+  it('does not retry a 426 in hosted mode', async () => {
+    const { up, fake } = make({ '/leaderboard': () => json({ error: 'outdated' }, 426) }, { internalKey: 'k' })
+    const err = await up.getJson('/leaderboard').catch((e) => e)
+    expect(err).toBeInstanceOf(UpstreamError)
+    expect((err as UpstreamError).status).toBe(426)
+    const lb = fake.calls.filter((c) => c.url.pathname === '/api/v1/leaderboard')
+    expect(lb.length).toBe(1)
+    expect(fake.calls.some((c) => c.url.pathname === '/api/v1/mod-version')).toBe(false)
+  })
+
   it('throws UpstreamError with the status for non-2xx responses (after the single 426 retry)', async () => {
     const { up } = make({ '/leaderboard': () => json({ error: 'outdated' }, 426) })
     await expect(up.getJson('/leaderboard')).rejects.toMatchObject({ status: 426, path: '/leaderboard' })
