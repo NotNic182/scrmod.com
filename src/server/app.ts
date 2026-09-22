@@ -2,10 +2,13 @@ import { Hono } from 'hono'
 import { Cache, MemoryCacheStore, type CacheStore } from './cache'
 import { type Env } from './env'
 import { registerBoardRoutes } from './routes/boards'
+import { registerCardRoutes } from './routes/cards'
+import { registerChatRoutes } from './routes/chat'
 import { registerHomeRoutes } from './routes/home'
 import { registerMetaRoutes } from './routes/meta'
 import { registerPlayerRoutes } from './routes/players'
 import { registerStatusRoutes } from './routes/status'
+import { registerTournamentRoutes } from './routes/tournaments'
 import type { RouteDeps } from './routes/common'
 import { Upstream } from './upstream'
 import { ModVersionSource } from './version'
@@ -54,7 +57,10 @@ export function createApp(deps: AppDeps) {
   registerHomeRoutes(app, routeDeps)
   registerBoardRoutes(app, routeDeps)
   registerPlayerRoutes(app, routeDeps)
-  // Tasks 13–15 add: registerTournamentRoutes, registerCardRoutes, registerChatRoutes, registerAuthRoutes.
+  registerTournamentRoutes(app, routeDeps)
+  registerCardRoutes(app, routeDeps)
+  registerChatRoutes(app, routeDeps)
+  // Task 15 adds: registerAuthRoutes.
 
   return { app, cache, upstream, version, deps: routeDeps }
 }
