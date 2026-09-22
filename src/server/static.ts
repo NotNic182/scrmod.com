@@ -48,7 +48,12 @@ export function registerStatic(app: Hono, opts: { root: string; basePath: string
             const body = await readFile(target)
             const ext = path.extname(target).toLowerCase()
             c.header('Content-Type', TYPES[ext] ?? 'application/octet-stream')
-            c.header('Cache-Control', rel.startsWith('assets/') ? 'public, max-age=31536000, immutable' : 'public, max-age=300')
+            const cacheControl = rel.startsWith('assets/')
+              ? 'public, max-age=31536000, immutable'
+              : ext === '.html'
+                ? 'no-cache'
+                : 'public, max-age=300'
+            c.header('Cache-Control', cacheControl)
             return c.body(body)
           }
         } catch {
