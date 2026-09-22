@@ -5,7 +5,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 # Server only for now; the web plan adds a `build` script that runs both.
-RUN npm run build:server
+RUN npm run build
 
 FROM node:26-alpine
 WORKDIR /app
