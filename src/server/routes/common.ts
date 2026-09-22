@@ -2,7 +2,7 @@ import type { Context } from 'hono'
 import { NotAllowedError } from '../allowlist'
 import { type Background, type Cache, type CachedResult, type TtlSpec } from '../cache'
 import type { Env } from '../env'
-import { type Query, type Upstream, UpstreamError } from '../upstream'
+import { type Query, type Upstream, UpstreamError, UpstreamNetworkError } from '../upstream'
 import type { ModVersionSource } from '../version'
 
 export interface RouteDeps {
@@ -45,7 +45,7 @@ export function errorResponse(c: Context, err: unknown) {
   if (err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError')) {
     return c.json({ error: 'upstream_timeout' }, 503)
   }
-  if (err instanceof TypeError) return c.json({ error: 'upstream_unreachable' }, 503)
+  if (err instanceof UpstreamNetworkError) return c.json({ error: 'upstream_unreachable' }, 503)
   console.error('[hub] unexpected error', err)
   return c.json({ error: 'internal' }, 500)
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { Upstream, UpstreamError } from '../../src/server/upstream'
+import { Upstream, UpstreamError, UpstreamNetworkError } from '../../src/server/upstream'
 import { ModVersionSource } from '../../src/server/version'
 import { NotAllowedError } from '../../src/server/allowlist'
 import { fakeUpstream, json, deferred } from './helpers/fakeUpstream'
@@ -75,6 +75,30 @@ describe('Upstream', () => {
     const err = await up2.getJson('/players/search').catch((e) => e)
     expect(err).toBeInstanceOf(UpstreamError)
     expect((err as UpstreamError).status).toBe(404)
+  })
+
+  it('wraps a bare fetch failure in UpstreamNetworkError, preserving the cause', async () => {
+    const networkErr = new TypeError('fetch failed')
+    const { up } = make({
+      '/queue/count': () => {
+        throw networkErr
+      },
+    })
+    const err = await up.getJson('/queue/count').catch((e) => e)
+    expect(err).toBeInstanceOf(UpstreamNetworkError)
+    expect((err as UpstreamNetworkError).cause).toBe(networkErr)
+  })
+
+  it('does not wrap a TimeoutError from fetch', async () => {
+    const timeoutErr = new Error('timed out')
+    timeoutErr.name = 'TimeoutError'
+    const { up } = make({
+      '/queue/count': () => {
+        throw timeoutErr
+      },
+    })
+    const err = await up.getJson('/queue/count').catch((e) => e)
+    expect(err).toBe(timeoutErr)
   })
 
   it('never has more than maxConcurrent requests in flight', async () => {

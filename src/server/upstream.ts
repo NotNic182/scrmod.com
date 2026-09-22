@@ -14,6 +14,16 @@ export class UpstreamError extends Error {
   }
 }
 
+export class UpstreamNetworkError extends Error {
+  constructor(
+    public readonly url: string,
+    public readonly cause: unknown,
+  ) {
+    super(`upstream request failed for ${url}`)
+    this.name = 'UpstreamNetworkError'
+  }
+}
+
 export interface UpstreamOptions {
   baseUrl: string
   userAgent: string
@@ -73,7 +83,12 @@ export class Upstream {
 
   private async doFetch(url: string): Promise<Response> {
     const f = this.opts.fetchImpl ?? fetch
-    return f(url, { headers: await this.headers(), signal: AbortSignal.timeout(this.opts.timeoutMs ?? 8000) })
+    try {
+      return await f(url, { headers: await this.headers(), signal: AbortSignal.timeout(this.opts.timeoutMs ?? 8000) })
+    } catch (err) {
+      if (err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError')) throw err
+      throw new UpstreamNetworkError(url, err)
+    }
   }
 
   private acquire(): Promise<void> {
