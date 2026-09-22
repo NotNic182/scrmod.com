@@ -7,12 +7,15 @@ import { fakeUpstream, json } from './helpers/fakeUpstream'
 const DISCORD_ID = '1299197810780143656'
 const AUTH_ENV = { DISCORD_CLIENT_ID: 'cid', DISCORD_CLIENT_SECRET: 'csecret', SESSION_SECRET: 'ssecret', SCR_MOD_VERSION_OVERRIDE: '1.40.3', SCR_UPSTREAM_BASE: 'https://up.test', PUBLIC_BASE_URL: 'https://hub.test' }
 
-function discordFake() {
+function discordFake(opts: { tokenFails?: boolean } = {}) {
   const calls: Array<{ url: string; body?: string; auth?: string }> = []
   const discordFetch = (async (input: string | URL | Request, init?: RequestInit) => {
     const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url
     calls.push({ url, body: init?.body ? String(init.body) : undefined, auth: new Headers(init?.headers).get('authorization') ?? undefined })
-    if (url === 'https://discord.com/api/oauth2/token') return json({ access_token: 'tok', token_type: 'Bearer' })
+    if (url === 'https://discord.com/api/oauth2/token') {
+      if (opts.tokenFails) return json({ error: 'invalid_grant' }, 400)
+      return json({ access_token: 'tok', token_type: 'Bearer' })
+    }
     if (url === 'https://discord.com/api/users/@me') return json({ id: DISCORD_ID, username: 'ntnic', avatar: null, global_name: 'Nic' })
     return json({ message: 'nope' }, 404)
   }) as typeof fetch
@@ -24,9 +27,9 @@ function cookieOf(res: Response, name: string): string | undefined {
   return raw?.split(';')[0].slice(name.length + 1)
 }
 
-function make(envExtra: Record<string, string> = {}) {
+function make(envExtra: Record<string, string> = {}, discordOpts: { tokenFails?: boolean } = {}) {
   const fake = fakeUpstream({ [`/players/by-discord/${DISCORD_ID}`]: { steam_id: '76561199311926326', display_name: 'NotNic', discord_id: DISCORD_ID, rating: 1101.8, peak_rating: 1337.7, level: 40 } })
-  const discord = discordFake()
+  const discord = discordFake(discordOpts)
   const { app } = createApp({ env: parseEnv({ ...AUTH_ENV, ...envExtra }), fetchImpl: fake.fetchImpl, store: new MemoryCacheStore(), discordFetch: discord.discordFetch })
   return { app, fake, discord }
 }
@@ -53,6 +56,8 @@ describe('Discord sign-in', () => {
     const cb = await app.request(`/auth/discord/callback?code=abc&state=${state}`, { headers: { cookie: `scrhub_oauth_state=${state}` } })
     expect(cb.status).toBe(302)
     expect(cb.headers.get('location')).toBe('/?auth=ok')
+    const clearedState = cb.headers.getSetCookie().find((c) => c.startsWith('scrhub_oauth_state='))
+    expect(clearedState).toContain('Max-Age=0')
     const session = cookieOf(cb, 'scrhub_session')
     expect(session).toBeTruthy()
     expect(discord.calls[0].body).toContain('client_secret=csecret')
@@ -105,7 +110,19 @@ describe('Discord sign-in', () => {
 
   it('honours BASE_PATH in the redirect uri and post-login redirect', async () => {
     const { app } = make({ BASE_PATH: '/hub' })
-    const res = await app.request('/hub/auth/discord/login')
-    expect(new URL(res.headers.get('location')!).searchParams.get('redirect_uri')).toBe('https://hub.test/hub/auth/discord/callback')
+    const login = await app.request('/hub/auth/discord/login')
+    expect(new URL(login.headers.get('location')!).searchParams.get('redirect_uri')).toBe('https://hub.test/hub/auth/discord/callback')
+    const state = cookieOf(login, 'scrhub_oauth_state')!
+    const cb = await app.request(`/hub/auth/discord/callback?code=abc&state=${state}`, { headers: { cookie: `scrhub_oauth_state=${state}` } })
+    expect(cb.headers.get('location')).toBe('/hub/?auth=ok')
+  })
+
+  it('redirects to failed when the token exchange fails', async () => {
+    const { app } = make({}, { tokenFails: true })
+    const login = await app.request('/auth/discord/login')
+    const state = cookieOf(login, 'scrhub_oauth_state')!
+    const cb = await app.request(`/auth/discord/callback?code=abc&state=${state}`, { headers: { cookie: `scrhub_oauth_state=${state}` } })
+    expect(cb.headers.get('location')).toBe('/?auth=failed')
+    expect(cookieOf(cb, 'scrhub_session')).toBeUndefined()
   })
 })

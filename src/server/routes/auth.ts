@@ -13,7 +13,9 @@ const SESSION_DAYS = 30
 const DISCORD_ID_RE = /^\d{1,32}$/
 
 function isHttps(c: Context): boolean {
-  return c.req.url.startsWith('https://') || c.req.header('x-forwarded-proto') === 'https'
+  if (c.req.url.startsWith('https://')) return true
+  const proto = c.req.header('x-forwarded-proto')?.split(',')[0]?.trim()
+  return proto === 'https'
 }
 
 export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: typeof fetch }) {
@@ -29,7 +31,10 @@ export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: ty
   }
 
   const f = d.discordFetch ?? fetch
-  const redirectUri = (c: Context) => `${d.env.publicBaseUrl ?? new URL(c.req.url).origin}${prefix}/auth/discord/callback`
+  const redirectUri = (c: Context) => {
+    const origin = d.env.publicBaseUrl ?? `${isHttps(c) ? 'https' : 'http'}://${c.req.header('host') ?? new URL(c.req.url).host}`
+    return `${origin}${prefix}/auth/discord/callback`
+  }
 
   app.get('/auth/discord/login', (c) => {
     const state = randomState()
@@ -60,11 +65,15 @@ export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: ty
           code,
           redirect_uri: redirectUri(c),
         }).toString(),
+        signal: AbortSignal.timeout(8000),
       })
       if (!tokenRes.ok) return c.redirect(`${home}?auth=failed`)
       const { access_token } = (await tokenRes.json()) as { access_token?: string }
       if (!access_token) return c.redirect(`${home}?auth=failed`)
-      const meRes = await f('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${access_token}` } })
+      const meRes = await f('https://discord.com/api/users/@me', {
+        headers: { Authorization: `Bearer ${access_token}` },
+        signal: AbortSignal.timeout(8000),
+      })
       if (!meRes.ok) return c.redirect(`${home}?auth=failed`)
       const u = (await meRes.json()) as { id: string; username: string; avatar?: string | null; global_name?: string | null }
       if (!DISCORD_ID_RE.test(u.id)) return c.redirect(`${home}?auth=failed`)
@@ -75,6 +84,7 @@ export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: ty
           avatar: u.avatar ?? null,
           global_name: u.global_name ?? null,
           exp: Math.floor(Date.now() / 1000) + SESSION_DAYS * 86400,
+          typ: 'session',
         },
         cfg.sessionSecret,
       )

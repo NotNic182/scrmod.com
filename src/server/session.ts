@@ -7,6 +7,7 @@ export interface SessionPayload {
   avatar: string | null
   global_name: string | null
   exp: number // epoch seconds
+  typ: 'session'
 }
 
 const enc = new TextEncoder()
@@ -52,6 +53,10 @@ export async function verifySession(token: string | undefined, secret: string, n
   try {
     const p = JSON.parse(dec.decode(fromB64url(body))) as SessionPayload
     if (typeof p.id !== 'string' || typeof p.exp !== 'number') return null
+    if (p.typ !== 'session') return null
+    if (typeof p.username !== 'string') return null
+    if (p.avatar !== null && typeof p.avatar !== 'string') return null
+    if (p.global_name !== null && typeof p.global_name !== 'string') return null
     if (p.exp * 1000 < nowMs) return null
     return p
   } catch {

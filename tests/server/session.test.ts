@@ -1,7 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import { signSession, verifySession, randomState } from '../../src/server/session'
+import { signSession, verifySession, randomState, type SessionPayload } from '../../src/server/session'
 
-const payload = { id: '1299197810780143656', username: 'ntnic', avatar: null, global_name: 'Nic', exp: Math.floor(Date.now() / 1000) + 3600 }
+const payload = {
+  id: '1299197810780143656',
+  username: 'ntnic',
+  avatar: null,
+  global_name: 'Nic',
+  exp: Math.floor(Date.now() / 1000) + 3600,
+  typ: 'session' as const,
+}
 
 describe('session tokens', () => {
   it('round-trips a signed payload', async () => {
@@ -20,6 +27,12 @@ describe('session tokens', () => {
     expect(await verifySession(expired, 'secret-1')).toBeNull()
     expect(await verifySession(undefined, 'secret-1')).toBeNull()
     expect(await verifySession('garbage', 'secret-1')).toBeNull()
+  })
+
+  it('rejects a token with a different typ', async () => {
+    const other = { ...payload, typ: 'other' } as unknown as SessionPayload
+    const token = await signSession(other, 'secret-1')
+    expect(await verifySession(token, 'secret-1')).toBeNull()
   })
 
   it('makes unpredictable url-safe states', () => {
