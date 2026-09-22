@@ -32,6 +32,14 @@ describe('static serving', () => {
     expect(js.headers.get('cache-control')).toContain('immutable')
   })
 
+  it('falls back to the built-in placeholder when the web root has not been built', async () => {
+    const { app } = makeApp({})
+    registerStatic(app, { root: path.join(root, 'not-built-yet'), basePath: '/' })
+    const home = await app.request('/')
+    expect(home.status).toBe(200)
+    expect(await home.text()).toContain('SCR Hub server is running')
+  })
+
   it('keeps unknown API and auth paths as JSON 404s', async () => {
     const { app } = makeApp({})
     registerStatic(app, { root, basePath: '/' })
