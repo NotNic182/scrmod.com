@@ -8,6 +8,7 @@ describe('fixtureNameFor', () => {
   it('normalises ids and joins segments', () => {
     expect(fixtureNameFor('/api/v1/leaderboard')).toBe('leaderboard')
     expect(fixtureNameFor('/api/v1/players/76561199311926326/matches')).toBe('players__ID__matches')
+    expect(fixtureNameFor('/players/76561199311926326/matches')).toBe('players__ID__matches')
     expect(fixtureNameFor('/api/v1/players/76561199311926326/vs/76561198040410653/top-cards')).toBe(
       'players__ID__vs__ID__top-cards',
     )

@@ -1,15 +1,8 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
+import { fixtureNameFor } from '../shared/fixture-name.mjs'
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
-export function fixtureNameFor(urlPath: string): string {
-  const p = urlPath.replace(/^\/api\/v1\//, '').replace(/^\/+|\/+$/g, '')
-  return p
-    .split('/')
-    .map((seg) => (/^\d+$/.test(seg) ? 'ID' : UUID_RE.test(seg) ? 'UUID' : seg))
-    .join('__')
-}
+export { fixtureNameFor }
 
 /**
  * A fetch() that answers from `<dir>/<fixtureName>.json` (spec 7.4). Node only.

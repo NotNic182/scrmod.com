@@ -3,6 +3,7 @@
 //        SCR_UPSTREAM_BASE=... SCR_MOD_VERSION=... npm run capture
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { fixtureNameFor } from '../src/shared/fixture-name.mjs'
 
 const BASE = (process.env.SCR_UPSTREAM_BASE || 'https://competitive-rounds.duckdns.org:8444').replace(/\/+$/, '')
 const UA = 'scr-hub-capture/0.1 (+https://github.com/NotNic/scr-hub)'
@@ -16,10 +17,6 @@ async function modVersion() {
   const j = await r.json()
   return j.version
 }
-
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-const nameFor = (p) =>
-  p.replace(/^\/+|\/+$/g, '').split('/').map((s) => (/^\d+$/.test(s) ? 'ID' : UUID_RE.test(s) ? 'UUID' : s)).join('__')
 
 const DROP_KEYS = /^(p1_|p2_)?discord_id$|^discord_username$/
 function scrub(v) {
@@ -75,7 +72,7 @@ async function main() {
   let ok = 0
   for (const p of paths) {
     const { status, body } = await get(version, p)
-    const file = path.join(OUT, `${nameFor(p.split('?')[0])}.json`)
+    const file = path.join(OUT, `${fixtureNameFor(p.split('?')[0])}.json`)
     if (status !== 200) {
       console.log(`skip ${p} -> ${status}`)
       continue
