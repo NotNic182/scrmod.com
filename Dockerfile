@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-# Server only for now; the web plan adds a `build` script that runs both.
+# The `build` script runs both the web (Vite) and server (esbuild) builds.
 RUN npm run build
 
 FROM node:26-alpine

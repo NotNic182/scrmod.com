@@ -12,15 +12,20 @@ export function relTime(iso: string | null | undefined, now = Date.now()): strin
   return `${Math.floor(h / 24)}d ago`
 }
 
+/** Drops a leading minus from a toFixed() string that rounded to zero (toFixed keeps the sign of values in (-1, 0)). */
+function unsignZero(fixed: string): string {
+  return Number(fixed) === 0 ? fixed.replace(/^-/, '') : fixed
+}
+
 export function pct(fraction: number | null | undefined, digits = 0): string {
   if (fraction === null || fraction === undefined || !Number.isFinite(fraction)) return '–'
-  return `${(fraction * 100).toFixed(digits)}%`
+  return `${unsignZero((fraction * 100).toFixed(digits))}%`
 }
 
 export function signed(n: number | null | undefined, digits = 0): string {
   if (n === null || n === undefined || !Number.isFinite(n)) return '–'
-  const fixed = n.toFixed(digits)
-  return n > 0 ? `+${fixed}` : fixed
+  const fixed = unsignZero(n.toFixed(digits))
+  return n > 0 && Number(fixed) !== 0 ? `+${fixed}` : fixed
 }
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

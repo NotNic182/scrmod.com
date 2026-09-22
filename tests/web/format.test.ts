@@ -21,6 +21,10 @@ describe('format', () => {
     expect(signed(-110.2)).toBe('-110')
     expect(signed(0)).toBe('0')
     expect(signed(null)).toBe('–')
+    expect(signed(-0.4)).toBe('0')
+    expect(signed(-0.04, 1)).toBe('0.0')
+    expect(signed(0.04, 1)).toBe('0.0')
+    expect(pct(-0.0001)).toBe('0%')
   })
   it('fmtDate, clock, num, goldText', () => {
     expect(fmtDate('2026-09-21T07:17:22Z', NOW)).toBe('Sep 21')
