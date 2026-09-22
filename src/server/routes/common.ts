@@ -54,8 +54,13 @@ export function errorResponse(c: Context, err: unknown) {
       c.header('Retry-After', '10')
       return c.json({ error: 'upstream_rate_limited', retry_after: 10 }, 503)
     }
+    if (err.body === 'invalid_json') {
+      return c.json({ error: 'upstream_bad_response', upstream_status: err.status }, 502)
+    }
     if (err.status === 400 || err.status === 422) return c.json({ error: 'bad_request', upstream_status: err.status }, 400)
-    return c.json({ error: 'upstream_error', upstream_status: err.status }, 502)
+    // 5xx and anything else unmapped: spec 6.2 says 503 with a retry hint.
+    c.header('Retry-After', '10')
+    return c.json({ error: 'upstream_error', upstream_status: err.status, retry_after: 10 }, 503)
   }
   if (err instanceof NotAllowedError) {
     console.error('[hub] route requested a non-allowlisted path', err.message)

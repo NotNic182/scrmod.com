@@ -58,6 +58,36 @@ describe('Upstream', () => {
     expect(lb[1].headers['x-mod-version']).toBe('1.41.0')
   })
 
+  it('reports the version gate when the refresh itself fails, not a bare error', async () => {
+    let versionCalls = 0
+    const { up } = make({
+      // The first call primes the header; the refresh triggered by the 426 finds it down.
+      '/mod-version': () => (versionCalls++ === 0 ? json({ version: '1.40.3' }) : json({ error: 'down' }, 500)),
+      '/leaderboard': () => json({ error: 'outdated', required: '1.41.0' }, 426),
+    })
+    const err = await up.getJson('/leaderboard').catch((e) => e)
+    expect(err).toBeInstanceOf(UpstreamError)
+    expect((err as UpstreamError).status).toBe(426)
+    expect((err as UpstreamError).path).toBe('/leaderboard')
+  })
+
+  it('records the last 426 and a count for _status', async () => {
+    const { up } = make({ '/leaderboard': () => json({ error: 'outdated' }, 426) }, { now: () => 1_700_000_000_000 })
+    expect(up.stats()).toEqual({ last_426_at: null, count_426: 0 })
+    await up.getJson('/leaderboard').catch(() => undefined)
+    expect(up.stats()).toEqual({ last_426_at: '2023-11-14T22:13:20.000Z', count_426: 1 })
+  })
+
+  it('wraps a 200 with a non-JSON body as an upstream error, not a SyntaxError', async () => {
+    const { up } = make({
+      '/queue/count': () => new Response('<html>gateway</html>', { status: 200, headers: { 'content-type': 'text/html' } }),
+    })
+    const err = await up.getJson('/queue/count').catch((e) => e)
+    expect(err).toBeInstanceOf(UpstreamError)
+    expect((err as UpstreamError).status).toBe(502)
+    expect((err as UpstreamError).body).toBe('invalid_json')
+  })
+
   it('does not retry a 426 in hosted mode', async () => {
     const { up, fake } = make({ '/leaderboard': () => json({ error: 'outdated' }, 426) }, { internalKey: 'k' })
     const err = await up.getJson('/leaderboard').catch((e) => e)

@@ -39,6 +39,7 @@ export function createApp(deps: AppDeps) {
     internalKey: env.internalKey,
     version,
     fetchImpl: deps.fetchImpl,
+    now,
   })
   const cache = new Cache(deps.store ?? new MemoryCacheStore(), now)
   const routeDeps: RouteDeps = { env, upstream, cache, version, now }

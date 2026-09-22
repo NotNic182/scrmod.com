@@ -32,14 +32,41 @@ export interface UpstreamOptions {
   fetchImpl?: typeof fetch
   timeoutMs?: number
   maxConcurrent?: number
+  now?: () => number
+}
+
+/** What `_status` reports about the version gate (spec 11). */
+export interface UpstreamStats {
+  last_426_at: string | null
+  count_426: number
 }
 
 /** Allowlisted, header-stamped, concurrency-capped JSON client for Sid's API (spec 6.2). */
 export class Upstream {
   private active = 0
   private readonly waiters: Array<() => void> = []
+  private last426: number | null = null
+  private count426 = 0
 
   constructor(private readonly opts: UpstreamOptions) {}
+
+  stats(): UpstreamStats {
+    return {
+      last_426_at: this.last426 === null ? null : new Date(this.last426).toISOString(),
+      count_426: this.count426,
+    }
+  }
+
+  private now(): number {
+    return (this.opts.now ?? Date.now)()
+  }
+
+  /** A version gate we could not get past: recorded so `_status` can surface it. */
+  private gate426(path: string, body?: unknown): UpstreamError {
+    this.count426++
+    this.last426 = this.now()
+    return new UpstreamError(426, path, body)
+  }
 
   buildUrl(path: string, query?: Query): string {
     assertAllowed(path)
@@ -56,7 +83,12 @@ export class Upstream {
     try {
       let res = await this.doFetch(url)
       if (res.status === 426 && !this.opts.internalKey) {
-        await this.opts.version.refresh()
+        try {
+          await this.opts.version.refresh()
+        } catch {
+          // /mod-version is down too: this is still the version gate, not a hub bug.
+          throw this.gate426(path)
+        }
         res = await this.doFetch(url)
       }
       if (!res.ok) {
@@ -66,9 +98,15 @@ export class Upstream {
         } catch {
           body = undefined
         }
+        if (res.status === 426) throw this.gate426(path, body)
         throw new UpstreamError(res.status, path, body)
       }
-      return (await res.json()) as T
+      try {
+        return (await res.json()) as T
+      } catch {
+        // A 200 that is not JSON (a proxy error page, say) is an upstream fault, not a crash.
+        throw new UpstreamError(502, path, 'invalid_json')
+      }
     } finally {
       this.release()
     }
