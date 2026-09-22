@@ -19,6 +19,7 @@ export interface Env {
   userAgent: string
   webRoot: string
   port: number
+  rateLimit: boolean
 }
 
 export const DEFAULT_UPSTREAM = 'https://competitive-rounds.duckdns.org:8444'
@@ -92,6 +93,7 @@ export function parseEnv(raw: Record<string, string | undefined>): Env {
     userAgent: publicBaseUrl ? `scr-hub/${appVersion} (+${publicBaseUrl})` : `scr-hub/${appVersion}`,
     webRoot: raw.SCR_WEB_ROOT || 'dist/web',
     port: parsePort(raw.PORT),
+    rateLimit: raw.SCR_RATE_LIMIT !== 'off',
   }
 }
 

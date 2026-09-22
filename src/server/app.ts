@@ -11,6 +11,7 @@ import { registerPlayerRoutes } from './routes/players'
 import { registerStatusRoutes } from './routes/status'
 import { registerTournamentRoutes } from './routes/tournaments'
 import type { RouteDeps } from './routes/common'
+import { rateLimit } from './ratelimit'
 import { Upstream } from './upstream'
 import { ModVersionSource } from './version'
 
@@ -53,6 +54,8 @@ export function createApp(deps: AppDeps) {
     console.error('[hub] unhandled', err)
     return c.json({ error: 'internal' }, 500)
   })
+
+  if (env.rateLimit) app.use('*', rateLimit({ now, prefix: env.basePath }))
 
   registerStatusRoutes(app, routeDeps)
   registerMetaRoutes(app, routeDeps)
