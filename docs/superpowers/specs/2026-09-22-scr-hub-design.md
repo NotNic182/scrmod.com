@@ -53,9 +53,9 @@ Verified on 2026-09-22 against `https://competitive-rounds.duckdns.org:8444` and
       |  HTTPS, same origin
       v
  +--------------------------------+
- |  SCR Hub server (Hono, TS)     |   one process, two runtimes:
- |  - serves the static SPA       |   Cloudflare Worker (community)
- |  - /api/* named routes         |   Node in Docker (hosted, Sid)
+ |  SCR Hub server (Hono, TS)     |   one Node process in a container:
+ |  - serves the static SPA       |   Railway (community, NotNic's domain)
+ |  - /api/* named routes         |   Sid's compose stack (hosted)
  |  - cache + request coalescing  |
  |  - privacy masking             |
  |  - Discord OAuth (optional)    |
@@ -73,8 +73,8 @@ scr-hub/
   src/web/           Vite + React SPA
   src/shared/        upstream response types, rank-tier helpers, masking rules
   fixtures/          captured API responses for demo and test mode
-  docker/Dockerfile
-  wrangler.toml
+  Dockerfile
+  railway.json
   docs/
 ```
 
@@ -112,7 +112,7 @@ The server holds an explicit allowlist of upstream paths. Anything not on it can
 
 ### 6.3 Cache
 
-One `CacheStore` interface with two implementations: an in-memory LRU for Node, and the Cache API plus in-isolate memory for Workers. Semantics:
+One `CacheStore` interface with an in-memory LRU implementation. The service runs as a single long-lived process, so one cache is shared by every visitor. Semantics:
 
 - Fresh within TTL: serve from cache.
 - Stale within the stale window: serve immediately and refresh in the background (stale-while-revalidate).
@@ -189,9 +189,9 @@ This is the identity foundation Phase 2 builds on: a web gacha pull would send t
 
 ## 9. Deployment
 
-### 9.1 Community mode: Cloudflare Workers with static assets
+### 9.1 Community mode: a container on Railway
 
-`wrangler deploy` publishes the server as a Worker and the SPA build as static assets on the same hostname. Static asset requests do not count as Worker invocations. The free tier allows 100,000 Worker requests per day. Home is one aggregate request every 15 s per visible tab, so about seventeen tabs open around the clock would exhaust the free tier. Realistic community use is well under that. If it is ever exceeded, Workers Paid is 5 dollars per month, or the same container runs on any small host.
+The `Dockerfile` from 9.2 is deployed as one Railway service, health-checked on `/api/_status`, with a single replica so the in-memory cache is shared by every visitor. NotNic's own domain points at it through a CNAME, and `PUBLIC_BASE_URL` carries that domain into the OAuth redirects and the User-Agent. Railway's Hobby plan is a small monthly fee with no per-request limit, so the polling budget is not a constraint. Vercel would also run the server, but each serverless instance keeps its own cache and starts empty, which multiplies the load on Sid's API; it would need a shared cache store first, so Railway is the primary target.
 
 ### 9.2 Hosted mode: Sid's server
 
@@ -239,10 +239,10 @@ plus one nginx `location /hub/` block proxying to the container. Same origin, so
 
 ## 13. Risks and their resolution
 
-1. **Cloudflare Workers fetch to port 8444.** It is unverified whether a Worker can reach a non-standard port on an external origin. Resolution: the first implementation task deploys a five-line Worker that fetches `/api/v1/health`. If it fails, community mode ships as the Docker image on a small host instead, and nothing else changes.
+1. **Container egress to port 8444.** Railway containers have unrestricted outbound access, and the first deploy verifies it with `/api/_status?probe=1`. If a host ever blocks it, the same container runs anywhere else, including Sid's server.
 2. **Sid changes response shapes.** The live contract check catches it. Tolerant parsing means a changed field blanks one widget rather than breaking a page.
 3. **Sid raises the minimum mod version.** Handled by version discovery. If a future gate requires something a non-mod client cannot send, hosted mode with the key is unaffected and community mode shows the 426 banner.
-4. **Free-tier request budget.** Mitigated by aggregation, the hidden-tab pause, and a 15 s minimum interval. The fallback is the paid plan or a container.
+4. **Hosting cost and limits.** Railway Hobby is a small monthly fee with no per-request limit, and a single replica keeps the cache effective. Aggregation, the hidden-tab pause and the 15 s minimum interval keep the load small regardless of host.
 5. **Sid objects to a third-party client.** The design keeps the ask small and the traffic identifiable, and the proposal document asks him directly before launch.
 
 ## 14. Out of scope, handled by a follow-up spec
@@ -252,6 +252,6 @@ plus one nginx `location /hub/` block proxying to the container. Same origin, so
 ## 15. Deliverables
 
 1. The `scr-hub` repository: server, SPA, shared types, fixtures, tests, Dockerfile, wrangler config, and a README with a one-command local run in fixture mode.
-2. A deployed community instance on NotNic's Cloudflare account, or a container host per risk 1.
+2. A deployed community instance on Railway under NotNic's own domain.
 3. `docs/for-sid.md`: a one-page proposal covering what the site is, the compose snippet, the three asks (host it or allow the origin, a Discord-identity pull endpoint, a key), and the smaller `/pull` slash-command alternative. Published as a shareable page.
 4. This spec, plus the follow-up gacha spec when its inputs exist.

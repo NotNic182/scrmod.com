@@ -4481,16 +4481,16 @@ Replace the "Deploy" section with:
 ```markdown
 ## Deploy
 
-### Community mode (Cloudflare Workers, free)
+### Community mode (Railway)
 
 ```bash
-npx wrangler login                       # once, opens a browser
-npm run build
-npm run deploy:cf
-npx wrangler secret put DISCORD_CLIENT_ID    # optional, enables sign-in (also CLIENT_SECRET and SESSION_SECRET)
+npx @railway/cli login                   # once, opens a browser
+npx @railway/cli up --detach             # builds the Dockerfile in Railway's cloud and deploys
+npx @railway/cli variables --set "PUBLIC_BASE_URL=https://hub.<your-domain>"
+npx @railway/cli variables --set "DISCORD_CLIENT_ID=..." --set "DISCORD_CLIENT_SECRET=..." --set "SESSION_SECRET=..."   # optional, enables sign-in
 ```
 
-Set `PUBLIC_BASE_URL` in `wrangler.toml` `[vars]` to the deployed URL and redeploy so OAuth redirects and the User-Agent carry it. Add `https://<site>/auth/discord/callback` as a redirect URL in the Discord application.
+Custom domain: Railway dashboard → service → Settings → Networking → Custom Domain, then add the CNAME it shows at your DNS provider. `PUBLIC_BASE_URL` must be the final domain so OAuth redirects and the User-Agent carry it. Add `https://hub.<your-domain>/auth/discord/callback` as a redirect URL in the Discord application.
 
 ### Hosted mode (Docker, next to Sid's API)
 
@@ -4536,7 +4536,7 @@ Open `http://localhost:8080`, phone-width and desktop. Check: the online list ma
 
 - [ ] **Step 3: Deploy the community instance**
 
-Follow README "Community mode". Record the deployed URL in `docs/for-sid.md` (`<site link>`) and in `wrangler.toml` `PUBLIC_BASE_URL`, redeploy, and confirm `https://<site>/api/_status?probe=1` reports `reachable: true` (spec risk 1). If not, ship the Docker image on a container host and record that outcome in the server plan under Task 17.
+Follow README "Community mode": `npx @railway/cli up --detach` redeploys the container with the built SPA, and the custom domain from the server plan's Task 18 serves it. Record the deployed URL in `docs/for-sid.md` (`<site link>`), make sure `PUBLIC_BASE_URL` is set to it, and confirm `https://hub.<your-domain>/api/_status?probe=1` reports `reachable: true` and `/` renders the Home page.
 
 - [ ] **Step 4: Tag**
 

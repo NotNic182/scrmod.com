@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the SCR Hub server: a Hono/TypeScript service that proxies an allowlisted set of Sid's Competitive Rounds read endpoints with caching, version discovery, privacy masking, fixture mode, Discord sign-in, and static SPA serving, deployable as a Node container or a Cloudflare Worker.
+**Goal:** Build the SCR Hub server: a Hono/TypeScript service that proxies an allowlisted set of Sid's Competitive Rounds read endpoints with caching, version discovery, privacy masking, fixture mode, Discord sign-in, and static SPA serving, deployable as one Node container on Railway (community mode) or on Sid's server (hosted mode).
 
-**Architecture:** One `createApp(deps)` factory builds a runtime-agnostic Hono app from an `Env`, a `fetch` implementation and a `CacheStore`. Named `/api/*` routes call an `Upstream` client that enforces the allowlist and headers, through a `Cache` that implements fresh / stale-while-revalidate / single-flight / stale-on-error. Two thin entries (`src/server/node.ts`, `src/server/worker.ts`) wire the runtime specifics. The frontend is a separate plan (`2026-09-22-scr-hub-web.md`) and only depends on the `/api/*` contract defined here.
+**Architecture:** One `createApp(deps)` factory builds a runtime-agnostic Hono app from an `Env`, a `fetch` implementation and a `CacheStore`. Named `/api/*` routes call an `Upstream` client that enforces the allowlist and headers, through a `Cache` that implements fresh / stale-while-revalidate / single-flight / stale-on-error. A thin entry (`src/server/node.ts`) wires the Node runtime; the same container image serves community mode on Railway and hosted mode on Sid's server. The frontend is a separate plan (`2026-09-22-scr-hub-web.md`) and only depends on the `/api/*` contract defined here.
 
-**Tech Stack:** TypeScript 5, Hono 4, @hono/node-server, esbuild (server bundle), Vitest 3, wrangler 4 (Cloudflare Workers with static assets), Node 26, npm (no pnpm on this machine).
+**Tech Stack:** TypeScript 5, Hono 4, @hono/node-server, esbuild (server bundle), Vitest 3, Docker, Railway (container hosting for community mode), Node 26, npm (no pnpm on this machine).
 
 **Spec:** `docs/superpowers/specs/2026-09-22-scr-hub-design.md` — sections 4, 5, 6, 8, 9, 10, 11, 12 apply to this plan.
 
@@ -22,7 +22,7 @@
 - Every hub JSON response is `{ data, fetched_at: <ISO string>, stale: <boolean> }`; `/api/home` and `/api/meta` add `errors: string[]` (spec 6.1, 6.3).
 - Secrets (`SCR_INTERNAL_KEY`, `DISCORD_CLIENT_SECRET`, `SESSION_SECRET`) never appear in any response, including `/api/_status`.
 - Steam64 ids are exactly 17 digits; tournament ids are UUIDs; validate before building an upstream path.
-- Node 26, npm, ESM everywhere (`"type": "module"`), strict TypeScript. Relative imports have no file extensions (bundler resolution); esbuild and wrangler bundle the server.
+- Node 26, npm, ESM everywhere (`"type": "module"`), strict TypeScript. Relative imports have no file extensions (bundler resolution); esbuild bundles the server.
 - Commit after every task with the message shown in that task. No attribution lines in commit messages.
 - The live API is only touched by the capture script (Task 8), the contract check (Task 19) and the manual smoke steps; every automated test uses a fake `fetch`.
 
@@ -68,7 +68,7 @@ Replace the `scripts` block so the file contains exactly these scripts (keep the
 }
 ```
 
-(`build:web`, `build`, `deploy:cf` are added by the web plan and Task 17.)
+(`build:web` and `build` are added by the web plan.)
 
 - [ ] **Step 3: Write `tsconfig.json`**
 
@@ -2758,7 +2758,7 @@ export function errorResponse(c: Context, err: unknown) {
   return c.json({ error: 'internal' }, 500)
 }
 
-/** On Cloudflare Workers, background refreshes must be attached to the execution context. */
+/** Serverless hosts expose an execution context that background work must attach to; on Node this is undefined. */
 export function backgroundFor(c: Context): Background | undefined {
   try {
     const ctx = c.executionCtx
@@ -4127,8 +4127,8 @@ Run: `npx vitest run tests/server/session.test.ts tests/server/auth.test.ts` —
 - [ ] **Step 4: Write `src/server/session.ts`**
 
 ```ts
-// Signed, stateless session cookie for Discord identity (spec 8). Web Crypto only,
-// so it runs identically on Node and Cloudflare Workers.
+// Signed, stateless session cookie for Discord identity (spec 8). Web Crypto only
+// (Node 26 provides it natively), so no node-only dependency is needed.
 
 export interface SessionPayload {
   id: string
@@ -4446,7 +4446,7 @@ npm run contract  # hits the live API once per endpoint and checks the shapes (m
 
 ## Deploy
 
-- Cloudflare Workers (community): see `wrangler.toml`; `npx wrangler login` once, then `npm run build && npm run deploy:cf`.
+- Railway (community): config in `railway.json`; `npx @railway/cli login` once, then `npx @railway/cli up --detach`.
 - Docker (hosted): `docker build -t scr-hub .` and the compose snippet in `docs/for-sid.md`.
 ```
 
@@ -4459,222 +4459,7 @@ git commit -m "Add Node entry with fixture mode and document running the server"
 
 ---
 
-### Task 17: Cloudflare Worker entry, Cache API store and the port-8444 check
-
-**Files:**
-- Create: `src/server/cf-cache.ts`, `src/server/worker.ts`, `wrangler.toml`
-- Modify: `package.json` (add `deploy:cf`, install wrangler)
-- Test: `tests/server/cf-cache.test.ts`
-
-**Interfaces:**
-- Produces: `class CfCacheStore implements CacheStore` (memory first, Cache API second; constructor `(memory: MemoryCacheStore, cachesApi?: CachesLike)`), the Worker default export, and `npm run deploy:cf`.
-
-- [ ] **Step 1: Install wrangler and add the script**
-
-```bash
-npm install -D wrangler
-npm pkg set scripts.deploy:cf="wrangler deploy"
-```
-
-- [ ] **Step 2: Write the failing test**
-
-`tests/server/cf-cache.test.ts`:
-
-```ts
-import { describe, it, expect } from 'vitest'
-import { CfCacheStore } from '../../src/server/cf-cache'
-import { MemoryCacheStore } from '../../src/server/cache'
-
-function fakeCaches() {
-  const store = new Map<string, Response>()
-  return {
-    calls: { match: 0, put: 0 },
-    default: {
-      async match(req: Request) {
-        this_calls.match++
-        const r = store.get(req.url)
-        return r ? r.clone() : undefined
-      },
-      async put(req: Request, res: Response) {
-        this_calls.put++
-        store.set(req.url, res)
-      },
-    },
-  }
-}
-const this_calls = { match: 0, put: 0 }
-
-describe('CfCacheStore', () => {
-  it('writes to memory and the Cache API, reads memory first, then falls back to the Cache API', async () => {
-    const caches = fakeCaches()
-    const memory = new MemoryCacheStore()
-    const store = new CfCacheStore(memory, caches)
-    await store.set('k', { value: { n: 1 }, fetched_at: 123 })
-    expect(this_calls.put).toBe(1)
-    expect((await store.get('k'))?.fetched_at).toBe(123)
-    expect(this_calls.match).toBe(0)
-
-    const cold = new CfCacheStore(new MemoryCacheStore(), caches)
-    const e = await cold.get<{ n: number }>('k')
-    expect(e).toEqual({ value: { n: 1 }, fetched_at: 123 })
-    expect(this_calls.match).toBe(1)
-    expect(await cold.get('missing')).toBeUndefined()
-  })
-})
-```
-
-- [ ] **Step 3: Run the test to verify it fails**
-
-Run: `npx vitest run tests/server/cf-cache.test.ts` — expected FAIL (module not found).
-
-- [ ] **Step 4: Write `src/server/cf-cache.ts`**
-
-```ts
-import type { CacheEntry, CacheStore, MemoryCacheStore } from './cache'
-
-export interface CachesLike {
-  default: {
-    match(req: Request): Promise<Response | undefined>
-    put(req: Request, res: Response): Promise<void>
-  }
-}
-
-/**
- * Workers store: in-isolate memory in front of the per-colo Cache API, so a cold
- * isolate still finds recent data (spec 6.3).
- */
-export class CfCacheStore implements CacheStore {
-  constructor(
-    private readonly memory: MemoryCacheStore,
-    private readonly cachesApi: CachesLike = (globalThis as unknown as { caches: CachesLike }).caches,
-  ) {}
-
-  private req(key: string): Request {
-    return new Request(`https://scr-hub.cache/${encodeURIComponent(key)}`)
-  }
-
-  async get<T>(key: string): Promise<CacheEntry<T> | undefined> {
-    const m = await this.memory.get<T>(key)
-    if (m) return m
-    if (!this.cachesApi) return undefined
-    const res = await this.cachesApi.default.match(this.req(key))
-    if (!res) return undefined
-    const fetched_at = Number(res.headers.get('x-fetched-at') || 0)
-    const value = (await res.json()) as T
-    const entry: CacheEntry<T> = { value, fetched_at }
-    await this.memory.set(key, entry)
-    return entry
-  }
-
-  async set<T>(key: string, entry: CacheEntry<T>): Promise<void> {
-    await this.memory.set(key, entry)
-    if (!this.cachesApi) return
-    await this.cachesApi.default.put(
-      this.req(key),
-      new Response(JSON.stringify(entry.value), {
-        headers: {
-          'content-type': 'application/json',
-          'x-fetched-at': String(entry.fetched_at),
-          'cache-control': 'public, max-age=3600',
-        },
-      }),
-    )
-  }
-
-  size(): number {
-    return this.memory.size()
-  }
-}
-```
-
-- [ ] **Step 5: Write `src/server/worker.ts`**
-
-```ts
-import { createApp } from './app'
-import { MemoryCacheStore } from './cache'
-import { CfCacheStore } from './cf-cache'
-import { parseEnv } from './env'
-
-type Bindings = Record<string, unknown>
-
-interface ExecutionContextLike {
-  waitUntil(p: Promise<unknown>): void
-}
-
-let built: { key: string; app: ReturnType<typeof createApp> } | null = null
-
-function getApp(bindings: Bindings) {
-  const raw: Record<string, string | undefined> = {}
-  for (const [k, v] of Object.entries(bindings)) if (typeof v === 'string') raw[k] = v
-  const key = JSON.stringify(raw)
-  if (!built || built.key !== key) {
-    built = { key, app: createApp({ env: parseEnv(raw), store: new CfCacheStore(new MemoryCacheStore(300)) }) }
-  }
-  return built.app
-}
-
-export default {
-  async fetch(request: Request, bindings: Bindings, ctx: ExecutionContextLike): Promise<Response> {
-    const { app } = getApp(bindings)
-    return app.fetch(request, bindings, ctx)
-  },
-}
-```
-
-Static assets are served by the platform via the `[assets]` block below; the Worker only runs for `/api/*` and `/auth/*`. `backgroundFor(c)` in `routes/common.ts` picks up `ctx.waitUntil` through Hono's `c.executionCtx`, so background refreshes survive the response.
-
-- [ ] **Step 6: Write `wrangler.toml`**
-
-```toml
-name = "scr-hub"
-main = "src/server/worker.ts"
-compatibility_date = "2026-09-01"
-
-[assets]
-directory = "./dist/web"
-binding = "ASSETS"
-not_found_handling = "single-page-application"
-run_worker_first = ["/api/*", "/auth/*"]
-
-[vars]
-SCR_UPSTREAM_BASE = "https://competitive-rounds.duckdns.org:8444"
-SCR_APP_VERSION = "0.1.0"
-# PUBLIC_BASE_URL = "https://scr-hub.example.workers.dev"   # set after the first deploy
-# Secrets (never in this file): npx wrangler secret put DISCORD_CLIENT_ID / DISCORD_CLIENT_SECRET / SESSION_SECRET
-```
-
-- [ ] **Step 7: Run the test, typecheck and a dry-run build**
-
-Run: `npx vitest run tests/server/cf-cache.test.ts` — expected PASS. `npm run typecheck` — clean.
-
-```bash
-mkdir -p dist/web && [ -f dist/web/index.html ] || echo '<!doctype html><title>SCR Hub</title><p>placeholder</p>' > dist/web/index.html
-npx wrangler deploy --dry-run --outdir dist/cf
-```
-
-Expected: wrangler bundles `src/server/worker.ts` without errors (no `node:` imports may end up in the bundle; `fixtures.ts` is only imported by `node.ts`).
-
-- [ ] **Step 8: The port-8444 check (spec risk 1) — needs NotNic's Cloudflare account**
-
-NotNic runs `npx wrangler login` (opens a browser; the agent cannot do this). Then:
-
-```bash
-npx wrangler deploy
-curl -s "https://scr-hub.<account-subdomain>.workers.dev/api/_status?probe=1"
-```
-
-Expected: `"reachable":true` and `"version":{"source":"discovered",...}`. If `reachable` is `false` or the request errors, Workers cannot reach port 8444: record the result in `docs/superpowers/plans/2026-09-22-scr-hub-server.md` under this task, and community mode ships as the Docker image (Task 18) on a small container host instead. Nothing else in the codebase changes.
-
-- [ ] **Step 9: Commit**
-
-```bash
-git add src/server/cf-cache.ts src/server/worker.ts wrangler.toml package.json package-lock.json tests/server/cf-cache.test.ts
-git commit -m "Add Cloudflare Worker entry, Cache API store and wrangler config"
-```
-
----
-
-### Task 18: Dockerfile for hosted mode
+### Task 17: Dockerfile (hosted mode and Railway)
 
 **Files:**
 - Create: `Dockerfile`, `.dockerignore`
@@ -4688,7 +4473,6 @@ git commit -m "Add Cloudflare Worker entry, Cache API store and wrangler config"
 node_modules
 dist
 .git
-.wrangler
 coverage
 playwright-report
 test-results
@@ -4720,7 +4504,7 @@ CMD ["node", "dist/server/node.js"]
 
 - [ ] **Step 3: Verify**
 
-Docker is not installed on the development machine. Verification happens on any machine with Docker (Sid's server, or after installing Docker Desktop):
+Docker is not installed on the development machine, so the first real build is Railway's cloud build in Task 18. On any machine with Docker, the local check is:
 
 ```bash
 docker build -t scr-hub .
@@ -4735,6 +4519,111 @@ Expected: `"mode":"fixtures"`. Until that machine is available, the build steps 
 ```bash
 git add Dockerfile .dockerignore
 git commit -m "Add Dockerfile for hosted mode"
+```
+
+---
+
+### Task 18: Railway deployment for community mode
+
+**Files:**
+- Create: `railway.json`
+- Test: `tests/server/railway-config.test.ts`
+
+**Interfaces:**
+- Produces: one Railway service built from the `Dockerfile` (Task 17), health-checked on `/api/_status`, one replica so the in-memory cache is shared by every visitor, reachable on a `*.up.railway.app` domain first and on NotNic's own domain once the CNAME is set. `PUBLIC_BASE_URL` carries the final domain.
+
+- [ ] **Step 1: Write the failing test**
+
+`tests/server/railway-config.test.ts`:
+
+```ts
+import { describe, it, expect } from 'vitest'
+import { readFileSync } from 'node:fs'
+
+describe('railway.json', () => {
+  it('builds from the Dockerfile with a health check on the status route and one replica', () => {
+    const cfg = JSON.parse(readFileSync('railway.json', 'utf8'))
+    expect(cfg.build.builder).toBe('DOCKERFILE')
+    expect(cfg.build.dockerfilePath).toBe('Dockerfile')
+    expect(cfg.deploy.healthcheckPath).toBe('/api/_status')
+    expect(cfg.deploy.numReplicas).toBe(1)
+    expect(cfg.deploy.restartPolicyType).toBe('ON_FAILURE')
+  })
+})
+```
+
+- [ ] **Step 2: Run the test to verify it fails**
+
+Run: `npx vitest run tests/server/railway-config.test.ts` — expected FAIL (ENOENT railway.json).
+
+- [ ] **Step 3: Write `railway.json`**
+
+```json
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile"
+  },
+  "deploy": {
+    "healthcheckPath": "/api/_status",
+    "healthcheckTimeout": 100,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10,
+    "numReplicas": 1
+  }
+}
+```
+
+- [ ] **Step 4: Run the test to verify it passes**
+
+Run: `npx vitest run tests/server/railway-config.test.ts` — expected PASS.
+
+- [ ] **Step 5: First deploy (needs NotNic's Railway account)**
+
+NotNic runs the login (it opens a browser; the agent cannot):
+
+```bash
+npx @railway/cli login
+```
+
+Then, from the repo root:
+
+```bash
+npx @railway/cli init            # create the project; name it scr-hub
+npx @railway/cli up --detach     # upload the repo; Railway builds the Dockerfile in its cloud
+npx @railway/cli domain          # create and print the *.up.railway.app domain
+npx @railway/cli variables --set "SCR_APP_VERSION=0.1.0" --set "PUBLIC_BASE_URL=https://<the railway domain>"
+```
+
+This is also the first real Docker build of Task 17. If the health check fails because Railway cannot find the port, set the variable `PORT=8080` on the service (the server listens on `PORT`, default 8080) and redeploy.
+
+- [ ] **Step 6: Verify the deployment and the egress to Sid's server**
+
+```bash
+curl -s "https://<the railway domain>/api/_status?probe=1"
+curl -s "https://<the railway domain>/api/home" | head -c 300
+```
+
+Expected: `"mode":"community"`, `"reachable":true`, `"version":{"source":"discovered",...}` and live presence data. `reachable:false` would mean the host blocks outbound port 8444 (spec risk 1); Railway does not, but record the result here either way.
+
+- [ ] **Step 7: Attach NotNic's domain**
+
+In the Railway dashboard: the service → Settings → Networking → Custom Domain → enter the chosen host name (for example `hub.<your-domain>`). Add the CNAME record Railway shows at the domain's DNS provider, wait for the certificate to issue (usually minutes), then:
+
+```bash
+npx @railway/cli variables --set "PUBLIC_BASE_URL=https://hub.<your-domain>"
+npx @railway/cli up --detach
+curl -s "https://hub.<your-domain>/api/_status" | head -c 200
+```
+
+Later deploys are the same `npx @railway/cli up --detach`, or connect the GitHub repository in the dashboard for deploy-on-push. Railway's Hobby plan is a small monthly fee with no per-request limit; keep `numReplicas` at 1 so the cache stays shared.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add railway.json tests/server/railway-config.test.ts
+git commit -m "Add Railway deployment config for community mode"
 ```
 
 ---
@@ -4887,6 +4776,6 @@ git commit -m "Add live contract check with fixture-backed tests"
 
 ## Self-review notes (filled in by the plan author)
 
-- **Spec coverage:** 6.1 routes → Tasks 9–13; 6.2 upstream client → Tasks 4–5; 6.3 cache → Task 6 (+17 for Workers); 6.4 masking → Task 7 (+12, 11, 13 apply it); 6.5 config → Task 1; 7.4 fixture mode → Task 8 and 16; 8 Discord sign-in → Task 15; 9.1 Workers → Task 17; 9.2 Docker → Task 18; 10 tests → every task, plus the contract check in Task 19; 11 error mapping → Task 9 `errorResponse`; 12 privacy → Tasks 7, 8 (scrubbed fixtures), 12.
+- **Spec coverage:** 6.1 routes → Tasks 9–13; 6.2 upstream client → Tasks 4–5; 6.3 cache → Task 6 (+17 for Workers); 6.4 masking → Task 7 (+12, 11, 13 apply it); 6.5 config → Task 1; 7.4 fixture mode → Task 8 and 16; 8 Discord sign-in → Task 15; 9.1 Railway → Task 18; 9.2 Docker → Task 17; 10 tests → every task, plus the contract check in Task 19; 11 error mapping → Task 9 `errorResponse`; 12 privacy → Tasks 7, 8 (scrubbed fixtures), 12.
 - **Not in this plan:** everything the browser renders (web plan), `docs/for-sid.md` (web plan, since it links to the finished site), and the gacha follow-up spec.
-- **Type consistency checked:** `RouteDeps`, `loaderFor` → `load<T>(key, spec, path, query?)`, `gather`, `ok`, `errorResponse`, `TTL`, `Query`, `UpstreamError`, `NotAllowedError`, `MemoryCacheStore`, `CfCacheStore`, `createApp` return `{ app, cache, upstream, version, deps }`, `registerStatic`, `registerAuthRoutes`, `MeResponse`, `HomeData`, `MetaData`, `StatusResponse`.
+- **Type consistency checked:** `RouteDeps`, `loaderFor` → `load<T>(key, spec, path, query?)`, `gather`, `ok`, `errorResponse`, `TTL`, `Query`, `UpstreamError`, `NotAllowedError`, `MemoryCacheStore`, `createApp` return `{ app, cache, upstream, version, deps }`, `registerStatic`, `registerAuthRoutes`, `MeResponse`, `HomeData`, `MetaData`, `StatusResponse`.
