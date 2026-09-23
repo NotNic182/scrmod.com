@@ -31,6 +31,17 @@ a {
   color: inherit;
   text-decoration: none;
 }
+/* A link inside reading text keeps the text's color, so an underline is what marks it (WCAG 1.4.1). Navigation,
+   tabs, tables, player names and buttons stay plain: where they sit already says what they are. */
+.prose a,
+.card p a,
+.page-intro a,
+.subline a,
+.card.guide a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
 button {
   font: inherit;
   color: inherit;
@@ -655,7 +666,7 @@ body {
   }
 }
 
-/* Touch: every control meets a 44px target, player names included. */
+/* Touch: every control meets a 44px target, player and card names included. */
 @media (pointer: coarse) {
   .btn,
   .btn-sm,
@@ -667,7 +678,8 @@ body {
   .icon-btn {
     width: 44px;
   }
-  .plink {
+  .plink,
+  .card-link {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
@@ -675,7 +687,9 @@ body {
     column-gap: 0.3em;
   }
   /* In tables the cell padding already counts toward the target: absorb it so rows stay 44px, not 60+. */
-  table.t .plink {
+  table.t .plink,
+  table.t .card-link,
+  table.t .disclosure {
     margin-block: calc(-1 * var(--space-xs));
   }
 }
@@ -999,8 +1013,15 @@ details.acc[open] {
   .segmented button {
     min-height: 44px;
   }
+  /* The cards table's pickers toggle is an icon alone: a 44px square around it, kept on the card name's line (the
+     pinned name column widens rather than stacking the two). */
   .disclosure {
+    min-width: 44px;
     min-height: 44px;
+    justify-content: center;
+  }
+  table.t .stick-lead .row {
+    flex-wrap: nowrap;
   }
 }
 @media (prefers-reduced-motion: reduce) {

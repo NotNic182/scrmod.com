@@ -122,7 +122,7 @@ function CardTable({ rows, open, setOpen }: { rows: CardStat[]; open: string | n
                       <button className="disclosure" onClick={() => setOpen(open === c.card_name ? null : c.card_name)} aria-expanded={open === c.card_name} aria-label={`Top pickers of ${c.card_name}`}>
                         <Icon name="chevron" size={16} />
                       </button>
-                      <Link to={`/cards/${cardSlug(c.card_name)}`}>{c.card_name}</Link>
+                      <Link to={`/cards/${cardSlug(c.card_name)}`} className="card-link">{c.card_name}</Link>
                     </span>
                   </td>
                   <td className={`rarity-${String(c.card_rarity).toLowerCase()}`}>{c.card_rarity}</td>
