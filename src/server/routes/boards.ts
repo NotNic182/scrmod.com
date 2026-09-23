@@ -1,5 +1,14 @@
 import type { Hono } from 'hono'
-import type { FfaLeaderboard, Leaderboard, MultimodeRecent, OvtLeaderboard, RecentSeriesList, TeamLeaderboard } from '../../shared/api-types'
+import type {
+  FfaLeaderboard,
+  Leaderboard,
+  MultimodeEntry,
+  MultimodeRecent,
+  OvtLeaderboard,
+  RecentSeries,
+  RecentSeriesList,
+  TeamLeaderboard,
+} from '../../shared/api-types'
 import { maskRecentSeries } from '../../shared/privacy'
 import { TTL, type CachedResult } from '../cache'
 import type { Query } from '../upstream'
@@ -26,8 +35,51 @@ export async function loadBoard(d: RouteDeps, mode: string, inactive = false): P
   })
 }
 
-export function loadResults(d: RouteDeps, limit: number) {
-  return loaderFor(d)<MultimodeRecent>(`results:${limit}`, TTL.RESULTS, '/series/recent-multimode', { limit })
+/** Recent 1v1 series, under the same cache key the /api/results/1v1 route uses. */
+export function loadRecentSeries(d: RouteDeps, limit: number) {
+  return loaderFor(d)<RecentSeriesList>(`results:1v1:${limit}`, TTL.RESULTS, '/series/recent', { minutes: 43200, limit })
+}
+
+/** A 1v1 series as a row of the mixed results feed: the winner on the left and the series score between. */
+function seriesEntry(s: RecentSeries): MultimodeEntry {
+  const p1Won = s.winner_steam_id === s.p1_steam_id
+  return {
+    mode: '1v1',
+    id: s.series_id,
+    ended_at: s.completed_at,
+    left_label: p1Won ? s.p1_name : s.p2_name,
+    right_label: p1Won ? s.p2_name : s.p1_name,
+    score: p1Won ? `${s.p1_series_wins}-${s.p2_series_wins}` : `${s.p2_series_wins}-${s.p1_series_wins}`,
+    left_rating_change: (p1Won ? s.p1_rating_change : s.p2_rating_change) ?? null,
+    right_rating_change: (p1Won ? s.p2_rating_change : s.p1_rating_change) ?? null,
+    settings: null,
+    bets: s.bets ?? [],
+  }
+}
+
+/**
+ * The mixed results feed. Sid's multimode feed carries 2v2, FFA and 1v2 games only, so 1v1 series are merged in
+ * from /series/recent, newest first. If one source fails the other is still served, marked stale; if both fail,
+ * the first error is thrown.
+ */
+export async function loadResults(d: RouteDeps, limit: number): Promise<CachedResult<MultimodeRecent>> {
+  const [multi, series] = await Promise.allSettled([
+    loaderFor(d)<MultimodeRecent>(`results:${limit}`, TTL.RESULTS, '/series/recent-multimode', { limit }),
+    loadRecentSeries(d, limit),
+  ])
+  if (multi.status === 'rejected' && series.status === 'rejected') throw multi.reason
+  const entries = [
+    ...(multi.status === 'fulfilled' ? (multi.value.value?.entries ?? []) : []),
+    ...(series.status === 'fulfilled' ? (series.value.value?.series ?? []).map(seriesEntry) : []),
+  ]
+    .sort((a, b) => Date.parse(b.ended_at) - Date.parse(a.ended_at))
+    .slice(0, limit)
+  const loaded = [multi, series].flatMap((r) => (r.status === 'fulfilled' ? [r.value] : []))
+  return {
+    value: { entries },
+    fetched_at: Math.min(...loaded.map((r) => r.fetched_at)),
+    stale: loaded.length < 2 || loaded.some((r) => r.stale),
+  }
 }
 
 export function registerBoardRoutes(app: Hono, d: RouteDeps) {
@@ -53,10 +105,7 @@ export function registerBoardRoutes(app: Hono, d: RouteDeps) {
   app.get('/api/results/1v1', async (c) => {
     const limit = intParam(c, 'limit', 50, 1, 200)
     try {
-      const r = await loaderFor(d)<RecentSeriesList>(`results:1v1:${limit}`, TTL.RESULTS, '/series/recent', {
-        minutes: 43200,
-        limit,
-      })
+      const r = await loadRecentSeries(d, limit)
       const series = (r.value.series ?? []).map((s) => maskRecentSeries(s))
       return ok(c, { ...r, value: { series } })
     } catch (err) {

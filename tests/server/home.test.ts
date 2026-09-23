@@ -27,6 +27,7 @@ const ALL = {
   '/ffa/lobbies': { lobbies: [{ lobby_id: 'l1', host_name: 'Nix', player_count: 3, max_players: 10, has_password: false, age_seconds: 40, bets_open: true, bet_targets: [], members: [] }], count: 1 },
   '/spectate/games': { games: [{ game_id: 'g1', mode: '1v1', names: 'NotNic, Sid', spectatable: true, spectator_count: 0, spectator_cap: 4 }] },
   '/series/recent-multimode': RESULTS,
+  '/series/recent': { series: [{ series_id: 'r1', p1_name: 'NotNic', p1_steam_id: '76561199311926326', p1_rating_change: 9.5, p2_name: 'Sid', p2_steam_id: '76561198040410653', p2_rating_change: -3, p1_series_wins: 2, p2_series_wins: 1, winner_steam_id: '76561199311926326', completed_at: '2026-09-21T08:00:00Z', bets: [] }] },
   '/admin/maintenance/status': { in_maintenance: true },
   '/alerts/active': { rev: 1, alerts: [{ category: 'info', message: 'Server restart at 9pm', expires_at: null }] },
 }
@@ -50,6 +51,9 @@ describe('GET /api/home', () => {
     const upstreamPaths = fake.calls.map((c) => c.url.pathname).sort()
     expect(upstreamPaths).toContain('/api/v1/series/recent-multimode')
     expect(fake.calls.find((c) => c.url.pathname === '/api/v1/series/recent-multimode')!.url.searchParams.get('limit')).toBe('20')
+    // Latest results include 1v1 series, which the multimode feed never carries.
+    expect(body.data.results.map((e: { mode: string }) => e.mode)).toEqual(['ffa', '1v1'])
+    expect(fake.calls.find((c) => c.url.pathname === '/api/v1/series/recent')!.url.searchParams.get('limit')).toBe('20')
   })
 
   it('serves the second request from cache without touching upstream', async () => {

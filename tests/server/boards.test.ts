@@ -44,11 +44,78 @@ describe('leaderboards', () => {
   })
 })
 
+const MULTI = {
+  entries: [
+    { mode: 'ffa', id: 'f1', ended_at: '2026-09-23T01:51:25.880882+00:00', left_label: 'Nix', right_label: '3-player FFA', score: '#1 of 3', left_rating_change: 6.7, right_rating_change: null, settings: null, bets: [] },
+    { mode: '2v2', id: 't1', ended_at: '2026-09-16T23:10:16.882611+00:00', left_label: 'Sid + Spirit', right_label: 'Nix + SlopsOn1', score: '1-0', left_rating_change: 11.8, right_rating_change: -20.5, settings: null, bets: [] },
+  ],
+}
+const series = (id: string, completed_at: string, p1Won: boolean) => ({
+  series_id: id,
+  p1_name: 'Spirit',
+  p1_steam_id: '76561198984811435',
+  p1_discord_id: '111',
+  p1_rating: 1852.5,
+  p1_rating_change: p1Won ? 12.1 : -15.7,
+  p2_name: 'galaxy ice',
+  p2_steam_id: '76561199013169799',
+  p2_discord_id: '222',
+  p2_rating: 1832,
+  p2_rating_change: p1Won ? -10.4 : 13.5,
+  p1_series_wins: p1Won ? 2 : 1,
+  p2_series_wins: p1Won ? 0 : 2,
+  winner_name: p1Won ? 'Spirit' : 'galaxy ice',
+  winner_steam_id: p1Won ? '76561198984811435' : '76561199013169799',
+  completed_at,
+  rules: null,
+  bets: [],
+  tournament: false,
+  tournament_label: '',
+})
+const SERIES = { series: [series('s1', '2026-09-23T20:24:20.530751+00:00', false), series('s2', '2026-09-20T10:00:00+00:00', true)] }
+
 describe('results', () => {
-  it('proxies the multimode feed with a bounded limit', async () => {
-    const { app, fake } = makeApp({ '/series/recent-multimode': { entries: [] } })
+  it('asks both feeds for the bounded limit', async () => {
+    const { app, fake } = makeApp({ '/series/recent-multimode': { entries: [] }, '/series/recent': { series: [] } })
     expect((await app.request('/api/results?limit=999')).status).toBe(200)
-    expect(fake.calls[0].url.searchParams.get('limit')).toBe('200')
+    const limit = (path: string) => fake.calls.find((c) => c.url.pathname === `/api/v1${path}`)!.url.searchParams.get('limit')
+    expect(limit('/series/recent-multimode')).toBe('200')
+    expect(limit('/series/recent')).toBe('200')
+  })
+
+  it('merges 1v1 series into the multimode feed, newest first, winner on the left', async () => {
+    // Sid's multimode feed carries 2v2, FFA and 1v2 games only; without the merge "All" had no 1v1 games.
+    const { app } = makeApp({ '/series/recent-multimode': MULTI, '/series/recent': SERIES })
+    const res = await app.request('/api/results?limit=3')
+    const body = await res.json()
+    expect(body.data.entries.map((e: { id: string }) => e.id)).toEqual(['s1', 'f1', 's2'])
+    expect(body.data.entries[0]).toEqual({
+      mode: '1v1',
+      id: 's1',
+      ended_at: '2026-09-23T20:24:20.530751+00:00',
+      left_label: 'galaxy ice',
+      right_label: 'Spirit',
+      score: '2-1',
+      left_rating_change: 13.5,
+      right_rating_change: -15.7,
+      settings: null,
+      bets: [],
+    })
+    expect(body.data.entries[2]).toMatchObject({ left_label: 'Spirit', right_label: 'galaxy ice', score: '2-0', left_rating_change: 12.1 })
+    expect(JSON.stringify(body)).not.toContain('discord')
+    expect(body.stale).toBe(false)
+  })
+
+  it('still serves one feed when the other fails, marked stale; fails only when both do', async () => {
+    const onlyMulti = makeApp({ '/series/recent-multimode': MULTI })
+    const a = await (await onlyMulti.app.request('/api/results')).json()
+    expect(a.data.entries.map((e: { id: string }) => e.id)).toEqual(['f1', 't1'])
+    expect(a.stale).toBe(true)
+    const onlySeries = makeApp({ '/series/recent': SERIES })
+    const b = await (await onlySeries.app.request('/api/results')).json()
+    expect(b.data.entries.map((e: { id: string }) => e.id)).toEqual(['s1', 's2'])
+    const neither = makeApp({})
+    expect((await neither.app.request('/api/results')).status).toBe(404)
   })
 
   it('masks discord ids out of recent 1v1 series', async () => {
