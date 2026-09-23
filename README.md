@@ -32,7 +32,7 @@ npm run contract  # hits the live API once per endpoint and checks the shapes (m
 | `SCR_MOD_VERSION_OVERRIDE` | unset | Pin the `X-Mod-Version` header (otherwise discovered) |
 | `SCR_FEATURES` | empty | Comma list, e.g. `chat` |
 | `BASE_PATH` | `/` | Mount under a sub-path, e.g. `/hub` |
-| `PUBLIC_BASE_URL` | derived | Absolute site URL for OAuth redirects |
+| `PUBLIC_BASE_URL` | derived | Absolute site URL for OAuth redirects and canonical links; page requests on other hosts are redirected to it |
 | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `SESSION_SECRET` | unset | All three enable Discord sign-in |
 | `SCR_FIXTURES` | unset | `1` answers from `fixtures/` (demo, tests) |
 | `SCR_FIXTURES_DIR` | `fixtures` | Where fixture mode reads from |
@@ -40,6 +40,11 @@ npm run contract  # hits the live API once per endpoint and checks the shapes (m
 | `SCR_RATE_LIMIT` | on | `off` disables the per-client limit (`/api/*` 60 per 10 s, `/auth/*` 10 per 60 s; `/api/_status` is exempt) |
 | `PORT` | `8080` | Node listen port |
 | `SCR_WEB_ROOT` | `dist/web` | Directory the built SPA is served from |
+| `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION` | unset | Search console verification meta tags |
+| `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | unset | Twitch app credentials: show when the stream is live |
+| `YOUTUBE_API_KEY` | unset | Optional: detect a live YouTube stream (recent videos work without it) |
+| `STREAM_TWITCH_LOGIN` | `sidscompetitiverounds` | Twitch channel to show |
+| `STREAM_YOUTUBE_CHANNEL_ID` | `UCz9MIFturPcCSJsFFzgyBxw` | YouTube channel to show |
 
 `PUBLIC_BASE_URL` may be given with or without `BASE_PATH` on the end (spec 9.2's compose
 snippet includes it); it is reduced to an origin either way. `SESSION_SECRET` must be at
