@@ -5,7 +5,6 @@ import type {
   AlertsActive,
   FfaLobbies,
   MaintenanceStatus,
-  MultimodeRecent,
   PresenceOnline,
   QueueCount,
   SpectateGames,
@@ -13,6 +12,7 @@ import type {
 } from '../../shared/api-types'
 import type { HomeData } from '../../shared/hub-types'
 import { TTL } from '../cache'
+import { loadResults } from './boards'
 import { gather, gathered, loaderFor, type RouteDeps } from './common'
 
 /** Everything the home page shows, from the same cache keys as /api/home. */
@@ -27,7 +27,7 @@ export async function loadHome(d: RouteDeps) {
       series_2v2: load<ActiveTeamSeriesList>('home:series-2v2', TTL.LIVE, '/team/series/active'),
       ffa_lobbies: load<FfaLobbies>('home:ffa-lobbies', TTL.LIVE, '/ffa/lobbies'),
       spectate: load<SpectateGames>('home:spectate', TTL.LIVE, '/spectate/games'),
-      results: load<MultimodeRecent>('results:20', TTL.RESULTS, '/series/recent-multimode', { limit: 20 }),
+      results: loadResults(d, 20),
       maintenance: load<MaintenanceStatus>('home:maintenance', TTL.LIVE, '/admin/maintenance/status'),
       alerts: load<AlertsActive>('home:alerts', TTL.LIVE, '/alerts/active'),
     },
