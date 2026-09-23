@@ -17,6 +17,7 @@ import type {
   BoardMode,
   BracketResponse,
   CardLeadersResponse,
+  CardPageResponse,
   CardPickersResponse,
   CardsResponse,
   Env,
@@ -144,6 +145,15 @@ export function useCardPickers(name: string | null) {
     queryKey: ['card-pickers', name],
     queryFn: () => hubGet<CardPickersResponse>(`/cards/${encodeURIComponent(name!)}/pickers`),
     enabled: !!name,
+    ...ref,
+  })
+}
+
+export function useCard(slug: string | undefined) {
+  return useQuery({
+    queryKey: ['card', slug],
+    queryFn: () => hubGet<CardPageResponse>(`/card/${encodeURIComponent(slug!)}`),
+    enabled: !!slug,
     ...ref,
   })
 }

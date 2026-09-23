@@ -1,5 +1,6 @@
 import { useTitle } from '../lib/title'
 import { Fragment, useId, useState } from 'react'
+import { Link } from 'react-router'
 import { useCardLeaders, useCardPickers, useCards } from '../api/hooks'
 import { PlayerLink } from '../components/PlayerLink'
 import { QueryState } from '../components/QueryState'
@@ -7,7 +8,7 @@ import { Icon } from '../components/Icon'
 import { Segmented } from '../components/Segmented'
 import { num, pct, plural } from '../lib/format'
 import { useFirst } from '../components/ShowMore'
-import { INTROS, pageMeta } from '../../shared/seo'
+import { cardSlug, INTROS, pageMeta } from '../../shared/seo'
 import type { CardStat } from '../../shared/api-types'
 
 const FILTERS: Array<{ id: 'all' | 'ranked' | 'casual'; label: string }> = [
@@ -23,7 +24,7 @@ const SORTS: Array<{ id: string; label: string }> = [
   { id: 'times_offered', label: 'Most offered' },
 ]
 
-function Pickers({ name }: { name: string }) {
+export function Pickers({ name }: { name: string }) {
   const q = useCardPickers(name)
   return (
     <QueryState q={q} label="top pickers" empty={(d) => !d.display_names?.length}>
@@ -117,10 +118,12 @@ function CardTable({ rows, open, setOpen }: { rows: CardStat[]; open: string | n
               <Fragment key={c.card_name}>
                 <tr>
                   <td className="stick-lead">
-                    <button className="disclosure" onClick={() => setOpen(open === c.card_name ? null : c.card_name)} aria-expanded={open === c.card_name}>
-                      <Icon name="chevron" size={16} />
-                      {c.card_name}
-                    </button>
+                    <span className="row tight">
+                      <button className="disclosure" onClick={() => setOpen(open === c.card_name ? null : c.card_name)} aria-expanded={open === c.card_name} aria-label={`Top pickers of ${c.card_name}`}>
+                        <Icon name="chevron" size={16} />
+                      </button>
+                      <Link to={`/cards/${cardSlug(c.card_name)}`}>{c.card_name}</Link>
+                    </span>
                   </td>
                   <td className={`rarity-${String(c.card_rarity).toLowerCase()}`}>{c.card_rarity}</td>
                   <td className="num">{num(c.times_picked)}</td>

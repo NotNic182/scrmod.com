@@ -64,10 +64,11 @@ const Player = page(() => import('./pages/Player'), 'Player')
 const Results = page(() => import('./pages/Results'), 'Results')
 const Tournaments = page(() => import('./pages/Tournaments'), 'Tournaments')
 const Cards = page(() => import('./pages/Cards'), 'Cards')
+const Card = page(() => import('./pages/Card'), 'Card')
 const Guide = page(() => import('./pages/Guide'), 'Guide')
 const About = page(() => import('./pages/About'), 'About')
 const NotFound = page(() => import('./pages/NotFound'), 'NotFound')
-const LAZY = [Leaderboards, Player, Results, Tournaments, Cards, Guide, About, NotFound]
+const LAZY = [Leaderboards, Player, Results, Tournaments, Cards, Card, Guide, About, NotFound]
 
 /** Which page's code a path needs (mirrors the <Routes> below). Home is in the main bundle. */
 const ROUTE_PAGES: Array<[RegExp, (typeof LAZY)[number]]> = [
@@ -75,6 +76,7 @@ const ROUTE_PAGES: Array<[RegExp, (typeof LAZY)[number]]> = [
   [/^\/players\//, Player],
   [/^\/results\/?$/, Results],
   [/^\/tournaments(\/|$)/, Tournaments],
+  [/^\/cards\/[^/]+\/?$/, Card],
   [/^\/cards\/?$/, Cards],
   [/^\/guide\/?$/, Guide],
   [/^\/about\/?$/, About],
@@ -120,6 +122,7 @@ export function App() {
             <Route path="tournaments" element={<Tournaments.Component />} />
             <Route path="tournaments/:id" element={<Tournaments.Component />} />
             <Route path="cards" element={<Cards.Component />} />
+            <Route path="cards/:slug" element={<Card.Component />} />
             <Route path="guide" element={<Guide.Component />} />
             <Route path="about" element={<About.Component />} />
             <Route path="*" element={<NotFound.Component />} />
