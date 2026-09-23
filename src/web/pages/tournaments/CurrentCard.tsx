@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import type { TournamentCurrent, TournamentMatch } from '../../../shared/api-types'
 import { PlayerLink } from '../../components/PlayerLink'
-import { fmtDate, relTime } from '../../lib/format'
+import { fmtDate, plural, relTime } from '../../lib/format'
 
 const STATUS_LABEL: Record<string, string> = { voting: 'Voting on a time', locked: 'Locked, starting soon', running: 'Running', completed: 'Completed' }
 
@@ -36,7 +36,7 @@ export function CurrentCard({ t, kind }: { t: TournamentCurrent | null; kind: 's
     <div className="card">
       <div className="card-head">
         <h2>{title}</h2>
-        <span className={`chip ${status === 'running' ? 'live-pill' : ''}`} style={status !== 'running' ? { background: 'var(--bg-elev)' } : undefined}>
+        <span className={`chip ${status === 'running' ? 'live-pill' : ''}`}>
           {STATUS_LABEL[status] ?? status}
         </span>
       </div>
@@ -54,12 +54,12 @@ export function CurrentCard({ t, kind }: { t: TournamentCurrent | null; kind: 's
 
       <h3 style={{ marginTop: 12 }}>Signups ({t.signups.length})</h3>
       {t.signups.length === 0 ? <div className="faint">No signups yet.</div> : null}
-      <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+      <ul className="plain-list">
         {t.signups.map((s) => (
           <li key={s.signup_id} className="row" style={{ minHeight: 32 }}>
-            {s.seed ? <span className="faint mono">#{s.seed}</span> : null}
+            {s.seed ? <span className="faint tnum">#{s.seed}</span> : null}
             <PlayerLink steamId={s.steam_id} name={s.display_name} title={s.title} titleColor={s.title_color} />
-            <span className="muted mono">{Math.round(s.rating)}</span>
+            <span className="muted tnum">{Math.round(s.rating)}</span>
             <span className="spacer" />
             {s.placed_rank ? <span className="chip">placed #{s.placed_rank}</span> : s.forfeited ? <span className="chip bad">forfeited</span> : s.progress_label ? <span className="faint">{s.progress_label}</span> : null}
           </li>
@@ -69,11 +69,11 @@ export function CurrentCard({ t, kind }: { t: TournamentCurrent | null; kind: 's
       {t.time_slot_tallies?.length ? (
         <>
           <h3 style={{ marginTop: 12 }}>Time votes</h3>
-          <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+          <ul className="plain-list">
             {t.time_slot_tallies.map((v) => (
               <li key={v.slot_ts} className="row">
                 <span>{when(v.slot_ts)}</span>
-                <span className="muted">{v.votes} votes</span>
+                <span className="muted">{plural(v.votes, 'vote')}</span>
               </li>
             ))}
           </ul>
@@ -89,7 +89,7 @@ export function CurrentCard({ t, kind }: { t: TournamentCurrent | null; kind: 's
               {ms.map((m) => (
                 <div key={m.match_id} className="row" style={{ minHeight: 32 }}>
                   <span style={{ fontWeight: m.winner_signup_id && m.winner_signup_id === m.p1_signup_id ? 800 : 500 }}>{m.p1_display_name ?? (m.is_bye ? 'bye' : 'TBD')}</span>
-                  <span className="mono">
+                  <span className="tnum">
                     {m.p1_series_wins ?? 0}–{m.p2_series_wins ?? 0}
                   </span>
                   <span style={{ fontWeight: m.winner_signup_id && m.winner_signup_id === m.p2_signup_id ? 800 : 500 }}>{m.p2_display_name ?? (m.is_bye ? 'bye' : 'TBD')}</span>

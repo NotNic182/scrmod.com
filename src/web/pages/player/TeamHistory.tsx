@@ -30,11 +30,11 @@ export function TeamHistoryTab({ steamId }: { steamId: string }) {
                   <tr key={s.series_id}>
                     <td className="faint">{fmtDate(s.completed_at)}</td>
                     <td>
-                      <strong className={s.won ? 'good' : 'bad'}>{s.won ? 'W' : 'L'}</strong> <span className="mono">{s.score}</span>
+                      <strong className={s.won ? 'good' : 'bad'}>{s.won ? 'W' : 'L'}</strong> <span className="tnum">{s.score}</span>
                     </td>
                     <td>{s.mate}</td>
                     <td>{(s.opponents ?? []).join(' & ')}</td>
-                    <td className={`num mono ${s.rating_change >= 0 ? 'good' : 'bad'}`}>{signed(s.rating_change, 1)}</td>
+                    <td className={`num tnum ${s.rating_change >= 0 ? 'good' : 'bad'}`}>{signed(s.rating_change, 1)}</td>
                   </tr>
                 ))}
               </tbody>

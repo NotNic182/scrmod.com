@@ -15,8 +15,9 @@ describe('Layout', () => {
         </Route>
       </Routes>,
     )
+    // Two copies by design: top bar links (wide screens) and the bottom tab bar (phones); CSS shows one.
     for (const label of ['Home', 'Boards', 'Results', 'Tournaments', 'Cards']) {
-      expect(screen.getByRole('link', { name: label })).toBeInTheDocument()
+      expect(screen.getAllByRole('link', { name: label })).toHaveLength(2)
     }
     expect(screen.getByText('page body')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /theme/i })).toBeInTheDocument()

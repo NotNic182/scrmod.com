@@ -1,6 +1,8 @@
+import { useTitle } from '../lib/title'
 import { Link } from 'react-router'
 
 export function NotFound() {
+  useTitle('Not found')
   return (
     <div className="card">
       <h1>Nothing here</h1>

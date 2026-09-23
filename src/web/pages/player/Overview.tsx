@@ -2,7 +2,7 @@ import type { HubProfile } from '../../api/types'
 import { FormStrip } from '../../components/FormStrip'
 import { RatingGraph } from '../../components/RatingGraph'
 import { StatTile } from '../../components/StatTile'
-import { goldText, num, pct, signed } from '../../lib/format'
+import { goldText, num, pct, plural, signed } from '../../lib/format'
 
 function ratio(a: number | undefined, b: number | undefined): string {
   if (!a || !b) return '–'
@@ -23,8 +23,8 @@ export function Overview({ p }: { p: HubProfile }) {
         <StatTile label="Casual" value={`${p.casual_wins ?? 0}-${p.casual_losses ?? 0}`} sub="games" />
         <StatTile label="Accuracy" value={ratio(p.bullets_hit, p.bullets_fired)} sub={`block ${ratio(p.blocks_successful, p.blocks_activated)}`} />
         <StatTile label="Gold" value={goldText(gold, p.gold_hidden)} sub={p.gold_hidden ? 'player hides gold' : 'balance'} />
-        {p.team_completed_series ? <StatTile label="2v2 rating" value={Math.round(p.team_rating)} sub={`${p.team_completed_series} series`} /> : null}
-        {p.ffa_games ? <StatTile label="FFA" value={p.ffa_rating ? Math.round(p.ffa_rating) : `${p.ffa_wins} wins`} sub={`avg place ${p.ffa_avg_placement?.toFixed(2) ?? '–'} · ${p.ffa_games} games`} /> : null}
+        {p.team_completed_series ? <StatTile label="2v2 rating" value={Math.round(p.team_rating)} sub={plural(p.team_completed_series, 'series', 'series')} /> : null}
+        {p.ffa_games ? <StatTile label="FFA" value={p.ffa_rating ? Math.round(p.ffa_rating) : plural(p.ffa_wins, 'win')} sub={`avg place ${p.ffa_avg_placement?.toFixed(2) ?? '–'} · ${plural(p.ffa_games, 'game')}`} /> : null}
         {p.ovt_solo_wins + p.ovt_solo_losses + p.ovt_duo_wins + p.ovt_duo_losses > 0 ? <StatTile label="1v2" value={`${p.ovt_solo_wins + p.ovt_duo_wins}-${p.ovt_solo_losses + p.ovt_duo_losses}`} sub={`solo ${p.ovt_solo_wins}-${p.ovt_solo_losses} · duo ${p.ovt_duo_wins}-${p.ovt_duo_losses}`} /> : null}
         <StatTile label="Sweeps" value={`${p.sweeps_given ?? 0} / ${p.sweeps_taken ?? 0}`} sub="given / taken" />
       </div>

@@ -13,10 +13,11 @@ interface Props {
 
 export function PlayerLink({ steamId, name, title, titleColor, online, me, bold }: Props) {
   return (
-    <span className="row" style={{ gap: 6, display: 'inline-flex' }}>
-      {online !== undefined ? <span className={`dot${online ? ' on' : ''}`} aria-label={online ? 'online' : 'offline'} /> : null}
-      <Link to={`/players/${steamId}`} style={{ fontWeight: bold || me ? 800 : 600 }}>
-        {name}
+    <span className="player">
+      {online !== undefined ? <span className={`dot${online ? ' on' : ''}`} role="img" aria-label={online ? 'online' : 'offline'} title={online ? 'Online' : 'Offline'} /> : null}
+      <Link to={`/players/${steamId}`} className="plink" style={{ fontWeight: bold || me ? 800 : 600 }}>
+        {/* bdi: a right-to-left name (Arabic, Hebrew) must not reorder the "(you)" or numbers around it. */}
+        <bdi>{name || 'Unnamed player'}</bdi>
         {me ? <span className="faint"> (you)</span> : null}
       </Link>
       <TitleTag title={title} color={titleColor} />

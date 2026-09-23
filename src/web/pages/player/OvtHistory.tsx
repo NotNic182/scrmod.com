@@ -26,7 +26,7 @@ export function OvtHistoryTab({ steamId }: { steamId: string }) {
                     <td className="faint">{fmtDate(g.ended_at)}</td>
                     <td>{g.role}</td>
                     <td>
-                      <strong className={g.won ? 'good' : 'bad'}>{g.won ? 'W' : 'L'}</strong> <span className="mono">{g.score}</span>
+                      <strong className={g.won ? 'good' : 'bad'}>{g.won ? 'W' : 'L'}</strong> <span className="tnum">{g.score}</span>
                     </td>
                     <td>{g.solo}</td>
                     <td>{(g.duo ?? []).join(' & ')}</td>

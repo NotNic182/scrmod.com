@@ -53,9 +53,13 @@ export function useIdentity() {
 
   const pin = useCallback((p: Pinned) => writePinned(p), [])
   const unpin = useCallback(() => writePinned(null), [])
-  const signOut = useCallback(async () => {
-    await fetch(authUrl('/logout'), { method: 'POST', credentials: 'same-origin' }).catch(() => undefined)
+  /** Resolves false when the server couldn't be reached or refused, so the caller can say so instead of silently staying signed in. */
+  const signOut = useCallback(async (): Promise<boolean> => {
+    const ok = await fetch(authUrl('/logout'), { method: 'POST', credentials: 'same-origin' })
+      .then((r) => r.ok)
+      .catch(() => false)
     await qc.invalidateQueries({ queryKey: ['me'] })
+    return ok
   }, [qc])
 
   return {

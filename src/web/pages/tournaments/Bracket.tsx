@@ -9,7 +9,7 @@ function Chips({ joined }: { joined: string }) {
   return (
     <span className="row" style={{ gap: 4, display: 'inline-flex' }}>
       {names.map((n, i) => (
-        <span key={i} className="chip" style={{ background: 'var(--bg-elev)', fontWeight: 500 }}>
+        <span key={i} className="chip card-chip">
           {n}
         </span>
       ))}
@@ -37,7 +37,7 @@ export function Bracket({ id }: { id: string }) {
                   <div key={g.n} style={{ padding: '6px 0', borderTop: '1px solid var(--line)' }}>
                     <div className="row">
                       <span className="faint">Game {g.n}</span>
-                      <strong className="mono">
+                      <strong className="tnum">
                         {g.p1_rounds}–{g.p2_rounds}
                       </strong>
                       <span className="faint">

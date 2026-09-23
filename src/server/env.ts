@@ -90,7 +90,7 @@ export function parseEnv(raw: Record<string, string | undefined>): Env {
     fixtures: raw.SCR_FIXTURES === '1' || raw.SCR_FIXTURES === 'true',
     fixturesDir: raw.SCR_FIXTURES_DIR || 'fixtures',
     appVersion,
-    userAgent: publicBaseUrl ? `scr-hub/${appVersion} (+${publicBaseUrl})` : `scr-hub/${appVersion}`,
+    userAgent: publicBaseUrl ? `scrmod/${appVersion} (+${publicBaseUrl})` : `scrmod/${appVersion}`,
     webRoot: raw.SCR_WEB_ROOT || 'dist/web',
     port: parsePort(raw.PORT),
     rateLimit: raw.SCR_RATE_LIMIT !== 'off',

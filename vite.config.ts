@@ -5,7 +5,19 @@ export default defineConfig({
   root: 'src/web',
   base: process.env.VITE_BASE_PATH || '/',
   plugins: [react()],
-  build: { outDir: '../../dist/web', emptyOutDir: true, sourcemap: true },
+  build: {
+    outDir: '../../dist/web',
+    emptyOutDir: true,
+    sourcemap: true,
+    rolldownOptions: {
+      output: {
+        // The framework changes far less often than the app: its own long-cached file survives app deploys.
+        advancedChunks: {
+          groups: [{ name: 'vendor', test: /node_modules[\/](react|react-dom|scheduler|react-router|@tanstack)[\/]/ }],
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     proxy: { '/api': 'http://localhost:8080', '/auth': 'http://localhost:8080' },

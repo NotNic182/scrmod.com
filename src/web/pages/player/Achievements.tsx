@@ -1,6 +1,7 @@
 import { usePlayerSub } from '../../api/hooks'
 import { QueryState } from '../../components/QueryState'
 import { fmtDate } from '../../lib/format'
+import { Icon } from '../../components/Icon'
 
 export function AchievementsTab({ steamId }: { steamId: string }) {
   const q = usePlayerSub(steamId, 'achievements')
@@ -17,10 +18,11 @@ export function AchievementsTab({ steamId }: { steamId: string }) {
               </div>
               <div className="tiles">
                 {sorted.map((a) => (
-                  <div key={a.achievement_key} className="tile" style={{ opacity: a.unlocked ? 1 : 0.55 }}>
-                    <div className="value" style={{ fontSize: 15 }}>
-                      {a.unlocked ? '✓ ' : ''}
+                  <div key={a.achievement_key} className={`tile ${a.unlocked ? 'earned' : 'locked'}`}>
+                    <div className="value ach-name">
+                      {a.unlocked ? <Icon name="check" size={16} /> : null}
                       {a.name}
+                      {a.unlocked ? <span className="sr-only"> (unlocked)</span> : null}
                     </div>
                     <div className="sub">
                       {a.gold}g · {a.global_pct}% of players
