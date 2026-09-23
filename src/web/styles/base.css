@@ -1593,3 +1593,15 @@ details.acc > summary.series-row::before {
   margin: calc(-1 * var(--space-xs)) 0 var(--space-md);
   color: var(--fg-muted);
 }
+
+/* The guide's numbered steps read like the bulleted ones. */
+ol.prose {
+  max-width: 64ch;
+  padding-left: 1.25rem;
+}
+ol.prose li + li {
+  margin-top: var(--space-2xs);
+}
+.card.guide p {
+  margin: var(--space-xs) 0;
+}

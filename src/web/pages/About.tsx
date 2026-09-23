@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import { useTitle } from '../lib/title'
 import { useStatus } from '../api/hooks'
 import { LINKS } from '../../shared/links'
@@ -19,6 +20,9 @@ export function About() {
         <p className="muted">
           It is a community project, not affiliated with Landfall. Playing, queueing, betting, chatting and tournament signups still happen in the game and on the{' '}
           <a href={LINKS.discord}>Competitive Rounds Discord</a>.
+        </p>
+        <p>
+          New to it? <Link to="/guide">How to install the mod and play ranked</Link>.
         </p>
       </div>
       <div className="card">
