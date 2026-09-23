@@ -4,6 +4,7 @@ import { Cache, MemoryCacheStore, type CacheStore } from './cache'
 import { type Env } from './env'
 import { registerAuthRoutes } from './routes/auth'
 import { registerBoardRoutes } from './routes/boards'
+import { registerCardPageRoute } from './routes/card'
 import { registerCardRoutes } from './routes/cards'
 import { registerChatRoutes } from './routes/chat'
 import { registerHomeRoutes } from './routes/home'
@@ -67,6 +68,7 @@ export function createApp(deps: AppDeps) {
   registerPlayerRoutes(app, routeDeps)
   registerTournamentRoutes(app, routeDeps)
   registerCardRoutes(app, routeDeps)
+  registerCardPageRoute(app, routeDeps)
   registerChatRoutes(app, routeDeps)
   registerAuthRoutes(app, { ...routeDeps, discordFetch: deps.discordFetch ?? deps.fetchImpl })
 
