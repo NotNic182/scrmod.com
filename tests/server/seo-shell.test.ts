@@ -33,6 +33,29 @@ describe('renderShell', () => {
     expect(html).not.toContain('No live games right now.')
   })
 
+  it('escapes upstream numbers too: a string where a number belongs cannot become markup', () => {
+    const x = '<b>x</b>'
+    const home = {
+      presence: { online_count: 1, online: [], recent: [] },
+      queue: { ranked_searching: 0, team_searching: 0, online: 1 },
+      live: {
+        series_1v1: [{ series_id: 's1', p1_name: 'Ann', p2_name: 'Bob', p1_wins: x, p2_wins: x }],
+        series_2v2: [],
+        ffa_lobbies: [{ lobby_id: 'l1', host_name: 'Eve', player_count: x, max_players: x }],
+        spectate: [],
+      },
+      results: [],
+      maintenance: false,
+      alerts: [],
+    }
+    const board = { entries: [{ rank: x, steam_id: '76561199000000001', display_name: 'Sid', rating: 2564 }], total_players: 1 }
+    for (const html of [renderShell({ kind: 'home', home: home as never }, ''), renderShell({ kind: 'leaderboard', mode: '1v1', board: board as never }, '')]) {
+      expect(html).not.toContain('<b>')
+      expect(html).toContain('&lt;b&gt;x&lt;/b&gt;')
+    }
+    expect(renderShell({ kind: 'home', home: home as never }, '')).toContain('Ann &lt;b&gt;x&lt;/b&gt;–&lt;b&gt;x&lt;/b&gt; Bob')
+  })
+
   it('lists the top 25 of a board, escaped', () => {
     const board = { entries: [entry(1, 'Sid', 2564), entry(2, '</a><script>x</script>', 2352), ...Array.from({ length: 30 }, (_, i) => entry(i + 3, `P${i}`, 1500))], total_players: 32 }
     const html = renderShell({ kind: 'leaderboard', mode: '1v1', board: board as never }, '')

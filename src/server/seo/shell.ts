@@ -53,9 +53,9 @@ export function renderShell(data: ShellData, base: string): string {
       const h = data.home
       const live = h
         ? [
-            ...h.live.series_1v1.map((s) => `${esc(s.p1_name)} ${s.p1_wins}–${s.p2_wins} ${esc(s.p2_name)}`),
+            ...h.live.series_1v1.map((s) => `${esc(s.p1_name)} ${esc(s.p1_wins)}–${esc(s.p2_wins)} ${esc(s.p2_name)}`),
             ...h.live.series_2v2.map((s) => esc(`${s.t1a_name} & ${s.t1b_name} ${s.t1_wins}–${s.t2_wins} ${s.t2a_name} & ${s.t2b_name}`)),
-            ...h.live.ffa_lobbies.map((l) => `${esc(l.host_name)}'s lobby · ${l.player_count}/${l.max_players}`),
+            ...h.live.ffa_lobbies.map((l) => `${esc(l.host_name)}'s lobby · ${esc(l.player_count)}/${esc(l.max_players)}`),
           ]
         : []
       const results = (h?.results ?? []).slice(0, 8).map(resultLine)
@@ -72,7 +72,7 @@ export function renderShell(data: ShellData, base: string): string {
       const mode = BOARD_MODES.find((m) => m.id === data.mode)
       const rows = (data.board?.entries ?? []).slice(0, 25).map((e) => {
         const rating = 'rating' in e && typeof e.rating === 'number' ? ` · ${Math.round(e.rating)}` : ''
-        return `#${e.rank} ${a(`/players/${e.steam_id}`, e.display_name || 'Unnamed player')}${rating}`
+        return `#${esc(e.rank)} ${a(`/players/${e.steam_id}`, e.display_name || 'Unnamed player')}${rating}`
       })
       main =
         `<h1>Leaderboards</h1>${intro(mode?.ranked === false ? INTROS.leaderboards1v2 : INTROS.leaderboards)}` +
