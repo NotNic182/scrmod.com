@@ -1,3 +1,4 @@
+import type { Context } from 'hono'
 import { scrubPrivate } from '../../shared/privacy'
 import { GUIDE_CHECKED, GUIDE_TITLE } from '../../shared/guide'
 import { cardSlug, matchRoute, pageMeta, slugToName, type MetaFacts, type PlayerFacts } from '../../shared/seo'
@@ -19,6 +20,9 @@ export const SHELL_DATA_MS = 250
 
 type Settled<T> = { ok: true; value: T } | { ok: false; notFound: boolean }
 
+/** What a page gets instead of its data when its client is over the API budget (ratelimit.ts). */
+const SKIPPED = { ok: false, notFound: false } as const
+
 /** Waits up to SHELL_DATA_MS; an upstream 404/410 is reported as notFound, anything else (timeout, error) is not. */
 async function settle<T>(p: Promise<T>): Promise<Settled<T>> {
   let timer: ReturnType<typeof setTimeout> | undefined
@@ -36,11 +40,26 @@ async function settle<T>(p: Promise<T>): Promise<Settled<T>> {
   }
 }
 
+/** The few profile fields a page's description and shell use, each dropped when it isn't the expected type. */
+function playerFacts(p: Record<string, unknown>): PlayerFacts {
+  return {
+    display_name: String(p.display_name ?? ''),
+    rating: typeof p.rating === 'number' ? p.rating : null,
+    rank_name: typeof p.rank_name === 'string' ? p.rank_name : null,
+    standing: typeof p.standing === 'number' ? p.standing : null,
+    standing_population: typeof p.standing_population === 'number' ? p.standing_population : null,
+    ranked_series_wins: typeof p.ranked_series_wins === 'number' ? p.ranked_series_wins : null,
+    ranked_series_losses: typeof p.ranked_series_losses === 'number' ? p.ranked_series_losses : null,
+  }
+}
+
 export type PageResult = { redirect: string } | { status: 200 | 404; head: string; body: string; index: boolean }
 
-export async function resolvePage(d: RouteDeps, path: string, requestUrl: string): Promise<PageResult> {
+export async function resolvePage(d: RouteDeps, path: string, c: Context): Promise<PageResult> {
   const base = basePrefix(d.env)
-  const site = siteUrl(d.env, requestUrl)
+  const site = siteUrl(d.env, c.req.url)
+  // Player and tournament ids come from the address, so a client over its API budget gets those pages without data.
+  const overBudget = c.get('overBudget') === true
   let match = matchRoute(path)
   if (match.kind === 'leaderboards-root') return { redirect: `${base}/leaderboards/1v1` }
 
@@ -77,7 +96,7 @@ export async function resolvePage(d: RouteDeps, path: string, requestUrl: string
       break
     }
     case 'tournament': {
-      const r = await settle(loadBracket(d, match.id))
+      const r = overBudget ? SKIPPED : await settle(loadBracket(d, match.id))
       if (!r.ok && r.notFound) match = { kind: 'not-found' }
       else shell = { kind: 'tournament', id: match.id }
       break
@@ -123,20 +142,7 @@ export async function resolvePage(d: RouteDeps, path: string, requestUrl: string
       shell = { kind: 'about' }
       break
     case 'player': {
-      const r = await settle(
-        loadProfile(d, match.id).then((res): PlayerFacts => {
-          const p = res.value as Record<string, unknown>
-          return {
-            display_name: String(p.display_name ?? ''),
-            rating: typeof p.rating === 'number' ? p.rating : null,
-            rank_name: typeof p.rank_name === 'string' ? p.rank_name : null,
-            standing: typeof p.standing === 'number' ? p.standing : null,
-            standing_population: typeof p.standing_population === 'number' ? p.standing_population : null,
-            ranked_series_wins: typeof p.ranked_series_wins === 'number' ? p.ranked_series_wins : null,
-            ranked_series_losses: typeof p.ranked_series_losses === 'number' ? p.ranked_series_losses : null,
-          }
-        }),
-      )
+      const r = overBudget ? SKIPPED : await settle(loadProfile(d, match.id).then((res) => playerFacts(res.value)))
       if (!r.ok && r.notFound) {
         match = { kind: 'not-found' }
         break

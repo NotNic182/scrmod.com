@@ -134,7 +134,7 @@ export function registerStatic(app: Hono, opts: { root: string; basePath: string
     let html = template
     if (opts.deps) {
       try {
-        const page = await resolvePage(opts.deps, p, c.req.url)
+        const page = await resolvePage(opts.deps, p, c)
         if ('redirect' in page) return c.redirect(page.redirect, 301)
         status = page.status
         if (!page.index) c.header('X-Robots-Tag', 'noindex, follow')

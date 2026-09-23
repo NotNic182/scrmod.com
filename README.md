@@ -37,7 +37,7 @@ npm run contract  # hits the live API once per endpoint and checks the shapes (m
 | `SCR_FIXTURES` | unset | `1` answers from `fixtures/` (demo, tests) |
 | `SCR_FIXTURES_DIR` | `fixtures` | Where fixture mode reads from |
 | `SCR_APP_VERSION` | `0.1.0` | Reported by `/api/_status` and sent in the `User-Agent` |
-| `SCR_RATE_LIMIT` | on | `off` disables the per-client limit (`/api/*` 60 per 10 s, `/auth/*` 10 per 60 s; `/api/_status` is exempt) |
+| `SCR_RATE_LIMIT` | on | `off` disables the per-client limit (`/api/*` 60 per 10 s, `/auth/*` 10 per 60 s; `/api/_status` is exempt). Player and tournament pages spend the `/api/*` budget; over it they are served without their data rather than refused |
 | `PORT` | `8080` | Node listen port |
 | `SCR_WEB_ROOT` | `dist/web` | Directory the built SPA is served from |
 | `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION` | unset | Search console verification meta tags |

@@ -1,4 +1,12 @@
 import type { Context, MiddlewareHandler } from 'hono'
+import { matchRoute } from '../shared/seo'
+
+declare module 'hono' {
+  interface ContextVariableMap {
+    /** Set on a player or tournament page whose client has spent its API budget: render it without upstream data. */
+    overBudget: boolean
+  }
+}
 
 export interface RateLimitRule {
   /** Requests allowed per window. */
@@ -10,6 +18,7 @@ export interface RateLimitRule {
  * Sid's API allows 150 req/10 s per IP and the hub is a single IP to it, so the hub has to
  * meter its own visitors: search terms, viewer pairs, card names and match pages are all
  * cold cache keys one person can enumerate, and every /auth/* hit is a Discord token POST.
+ * Player and tournament pages look up the id in their address, so they spend the API budget too.
  */
 export const API_RULE: RateLimitRule = { limit: 60, windowMs: 10_000 }
 export const AUTH_RULE: RateLimitRule = { limit: 10, windowMs: 60_000 }
@@ -49,6 +58,12 @@ export function clientIp(c: Context): string | null {
   return null
 }
 
+/** A page whose data is keyed by an id the client can invent: each new id is a fresh upstream call. */
+function lookupPage(path: string): boolean {
+  const kind = matchRoute(path).kind
+  return kind === 'player' || kind === 'tournament'
+}
+
 interface Bucket {
   tokens: number
   last: number
@@ -79,7 +94,7 @@ export function rateLimit(opts: RateLimitOptions = {}): RateLimitMiddleware {
     if (prefix && path.startsWith(prefix)) path = path.slice(prefix.length) || '/'
     // _status is the deploy health check: it must answer even while a client is throttled.
     const scope =
-      path === '/api/_status' ? null : path.startsWith('/api/') ? 'api' : path.startsWith('/auth/') ? 'auth' : null
+      path === '/api/_status' ? null : path.startsWith('/api/') ? 'api' : path.startsWith('/auth/') ? 'auth' : lookupPage(path) ? 'page' : null
     if (!scope) return next()
 
     const ip = clientIp(c)
@@ -97,8 +112,8 @@ export function rateLimit(opts: RateLimitOptions = {}): RateLimitMiddleware {
       return next()
     }
 
-    const rule = scope === 'api' ? api : auth
-    const key = `${scope}:${ip}`
+    const rule = scope === 'auth' ? auth : api
+    const key = `${scope === 'auth' ? 'auth' : 'api'}:${ip}`
     const bucket = buckets.get(key) ?? { tokens: rule.limit, last: t }
     bucket.tokens = Math.min(rule.limit, bucket.tokens + ((t - bucket.last) * rule.limit) / rule.windowMs)
     bucket.last = t
@@ -110,6 +125,11 @@ export function rateLimit(opts: RateLimitOptions = {}): RateLimitMiddleware {
     }
 
     if (bucket.tokens < 1) {
+      // A page never answers 429: it is served without its data (the page is noindex anyway).
+      if (scope === 'page') {
+        c.set('overBudget', true)
+        return next()
+      }
       const retryAfter = Math.max(1, Math.ceil(((1 - bucket.tokens) * rule.windowMs) / rule.limit / 1000))
       c.header('Retry-After', String(retryAfter))
       return c.json({ error: 'rate_limited', retry_after: retryAfter }, 429)
