@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { makeApp } from './helpers/makeApp'
 
 describe('canonical host', () => {
@@ -22,5 +22,17 @@ describe('canonical host', () => {
   it('does nothing without PUBLIC_BASE_URL', async () => {
     const { app } = makeApp({})
     expect((await app.request('http://anything.test/robots.txt')).status).toBe(200)
+  })
+
+  it('tolerates a malformed PUBLIC_BASE_URL and disables redirect', async () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { app } = makeApp({}, { PUBLIC_BASE_URL: 'scrmod.com' })
+    expect(spy).toHaveBeenCalledWith(
+      '[hub] PUBLIC_BASE_URL is not a URL; canonical host redirect disabled:',
+      'scrmod.com',
+    )
+    const res = await app.request('http://anything.test/leaderboards/1v1')
+    expect(res.status).not.toBe(301)
+    spy.mockRestore()
   })
 })

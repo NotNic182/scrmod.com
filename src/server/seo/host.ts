@@ -7,7 +7,14 @@ import type { Env } from '../env'
  * so health checks and API clients keep working on any host.
  */
 export function canonicalHost(env: Env): MiddlewareHandler {
-  const target = env.publicBaseUrl ? new URL(env.publicBaseUrl) : null
+  let target: URL | null = null
+  if (env.publicBaseUrl) {
+    try {
+      target = new URL(env.publicBaseUrl)
+    } catch {
+      console.warn('[hub] PUBLIC_BASE_URL is not a URL; canonical host redirect disabled:', env.publicBaseUrl)
+    }
+  }
   return async (c, next) => {
     if (!target || (c.req.method !== 'GET' && c.req.method !== 'HEAD')) return next()
     const url = new URL(c.req.url)
