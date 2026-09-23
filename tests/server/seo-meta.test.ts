@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { cardSlug, matchRoute, pageMeta, slugToName } from '../../src/shared/seo'
+import { GUIDE, GUIDE_INTRO } from '../../src/shared/guide'
 
 describe('cardSlug', () => {
   it('lowercases, strips accents and joins words with single dashes', () => {
@@ -89,5 +90,17 @@ describe('pageMeta', () => {
     expect(pristineNoFacts.description.length).toBeLessThanOrEqual(160)
     expect(pageMeta({ kind: 'not-found' })).toMatchObject({ index: false, path: null })
     expect(pageMeta({ kind: 'tournament', id: 'x' }).index).toBe(false)
+  })
+})
+
+describe('guide content', () => {
+  it('covers the planned sections and links to the mod', () => {
+    expect(GUIDE.map((s) => s.id)).toEqual(['before', 'install-r2modman', 'install-windows', 'ranked', 'more', 'controls', 'other-mods', 'links'])
+    const links = JSON.stringify([GUIDE_INTRO, GUIDE])
+    expect(links).toContain('https://thunderstore.io/c/rounds/p/Team_Sid/SidsCompetitiveRounds/')
+    expect(links).toContain('https://github.com/SidNDeed/SidsCompetitiveRounds')
+    expect(links).toContain('https://discord.gg/4tsWadH6tc')
+    expect(links).toContain('v1.1.2')
+    expect(links).toContain('Grand Master V')
   })
 })

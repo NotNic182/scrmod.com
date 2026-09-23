@@ -2,18 +2,20 @@ import { Suspense, useEffect, useRef, type ReactNode } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
 import { useOnline } from '../lib/online'
 import { useTheme } from '../lib/theme'
+import { FOOTER_NOTE, NAV_LINKS } from '../../shared/brand'
 import { Backdrop } from './Backdrop'
 import { ErrorBoundary } from './ErrorBoundary'
 import { Icon, type IconName } from './Icon'
 import { Wordmark } from './Wordmark'
 
-const NAV: Array<{ to: string; label: string; icon: IconName; end?: boolean; match?: string }> = [
-  { to: '/', label: 'Home', icon: 'home', end: true },
-  { to: '/leaderboards/1v1', label: 'Boards', icon: 'boards', match: '/leaderboards' },
-  { to: '/results', label: 'Results', icon: 'results' },
-  { to: '/tournaments', label: 'Tournaments', icon: 'tournaments' },
-  { to: '/cards', label: 'Cards', icon: 'cards' },
-]
+const NAV_DETAILS: Record<string, { icon: IconName; end?: boolean; match?: string }> = {
+  '/': { icon: 'home', end: true },
+  '/leaderboards/1v1': { icon: 'boards', match: '/leaderboards' },
+  '/results': { icon: 'results' },
+  '/tournaments': { icon: 'tournaments' },
+  '/cards': { icon: 'cards' },
+}
+const NAV = NAV_LINKS.map((n) => ({ ...n, ...NAV_DETAILS[n.to] }))
 
 /** Boards links to 1v1 but stays lit on every mode. */
 function isActive(n: (typeof NAV)[number], pathname: string, active: boolean) {
@@ -87,8 +89,7 @@ export function Layout({ identity }: { identity?: ReactNode }) {
         </ErrorBoundary>
       </main>
       <footer className="footer">
-        Data from the Sid's Competitive Rounds mod API, refreshed every few seconds. Not affiliated with Landfall.{' '}
-        <NavLink to="/about">About &amp; privacy</NavLink>
+        {FOOTER_NOTE} <NavLink to="/about">About &amp; privacy</NavLink>
       </footer>
       <nav className="tabbar" aria-label="Primary">
         {NAV.map((n) => (
