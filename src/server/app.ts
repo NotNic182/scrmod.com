@@ -13,6 +13,7 @@ import { registerPlayerRoutes } from './routes/players'
 import { registerStatusRoutes } from './routes/status'
 import { registerTournamentRoutes } from './routes/tournaments'
 import type { RouteDeps } from './routes/common'
+import { canonicalHost } from './seo/host'
 import { registerCrawlRoutes } from './seo/crawl'
 import { rateLimit } from './ratelimit'
 import { Upstream } from './upstream'
@@ -58,6 +59,7 @@ export function createApp(deps: AppDeps) {
     return c.json({ error: 'internal' }, 500)
   })
 
+  app.use('*', canonicalHost(env))
   if (env.rateLimit) app.use('*', rateLimit({ now, prefix: env.basePath }))
   // JSON compresses ~5-10x and the live pages poll it every 15 s. Static files compress themselves (static.ts).
   app.use('/api/*', compress())
