@@ -1,0 +1,53 @@
+import { describe, it, expect } from 'vitest'
+import { renderShell } from '../../src/server/seo/shell'
+
+const entry = (rank: number, name: string, rating: number) => ({ rank, steam_id: `7656119900000000${rank}`, display_name: name, rating })
+
+describe('renderShell', () => {
+  it('always carries the navigation as plain links, under the base path', () => {
+    const html = renderShell({ kind: 'about' }, '/hub')
+    expect(html).toContain('<a class="item" href="/hub/leaderboards/1v1">Boards</a>')
+    expect(html).toContain('<a href="/hub/guide">Guide</a>')
+    expect(html).toContain('<footer class="footer">')
+    expect(html).toContain('aria-label="SCRmod"')
+  })
+
+  it('lists the top 25 of a board, escaped', () => {
+    const board = { entries: [entry(1, 'Sid', 2564), entry(2, '</a><script>x</script>', 2352), ...Array.from({ length: 30 }, (_, i) => entry(i + 3, `P${i}`, 1500))], total_players: 32 }
+    const html = renderShell({ kind: 'leaderboard', mode: '1v1', board: board as never }, '')
+    expect(html).toContain('<h1>Leaderboards</h1>')
+    expect(html).toContain("Ranked ROUNDS players in Sid&#39;s Competitive Rounds, ordered by rating.")
+    expect(html).toContain('href="/players/76561199000000001">Sid</a> · 2564')
+    expect(html).not.toContain('<script>x')
+    expect(html.match(/<li class="row list-row">/g)).toHaveLength(25)
+  })
+
+  it('links every card, and renders a card page with its stats and neighbours', () => {
+    const cards = [{ card_name: 'Big Bullet', card_rarity: 'Common', times_picked: 1234, win_rate: 0.523, pass_rate: 0.31 }]
+    expect(renderShell({ kind: 'cards', cards: cards as never }, '')).toContain('<a href="/cards/big-bullet">Big Bullet</a>')
+    const page = { slug: 'big-bullet', card: { ...cards[0], times_offered: 2000, unique_players: 70, sweeps_with_card: 9 }, ranked: null, casual: null, winners: [{ card: 'Big Bullet', player: 'Stan', count: 50 }], sweepers: [], prev: { name: 'Poison', slug: 'poison' }, next: null }
+    const html = renderShell({ kind: 'card', slug: 'big-bullet', page: page as never }, '')
+    expect(html).toContain('<h1>Big Bullet</h1>')
+    expect(html).toContain('52% win rate')
+    expect(html).toContain('Stan · 50')
+    expect(html).toContain('<a href="/cards/poison">← Poison</a>')
+  })
+
+  it('renders the whole guide', () => {
+    const html = renderShell({ kind: 'guide' }, '')
+    expect(html).toContain('<h1>How to play ranked ROUNDS</h1>')
+    expect(html).toContain('<h2>Install with r2modman or Thunderstore Mod Manager</h2>')
+    expect(html).toContain('<code>CompetitiveRoundsInstaller.exe</code>')
+    expect(html).toContain('<td>F5</td>')
+    expect(html).toContain('href="/leaderboards/1v1"')
+  })
+
+  it('falls back to headings and links when the data did not arrive', () => {
+    for (const d of [{ kind: 'home' }, { kind: 'leaderboard', mode: '2v2' }, { kind: 'results' }, { kind: 'tournaments' }, { kind: 'cards' }, { kind: 'card', slug: 'big-bullet' }, { kind: 'player', id: '76561199311926326' }, { kind: 'tournament', id: 'x' }, { kind: 'not-found' }] as const) {
+      const html = renderShell(d, '')
+      expect(html).toContain('<h1>')
+      expect(html).toContain('<main class="page" id="main">')
+    }
+    expect(renderShell({ kind: 'not-found' }, '')).toContain('<h1>Nothing here</h1>')
+  })
+})
