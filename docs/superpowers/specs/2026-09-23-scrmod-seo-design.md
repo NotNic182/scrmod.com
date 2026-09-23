@@ -147,11 +147,13 @@ Players: title "{Name}: ROUNDS ranked stats", description "{rating} rating · {t
 ```
 User-agent: *
 Allow: /
-Disallow: /api/
 Disallow: /auth/
 Sitemap: {origin}{base}/sitemap.xml
 ```
-Player pages are not blocked here: Google must fetch them to see their `noindex`.
+Player pages are not blocked here: Google must fetch them to see their `noindex`. `/api/` is not blocked
+either: Google renders pages with JavaScript, and the pages fetch their data from it (an earlier version
+disallowed it, and Search Console reported `/api/home`, `/api/me` and `/api/stream` as blocked resources).
+Every `/api/*` response carries `X-Robots-Tag: noindex` so the JSON is fetched but never indexed.
 
 **`sitemap.xml`:** Home, the 6 leaderboard modes, Results, Tournaments, Cards, every card page, Guide, About.
 No player or tournament-detail pages. `<lastmod>` on card pages from their data's `fetched_at`; on Guide and

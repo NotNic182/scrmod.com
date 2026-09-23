@@ -12,7 +12,9 @@ export function registerCrawlRoutes(app: Hono, d: RouteDeps) {
     const base = basePrefix(d.env)
     c.header('Content-Type', 'text/plain; charset=utf-8')
     c.header('Cache-Control', 'public, max-age=3600')
-    return c.body(`User-agent: *\nAllow: /\nDisallow: ${base}/api/\nDisallow: ${base}/auth/\n\nSitemap: ${siteUrl(d.env, c)}/sitemap.xml\n`)
+    // /api/ stays crawlable: Google renders pages with JavaScript and the pages fetch their data from it. The API's
+    // responses carry X-Robots-Tag: noindex instead (app.ts), so the JSON itself never lands in search results.
+    return c.body(`User-agent: *\nAllow: /\nDisallow: ${base}/auth/\n\nSitemap: ${siteUrl(d.env, c)}/sitemap.xml\n`)
   })
 
   app.get('/sitemap.xml', async (c) => {

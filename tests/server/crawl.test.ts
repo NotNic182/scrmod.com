@@ -5,11 +5,18 @@ import { json } from './helpers/fakeUpstream'
 const cards = [{ card_name: 'Big Bullet', card_rarity: 'Common', times_picked: 1, win_rate: 0.5, pass_rate: 0.3 }]
 
 describe('crawl files', () => {
-  it('robots.txt allows pages, blocks the API and points to the sitemap', async () => {
+  it('robots.txt allows pages and the API they render from, blocks auth and points to the sitemap', async () => {
     const { app } = makeApp({}, { PUBLIC_BASE_URL: 'https://scrmod.com' })
     const res = await app.request('/robots.txt')
     expect(res.headers.get('content-type')).toContain('text/plain')
-    expect(await res.text()).toBe('User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /auth/\n\nSitemap: https://scrmod.com/sitemap.xml\n')
+    expect(await res.text()).toBe('User-agent: *\nAllow: /\nDisallow: /auth/\n\nSitemap: https://scrmod.com/sitemap.xml\n')
+  })
+
+  it('API responses can be fetched for rendering but are never indexed', async () => {
+    const { app } = makeApp({ '/leaderboard': { entries: [], total_players: 0 } })
+    for (const path of ['/api/leaderboard/1v1', '/api/leaderboard/nope', '/api/_status']) {
+      expect((await app.request(path)).headers.get('x-robots-tag')).toBe('noindex')
+    }
   })
 
   it('without PUBLIC_BASE_URL, points to the sitemap on the https address a TLS proxy was reached on', async () => {
@@ -44,6 +51,8 @@ describe('crawl files', () => {
 
   it('respects a base path', async () => {
     const { app } = makeApp({}, { BASE_PATH: '/hub', PUBLIC_BASE_URL: 'https://example.org/hub' })
-    expect(await (await app.request('/hub/robots.txt')).text()).toContain('Disallow: /hub/api/\nDisallow: /hub/auth/\n\nSitemap: https://example.org/hub/sitemap.xml')
+    const robots = await (await app.request('/hub/robots.txt')).text()
+    expect(robots).toContain('Disallow: /hub/auth/\n\nSitemap: https://example.org/hub/sitemap.xml')
+    expect(robots).not.toContain('/api/')
   })
 })
