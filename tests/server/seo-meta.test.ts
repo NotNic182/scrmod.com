@@ -47,7 +47,7 @@ describe('pageMeta', () => {
   it('builds a card page from its facts, canonical slug included', () => {
     const m = pageMeta({ kind: 'card', slug: 'Big Bullet' }, { card: { name: 'Big Bullet', rarity: 'Common', win_rate: 0.523, times_picked: 1234, pass_rate: 0.31 } })
     expect(m.title).toBe('Big Bullet: ROUNDS card win rate and stats · SCRmod')
-    expect(m.description).toBe("Big Bullet (Common) in ROUNDS: 52% win rate, picked 1,234 times and passed 31% of the time in Sid's Competitive Rounds games.")
+    expect(m.description).toBe("Big Bullet (Common) in ROUNDS: 52% win rate, picked 1,234 times and passed 31% of the time in Sid's Competitive Rounds ranked and casual games.")
     expect(m.path).toBe('/cards/big-bullet')
     expect(pageMeta({ kind: 'card', slug: 'big-bullet' }).title).toBe('Big Bullet: ROUNDS card win rate and stats · SCRmod')
   })
@@ -69,6 +69,24 @@ describe('pageMeta', () => {
       expect(m.description.length).toBeGreaterThanOrEqual(120)
       expect(m.description.length).toBeLessThanOrEqual(160)
     }
+    // Card descriptions with facts
+    const empMeta = pageMeta({ kind: 'card', slug: 'Emp' }, { card: { name: 'Emp', rarity: 'Rare', win_rate: 0.05, times_picked: 5, pass_rate: 0.05 } })
+    expect(empMeta.index).toBe(true)
+    expect(empMeta.description.length).toBeGreaterThanOrEqual(120)
+    expect(empMeta.description.length).toBeLessThanOrEqual(160)
+    const pristineMeta = pageMeta({ kind: 'card', slug: 'Pristine Perseverance' }, { card: { name: 'Pristine Perseverance', rarity: 'Uncommon', win_rate: 1, times_picked: 99999, pass_rate: 1 } })
+    expect(pristineMeta.index).toBe(true)
+    expect(pristineMeta.description.length).toBeGreaterThanOrEqual(120)
+    expect(pristineMeta.description.length).toBeLessThanOrEqual(160)
+    // Card descriptions without facts
+    const empNoFacts = pageMeta({ kind: 'card', slug: 'emp' })
+    expect(empNoFacts.index).toBe(true)
+    expect(empNoFacts.description.length).toBeGreaterThanOrEqual(120)
+    expect(empNoFacts.description.length).toBeLessThanOrEqual(160)
+    const pristineNoFacts = pageMeta({ kind: 'card', slug: 'pristine-perseverance' })
+    expect(pristineNoFacts.index).toBe(true)
+    expect(pristineNoFacts.description.length).toBeGreaterThanOrEqual(120)
+    expect(pristineNoFacts.description.length).toBeLessThanOrEqual(160)
     expect(pageMeta({ kind: 'not-found' })).toMatchObject({ index: false, path: null })
     expect(pageMeta({ kind: 'tournament', id: 'x' }).index).toBe(false)
   })

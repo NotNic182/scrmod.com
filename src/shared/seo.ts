@@ -216,8 +216,8 @@ export function pageMeta(m: RouteMatch, facts: MetaFacts = {}): PageMeta {
       return {
         title: titled(`${name}: ROUNDS card win rate and stats`),
         description: c
-          ? `${c.name} (${c.rarity}) in ROUNDS: ${percent(c.win_rate)} win rate, picked ${count(c.times_picked)} times and passed ${percent(c.pass_rate)} of the time in Sid's Competitive Rounds games.`
-          : `Win rate, pick rate and the top players of the ROUNDS card ${name} in Sid's Competitive Rounds.`,
+          ? `${c.name} (${c.rarity}) in ROUNDS: ${percent(c.win_rate)} win rate, picked ${count(c.times_picked)} times and passed ${percent(c.pass_rate)} of the time in Sid's Competitive Rounds ranked and casual games.`
+          : `Win rate, pick rate and the players who win most with ${name}, a ROUNDS card, across ranked and casual games of Sid's Competitive Rounds.`,
         path: `/cards/${c ? cardSlug(c.name) : cardSlug(m.slug)}`,
         index: true,
         ogType: 'website',
