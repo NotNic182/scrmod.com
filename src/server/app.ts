@@ -11,6 +11,7 @@ import { registerHomeRoutes } from './routes/home'
 import { registerMetaRoutes } from './routes/meta'
 import { registerPlayerRoutes } from './routes/players'
 import { registerStatusRoutes } from './routes/status'
+import { registerStreamRoutes } from './stream'
 import { registerTournamentRoutes } from './routes/tournaments'
 import type { RouteDeps } from './routes/common'
 import { canonicalHost } from './seo/host'
@@ -26,6 +27,8 @@ export interface AppDeps {
   now?: () => number
   /** fetch used for Discord's own API; defaults to fetchImpl or global fetch. */
   discordFetch?: typeof fetch
+  /** fetch used for Twitch and YouTube; defaults to the global fetch. */
+  streamFetch?: typeof fetch
 }
 
 export function createApp(deps: AppDeps) {
@@ -75,6 +78,7 @@ export function createApp(deps: AppDeps) {
   registerChatRoutes(app, routeDeps)
   registerAuthRoutes(app, { ...routeDeps, discordFetch: deps.discordFetch ?? deps.fetchImpl })
   registerCrawlRoutes(app, routeDeps)
+  registerStreamRoutes(app, routeDeps, deps.streamFetch ?? fetch)
 
   return { app, cache, upstream, version, deps: routeDeps }
 }

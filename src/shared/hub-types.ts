@@ -78,6 +78,28 @@ export interface CardPageData {
   next: { name: string; slug: string } | null
 }
 
+export interface StreamLive {
+  platform: 'twitch' | 'youtube'
+  title: string
+  viewers: number | null
+  started_at: string | null
+  url: string
+  embed: { kind: 'twitch'; channel: string } | { kind: 'youtube'; videoId: string }
+}
+
+export interface StreamVideo {
+  title: string
+  url: string
+  videoId: string
+  published_at: string
+}
+
+export interface StreamData {
+  live: StreamLive | null
+  recent: StreamVideo[]
+  links: { twitch: string; youtube: string }
+}
+
 export interface StatusResponse {
   mode: 'community' | 'hosted' | 'fixtures'
   app_version: string
