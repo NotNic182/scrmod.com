@@ -102,6 +102,14 @@ describe('server-rendered pages', () => {
     expect(brotliDecompressSync(Buffer.from(await br.arrayBuffer())).toString()).toContain('How to play ranked ROUNDS')
   })
 
+  it('watch: 200 with the watch title and canonical, no stream data needed', async () => {
+    const res = await site({}).request('/watch')
+    expect(res.status).toBe(200)
+    const html = await res.text()
+    expect(html).toContain('<title>ROUNDS live stream: ranked games and tournaments · SCRmod</title>')
+    expect(html).toContain('<link rel="canonical" href="https://scrmod.com/watch" />')
+  })
+
   it('a null response from upstream renders the generic page rather than an error', async () => {
     const res = await site({ '/series/recent-multimode': null }).request('/results')
     expect(res.status).toBe(200)

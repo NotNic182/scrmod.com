@@ -2,7 +2,6 @@ import { useTitle } from '../lib/title'
 import { useParams } from 'react-router'
 import { useTournaments } from '../api/hooks'
 import { QueryState } from '../components/QueryState'
-import { StreamCard } from '../components/Stream'
 import { Bracket } from './tournaments/Bracket'
 import { CurrentCard } from './tournaments/CurrentCard'
 import { History } from './tournaments/History'
@@ -18,7 +17,6 @@ export function Tournaments() {
     <>
       <h1>Tournaments</h1>
       <p className="page-intro">{INTROS.tournaments} Sign up, vote and play from the game (F5 → Tournaments).</p>
-      <StreamCard />
       {bracketId ? <Bracket id={bracketId} /> : null}
       <QueryState q={q} label="tournaments">
         {(d, meta) => (

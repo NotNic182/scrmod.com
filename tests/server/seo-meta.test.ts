@@ -27,6 +27,9 @@ describe('matchRoute', () => {
     expect(matchRoute('/cards/%E0%A4%A')).toEqual({ kind: 'not-found' })
     expect(matchRoute('/guide')).toEqual({ kind: 'guide' })
     expect(matchRoute('/about')).toEqual({ kind: 'about' })
+    expect(matchRoute('/watch')).toEqual({ kind: 'watch' })
+    expect(matchRoute('/watch/')).toEqual({ kind: 'watch' })
+    expect(matchRoute('/watch/x')).toEqual({ kind: 'not-found' })
     expect(matchRoute('/players/76561199311926326')).toEqual({ kind: 'player', id: '76561199311926326' })
     expect(matchRoute('/players/123')).toEqual({ kind: 'not-found' })
     expect(matchRoute('/cards/a/b')).toEqual({ kind: 'not-found' })
@@ -41,6 +44,7 @@ describe('pageMeta', () => {
     expect(pageMeta({ kind: 'leaderboard', mode: '1v2-solo' }).title).toBe('ROUNDS 1v2 solo leaderboard: top players · SCRmod')
     expect(pageMeta({ kind: 'cards' }).title).toBe('ROUNDS card win rates: the best cards in ranked play · SCRmod')
     expect(pageMeta({ kind: 'guide' }).title).toBe("How to play ranked ROUNDS: install Sid's Competitive Rounds · SCRmod")
+    expect(pageMeta({ kind: 'watch' }).title).toBe('ROUNDS live stream: ranked games and tournaments · SCRmod')
     expect(pageMeta({ kind: 'leaderboards-root' }).path).toBe('/leaderboards/1v1')
     expect(pageMeta({ kind: 'leaderboard', mode: 'zzz' }).index).toBe(false)
   })
@@ -81,7 +85,7 @@ describe('pageMeta', () => {
   })
 
   it('gives every indexed page a 120-160 character description', () => {
-    const pages = [{ kind: 'home' }, { kind: 'leaderboard', mode: '1v1' }, { kind: 'leaderboard', mode: '1v2' }, { kind: 'results' }, { kind: 'tournaments' }, { kind: 'cards' }, { kind: 'guide' }, { kind: 'about' }] as const
+    const pages = [{ kind: 'home' }, { kind: 'leaderboard', mode: '1v1' }, { kind: 'leaderboard', mode: '1v2' }, { kind: 'results' }, { kind: 'tournaments' }, { kind: 'cards' }, { kind: 'guide' }, { kind: 'about' }, { kind: 'watch' }] as const
     for (const p of pages) {
       const m = pageMeta(p)
       expect(m.index).toBe(true)

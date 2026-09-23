@@ -21,6 +21,7 @@ export const INTROS = {
   results: 'The latest finished ranked and casual games, newest first.',
   tournaments: 'Weekly and async ROUNDS tournaments: signups, brackets and past winners.',
   cards: 'Win, pick and pass rates for every ROUNDS card across ranked and casual games.',
+  watch: "Ranked ROUNDS games and tournaments from Sid's Competitive Rounds, streamed on Twitch and YouTube.",
 } as const
 
 /** "Big Bullet" → "big-bullet": lowercase, accents stripped, runs of anything else become one dash. */
@@ -53,6 +54,7 @@ export type RouteMatch =
   | { kind: 'card'; slug: string }
   | { kind: 'guide' }
   | { kind: 'about' }
+  | { kind: 'watch' }
   | { kind: 'player'; id: string }
   | { kind: 'not-found' }
 
@@ -92,6 +94,8 @@ export function matchRoute(path: string): RouteMatch {
       return b ? NOT_FOUND : { kind: 'guide' }
     case 'about':
       return b ? NOT_FOUND : { kind: 'about' }
+    case 'watch':
+      return b ? NOT_FOUND : { kind: 'watch' }
     case 'players':
       return b && STEAM_ID.test(b) ? { kind: 'player', id: b } : NOT_FOUND
     default:
@@ -239,6 +243,14 @@ export function pageMeta(m: RouteMatch, facts: MetaFacts = {}): PageMeta {
         title: titled('About SCRmod and privacy'),
         description: 'What SCRmod is, where its ROUNDS data comes from, and how it handles privacy: appearing offline, hidden gold and deleting your data.',
         path: '/about',
+        index: true,
+        ogType: 'website',
+      }
+    case 'watch':
+      return {
+        title: titled('ROUNDS live stream: ranked games and tournaments'),
+        description: "Watch Sid's Competitive Rounds live: ranked ROUNDS games and tournaments streamed on Twitch and YouTube, plus the latest broadcasts to catch up on.",
+        path: '/watch',
         index: true,
         ogType: 'website',
       }

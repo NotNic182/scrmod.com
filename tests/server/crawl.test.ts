@@ -23,13 +23,13 @@ describe('crawl files', () => {
     const res = await app.request('/sitemap.xml')
     expect(res.headers.get('content-type')).toContain('application/xml')
     const xml = await res.text()
-    for (const p of ['/', '/leaderboards/1v1', '/leaderboards/1v2-duo', '/results', '/tournaments', '/cards', '/guide', '/about', '/cards/big-bullet']) {
+    for (const p of ['/', '/leaderboards/1v1', '/leaderboards/1v2-duo', '/results', '/tournaments', '/cards', '/guide', '/about', '/watch', '/cards/big-bullet']) {
       expect(xml).toContain(`<loc>https://scrmod.com${p}</loc>`)
     }
     expect(xml).toMatch(/<loc>https:\/\/scrmod\.com\/cards\/big-bullet<\/loc><lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/)
     expect(xml).toContain('<loc>https://scrmod.com/guide</loc><lastmod>2026-09-23</lastmod>')
     expect(xml).not.toContain('/players/')
-    expect(xml.match(/<url>/g)).toHaveLength(13) // 12 site pages (home, 6 boards, results, tournaments, cards, guide, about) + 1 card
+    expect(xml.match(/<url>/g)).toHaveLength(14) // 13 site pages (home, 6 boards, results, tournaments, cards, guide, about, watch) + 1 card
   })
 
   it('still serves the pages when the card list fails, and says why in the log', async () => {
@@ -37,7 +37,7 @@ describe('crawl files', () => {
     const { app } = makeApp({ '/cards': () => json({ detail: 'down' }, 500) }, { PUBLIC_BASE_URL: 'https://scrmod.com' })
     const res = await app.request('/sitemap.xml')
     expect(res.status).toBe(200)
-    expect((await res.text()).match(/<url>/g)).toHaveLength(12)
+    expect((await res.text()).match(/<url>/g)).toHaveLength(13)
     expect(warn).toHaveBeenCalledWith('[hub] sitemap: card list unavailable', 500)
     warn.mockRestore()
   })

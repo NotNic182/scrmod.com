@@ -25,6 +25,7 @@ export function registerCrawlRoutes(app: Hono, d: RouteDeps) {
       { path: '/cards' },
       { path: '/guide', lastmod: GUIDE_CHECKED },
       { path: '/about' },
+      { path: '/watch' },
     ]
     try {
       const cards = await loadCards(d, 'all')

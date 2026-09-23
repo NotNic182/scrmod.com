@@ -49,4 +49,31 @@ describe('stream', () => {
     expect(await screen.findByRole('link', { name: 'Spirit vs galaxy ice' })).toHaveAttribute('href', 'https://www.youtube.com/watch?v=v1')
     expect(screen.queryByText(/live on stream/i)).toBeNull()
   })
+
+  it('adds a link to the Watch tab in the subline when watchLink is set', async () => {
+    const started = new Date(Date.now() - 5 * 60_000).toISOString()
+    mockHub({ '/stream': env({ live: { platform: 'twitch', title: 'Ranked night', viewers: 5, started_at: started, url: links.twitch, embed: { kind: 'twitch', channel: 'sidscompetitiverounds' } }, recent: [], links }) })
+    renderApp(<StreamCard watchLink />)
+    expect(await screen.findByRole('link', { name: 'Open on Twitch' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'More on Watch' })).toHaveAttribute('href', '/watch')
+  })
+
+  it('without watchLink, the subline carries no Watch link', async () => {
+    mockHub({ '/stream': env({ live: { platform: 'twitch', title: 'Ranked night', viewers: 5, started_at: new Date().toISOString(), url: links.twitch, embed: { kind: 'twitch', channel: 'sidscompetitiverounds' } }, recent: [], links }) })
+    renderApp(<StreamCard />)
+    await screen.findByRole('link', { name: 'Open on Twitch' })
+    expect(screen.queryByRole('link', { name: 'More on Watch' })).toBeNull()
+  })
+
+  it('RecentBroadcasts shows the list while live when whileLive is set', async () => {
+    mockHub({
+      '/stream': env({
+        live: { platform: 'twitch', title: 'Ranked night', viewers: 5, started_at: new Date().toISOString(), url: links.twitch, embed: { kind: 'twitch', channel: 'sidscompetitiverounds' } },
+        recent,
+        links,
+      }),
+    })
+    renderApp(<RecentBroadcasts whileLive />)
+    expect(await screen.findByRole('link', { name: 'Spirit vs galaxy ice' })).toBeInTheDocument()
+  })
 })

@@ -7,9 +7,19 @@ describe('renderShell', () => {
   it('always carries the navigation as plain links, under the base path', () => {
     const html = renderShell({ kind: 'about' }, '/hub')
     expect(html).toContain('<a class="item" href="/hub/leaderboards/1v1">Boards</a>')
+    expect(html).toContain('<a class="item" href="/hub/watch">Watch</a>')
     expect(html).toContain('<a href="/hub/guide">Guide</a>')
     expect(html).toContain('<footer class="footer">')
     expect(html).toContain('aria-label="SCRmod"')
+  })
+
+  it('renders the watch shell with the intro and both channel follow links', () => {
+    const html = renderShell({ kind: 'watch' }, '')
+    expect(html).toContain('<h1>Watch</h1>')
+    expect(html).toContain("Ranked ROUNDS games and tournaments from Sid&#39;s Competitive Rounds, streamed on Twitch and YouTube.")
+    expect(html).toContain('href="https://www.twitch.tv/sidscompetitiverounds" rel="noopener">Twitch</a>')
+    expect(html).toContain('href="https://www.youtube.com/@SidsCompetitiveRounds" rel="noopener">YouTube</a>')
+    expect(html).toContain('href="/watch">Watch</a>')
   })
 
   it('shows 2v2 and FFA live games on the home shell, and the 2v2 queue count', () => {
@@ -87,7 +97,7 @@ describe('renderShell', () => {
   })
 
   it('falls back to headings and links when the data did not arrive', () => {
-    for (const d of [{ kind: 'home' }, { kind: 'leaderboard', mode: '2v2' }, { kind: 'results' }, { kind: 'tournaments' }, { kind: 'cards' }, { kind: 'card', slug: 'big-bullet' }, { kind: 'player', id: '76561199311926326' }, { kind: 'tournament', id: 'x' }, { kind: 'not-found' }] as const) {
+    for (const d of [{ kind: 'home' }, { kind: 'leaderboard', mode: '2v2' }, { kind: 'results' }, { kind: 'tournaments' }, { kind: 'cards' }, { kind: 'card', slug: 'big-bullet' }, { kind: 'player', id: '76561199311926326' }, { kind: 'tournament', id: 'x' }, { kind: 'watch' }, { kind: 'not-found' }] as const) {
       const html = renderShell(d, '')
       expect(html).toContain('<h1>')
       expect(html).toContain('<main class="page" id="main">')

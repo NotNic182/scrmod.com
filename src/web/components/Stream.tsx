@@ -1,4 +1,5 @@
 import { useId, useState } from 'react'
+import { Link } from 'react-router'
 import { useStream } from '../api/hooks'
 import { relTime, num } from '../lib/format'
 import { Icon } from './Icon'
@@ -9,7 +10,7 @@ const PLATFORM = { twitch: 'Twitch', youtube: 'YouTube' } as const
  * The community's live stream, when there is one. Nothing is requested from Twitch or YouTube until the visitor
  * presses play: until then the card is one compact row in the site's own style, and the player opens under it.
  */
-export function StreamCard() {
+export function StreamCard({ watchLink = false }: { watchLink?: boolean } = {}) {
   const q = useStream()
   const [playing, setPlaying] = useState(false)
   const id = useId()
@@ -54,16 +55,22 @@ export function StreamCard() {
         <a href={live.url} rel="noopener">
           Open on {platform}
         </a>
+        {watchLink ? (
+          <>
+            {' '}
+            · <Link to="/watch">More on Watch</Link>
+          </>
+        ) : null}
       </p>
     </section>
   )
 }
 
-/** The latest ranked matches the channel broadcast, when nothing is live right now. */
-export function RecentBroadcasts() {
+/** The latest ranked matches the channel broadcast. Hidden while live unless `whileLive` says otherwise (the Watch tab shows it either way). */
+export function RecentBroadcasts({ whileLive = false }: { whileLive?: boolean } = {}) {
   const q = useStream()
   const d = q.data?.data
-  if (!d || d.live || !d.recent.length) return null
+  if (!d || (d.live && !whileLive) || !d.recent.length) return null
   return (
     <section className="card">
       <div className="card-head">

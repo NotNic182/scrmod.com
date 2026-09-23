@@ -141,6 +141,9 @@ export async function resolvePage(d: RouteDeps, path: string, c: Context): Promi
     case 'about':
       shell = { kind: 'about' }
       break
+    case 'watch':
+      shell = { kind: 'watch' }
+      break
     case 'player': {
       const r = overBudget ? SKIPPED : await settle(loadProfile(d, match.id).then((res) => playerFacts(res.value)))
       if (!r.ok && r.notFound) {

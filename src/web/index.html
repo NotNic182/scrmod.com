@@ -25,6 +25,7 @@
         var want = []
         var m
         if (p === "/") want.push("/home", "/stream")
+        else if (p === "/watch") want.push("/stream")
         else if ((m = /^\/leaderboards(?:\/([\w-]+))?$/.exec(p))) want.push("/leaderboard/" + (m[1] || "1v1"), "/meta")
         else if ((m = /^\/players\/(\d{17})$/.exec(p))) {
           // The profile request names the pinned viewer (for head-to-head), exactly as usePlayer() does on first render.

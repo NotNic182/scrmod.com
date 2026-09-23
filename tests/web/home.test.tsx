@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { screen, waitFor } from '@testing-library/react'
 import { renderApp } from './helpers/render'
-import { mockHub } from './helpers/mockHub'
+import { mockHub, env } from './helpers/mockHub'
 import { homeEnvelope } from './helpers/fixtures'
 import { Home } from '../../src/web/pages/Home'
 
@@ -30,5 +30,19 @@ describe('Home', () => {
     mockHub({ '/home': homeEnvelope({ live: { series_1v1: [], series_2v2: [], ffa_lobbies: [], spectate: [] }, results: [] }), '/me': SIGNED_OUT })
     renderApp(<Home />)
     await waitFor(() => expect(screen.getByText(/no live games/i)).toBeInTheDocument())
+  })
+
+  it('links the live stream card to the Watch tab', async () => {
+    mockHub({
+      '/home': homeEnvelope(),
+      '/me': SIGNED_OUT,
+      '/stream': env({
+        live: { platform: 'twitch', title: 'Ranked night', viewers: 10, started_at: new Date().toISOString(), url: 'https://www.twitch.tv/sidscompetitiverounds', embed: { kind: 'twitch', channel: 'sidscompetitiverounds' } },
+        recent: [],
+        links: { twitch: 'https://www.twitch.tv/sidscompetitiverounds', youtube: 'https://www.youtube.com/@SidsCompetitiveRounds' },
+      }),
+    })
+    renderApp(<Home />)
+    expect(await screen.findByRole('link', { name: 'More on Watch' })).toHaveAttribute('href', '/watch')
   })
 })

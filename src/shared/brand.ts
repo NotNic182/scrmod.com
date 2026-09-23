@@ -21,4 +21,5 @@ export const NAV_LINKS: ReadonlyArray<{ to: string; label: string }> = [
   { to: '/results', label: 'Results' },
   { to: '/tournaments', label: 'Tournaments' },
   { to: '/cards', label: 'Cards' },
+  { to: '/watch', label: 'Watch' },
 ]

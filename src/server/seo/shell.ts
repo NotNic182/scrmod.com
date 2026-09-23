@@ -17,6 +17,7 @@ export type ShellData =
   | { kind: 'card'; slug: string; page?: CardPageData }
   | { kind: 'guide' }
   | { kind: 'about' }
+  | { kind: 'watch' }
   | { kind: 'player'; id: string; player?: PlayerFacts }
   | { kind: 'not-found' }
 
@@ -137,6 +138,9 @@ export function renderShell(data: ShellData, base: string): string {
         `<section class="card"><h2>Status</h2>` +
         `<p class="muted">Get the mod: ${ext(LINKS.thunderstore, 'Thunderstore')} · ${ext(LINKS.github, 'GitHub')}</p>` +
         `</section>`
+      break
+    case 'watch':
+      main = `<h1>Watch</h1>${intro(INTROS.watch)}<section class="card"><p>Follow on ${ext(LINKS.twitch, 'Twitch')} · ${ext(LINKS.youtube, 'YouTube')}</p></section>`
       break
     case 'player': {
       const p = data.player

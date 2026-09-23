@@ -15,6 +15,7 @@ const NAV_DETAILS: Record<string, { icon: IconName; end?: boolean; match?: strin
   '/results': { icon: 'results' },
   '/tournaments': { icon: 'tournaments' },
   '/cards': { icon: 'cards' },
+  '/watch': { icon: 'play' },
 }
 const NAV = NAV_LINKS.map((n) => ({ ...n, ...NAV_DETAILS[n.to] }))
 
