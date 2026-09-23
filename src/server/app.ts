@@ -13,6 +13,7 @@ import { registerPlayerRoutes } from './routes/players'
 import { registerStatusRoutes } from './routes/status'
 import { registerTournamentRoutes } from './routes/tournaments'
 import type { RouteDeps } from './routes/common'
+import { registerCrawlRoutes } from './seo/crawl'
 import { rateLimit } from './ratelimit'
 import { Upstream } from './upstream'
 import { ModVersionSource } from './version'
@@ -71,6 +72,7 @@ export function createApp(deps: AppDeps) {
   registerCardPageRoute(app, routeDeps)
   registerChatRoutes(app, routeDeps)
   registerAuthRoutes(app, { ...routeDeps, discordFetch: deps.discordFetch ?? deps.fetchImpl })
+  registerCrawlRoutes(app, routeDeps)
 
   return { app, cache, upstream, version, deps: routeDeps }
 }
