@@ -12,6 +12,27 @@ describe('renderShell', () => {
     expect(html).toContain('aria-label="SCRmod"')
   })
 
+  it('shows 2v2 and FFA live games on the home shell, and the 2v2 queue count', () => {
+    const home = {
+      presence: { online_count: 5, online: [], recent: [] },
+      queue: { ranked_searching: 1, team_searching: 2, online: 5 },
+      live: {
+        series_1v1: [],
+        series_2v2: [{ series_id: 's1', t1a_name: 'Ann', t1b_name: 'Bob', t2a_name: 'Cal', t2b_name: 'Dee', t1_wins: 1, t2_wins: 0 }],
+        ffa_lobbies: [{ lobby_id: 'l1', host_name: 'Eve', player_count: 4, max_players: 8 }],
+        spectate: [],
+      },
+      results: [],
+      maintenance: false,
+      alerts: [],
+    }
+    const html = renderShell({ kind: 'home', home: home as never }, '')
+    expect(html).toContain('Ann &amp; Bob 1–0 Cal &amp; Dee')
+    expect(html).toContain("Eve's lobby · 4/8")
+    expect(html).toContain('2v2 queue: 2 searching')
+    expect(html).not.toContain('No live games right now.')
+  })
+
   it('lists the top 25 of a board, escaped', () => {
     const board = { entries: [entry(1, 'Sid', 2564), entry(2, '</a><script>x</script>', 2352), ...Array.from({ length: 30 }, (_, i) => entry(i + 3, `P${i}`, 1500))], total_players: 32 }
     const html = renderShell({ kind: 'leaderboard', mode: '1v1', board: board as never }, '')

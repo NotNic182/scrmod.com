@@ -1,5 +1,6 @@
 import { useTitle } from '../lib/title'
 import { useStatus } from '../api/hooks'
+import { LINKS } from '../../shared/links'
 
 export function About() {
   useTitle('About & privacy')
@@ -16,7 +17,7 @@ export function About() {
         </p>
         <p className="muted">
           It is a community project, not affiliated with Landfall. Playing, queueing, betting, chatting and tournament signups still happen in the game and on the{' '}
-          <a href="https://discord.gg/4tsWadH6tc">Competitive Rounds Discord</a>.
+          <a href={LINKS.discord}>Competitive Rounds Discord</a>.
         </p>
       </div>
       <div className="card">
@@ -55,7 +56,7 @@ export function About() {
           <p className="faint">Loading status…</p>
         )}
         <p className="muted">
-          Get the mod: <a href="https://thunderstore.io/c/rounds/p/SidNDeed/SidsCompetitiveRounds/">Thunderstore</a> · <a href="https://github.com/SidNDeed/SidsCompetitiveRounds">GitHub</a>
+          Get the mod: <a href={LINKS.thunderstore}>Thunderstore</a> · <a href={LINKS.github}>GitHub</a>
         </p>
       </div>
     </>

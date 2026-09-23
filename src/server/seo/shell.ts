@@ -51,11 +51,19 @@ export function renderShell(data: ShellData, base: string): string {
   switch (data.kind) {
     case 'home': {
       const h = data.home
-      const live = h ? [...h.live.series_1v1.map((s) => `${esc(s.p1_name)} ${s.p1_wins}–${s.p2_wins} ${esc(s.p2_name)}`)] : []
+      const live = h
+        ? [
+            ...h.live.series_1v1.map((s) => `${esc(s.p1_name)} ${s.p1_wins}–${s.p2_wins} ${esc(s.p2_name)}`),
+            ...h.live.series_2v2.map((s) => esc(`${s.t1a_name} & ${s.t1b_name} ${s.t1_wins}–${s.t2_wins} ${s.t2a_name} & ${s.t2b_name}`)),
+            ...h.live.ffa_lobbies.map((l) => `${esc(l.host_name)}'s lobby · ${l.player_count}/${l.max_players}`),
+          ]
+        : []
       const results = (h?.results ?? []).slice(0, 8).map(resultLine)
       main =
         `<h1>Right now</h1><p class="page-intro">${a('/guide', 'New to ranked ROUNDS? Start here →')}</p>` +
-        (h ? `<ul class="plain-list"><li>Online now: ${num(h.presence.online_count)}</li><li>Ranked queue: ${num(h.queue.ranked_searching)} searching</li><li>Live games: ${num(h.live.series_1v1.length + h.live.series_2v2.length + h.live.ffa_lobbies.length)}</li></ul>` : '') +
+        (h
+          ? `<ul class="plain-list"><li>Online now: ${num(h.presence.online_count)}</li><li>Ranked queue: ${num(h.queue.ranked_searching)} searching</li><li>2v2 queue: ${num(h.queue.team_searching)} searching</li><li>Live games: ${num(h.live.series_1v1.length + h.live.series_2v2.length + h.live.ffa_lobbies.length)}</li></ul>`
+          : '') +
         card('Live games', list(live) || '<p>No live games right now.</p>') +
         card('Latest results', list(results) + `<p>${a('/results', 'All results →')}</p>`)
       break
@@ -110,8 +118,25 @@ export function renderShell(data: ShellData, base: string): string {
       main = `<h1>${esc(GUIDE_TITLE)}</h1><p class="page-intro">${inline(GUIDE_INTRO)}</p>${GUIDE.map((s) => `<section class="card" id="${esc(s.id)}"><h2>${esc(s.heading)}</h2>${s.blocks.map(block).join('')}</section>`).join('')}`
       break
     case 'about':
-      // Word for word from About.tsx (its first sentence and the guide link Task 14 adds), since the shell may only show what the app shows.
-      main = `<h1>About SCRmod</h1><section class="card"><h2>What this is</h2><p>A browser companion for <strong>Sid&#39;s Competitive Rounds</strong>, the ranked mod for ROUNDS.</p><p>New to it? ${a('/guide', 'How to install the mod and play ranked')}.</p></section>`
+      // Word for word from About.tsx's static text (its live Status paragraph needs runtime data, so the shell skips it),
+      // plus the guide link Task 14 adds to the "What this is" card, since the shell may only show what the app shows.
+      main =
+        `<h1>About SCRmod</h1>` +
+        `<section class="card"><h2>What this is</h2>` +
+        `<p>A browser companion for <strong>Sid&#39;s Competitive Rounds</strong>, the ranked mod for ROUNDS. It shows the same things the in-game F5 menu and the Discord bot show, so you can check who is online, what is being played and where you stand without launching the game.</p>` +
+        `<p class="muted">It is a community project, not affiliated with Landfall. Playing, queueing, betting, chatting and tournament signups still happen in the game and on the ${ext(LINKS.discord, 'Competitive Rounds Discord')}.</p>` +
+        `<p>New to it? ${a('/guide', 'How to install the mod and play ranked')}.</p>` +
+        `</section>` +
+        `<section class="card"><h2>Where the data comes from</h2>` +
+        `<p>Everything here is read from the mod&#39;s public API, the same data every mod client and the Discord bot receive. Nothing is collected beyond that. Live pages refresh every 15 seconds while the tab is visible, leaderboards every minute, and every panel shows how old its data is.</p>` +
+        `<ul class="prose"><li><strong>Appear offline</strong> in the game (F5 → Settings) removes you from the online lists here too.</li><li><strong>Hide gold</strong> in the game hides your gold here as well.</li><li>Your Discord name appears only if you switched on <strong>Show Discord</strong> in the game.</li><li>Deleting your data in the game removes it here within a minute.</li></ul>` +
+        `</section>` +
+        `<section class="card"><h2>Pinning and signing in</h2>` +
+        `<p>&quot;Find me&quot; lets you pin your own profile in this browser, nothing more. Signing in with Discord, where enabled, looks up the player you linked in-game with <code>/link</code> and pins that instead. The site keeps no account data of its own.</p>` +
+        `</section>` +
+        `<section class="card"><h2>Status</h2>` +
+        `<p class="muted">Get the mod: ${ext(LINKS.thunderstore, 'Thunderstore')} · ${ext(LINKS.github, 'GitHub')}</p>` +
+        `</section>`
       break
     case 'player': {
       const p = data.player
