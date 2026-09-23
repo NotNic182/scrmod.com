@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { makeApp } from './helpers/makeApp'
 import { json } from './helpers/fakeUpstream'
 
@@ -32,11 +32,14 @@ describe('crawl files', () => {
     expect(xml.match(/<url>/g)).toHaveLength(13) // 12 site pages (home, 6 boards, results, tournaments, cards, guide, about) + 1 card
   })
 
-  it('still serves the pages when the card list fails', async () => {
+  it('still serves the pages when the card list fails, and says why in the log', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const { app } = makeApp({ '/cards': () => json({ detail: 'down' }, 500) }, { PUBLIC_BASE_URL: 'https://scrmod.com' })
     const res = await app.request('/sitemap.xml')
     expect(res.status).toBe(200)
     expect((await res.text()).match(/<url>/g)).toHaveLength(12)
+    expect(warn).toHaveBeenCalledWith('[hub] sitemap: card list unavailable', 500)
+    warn.mockRestore()
   })
 
   it('respects a base path', async () => {

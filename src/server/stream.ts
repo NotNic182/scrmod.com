@@ -9,6 +9,44 @@ const TIMEOUT_MS = 5000
 const FEED_TTL = { ttlMs: 300_000, staleMs: 3_600_000 }
 const LIVE_TTL = { ttlMs: 60_000, staleMs: 0 }
 
+/** An upstream's error status. It carries no URL, header or key, so it is safe to log. */
+class StatusError extends Error {
+  constructor(
+    what: string,
+    readonly status: number,
+  ) {
+    super(`${what} ${status}`)
+    this.name = 'StatusError'
+  }
+}
+
+/** Why a load failed, short and secret-free: the status an upstream answered with, else the error's name. */
+function reason(err: unknown): string {
+  if (err instanceof StatusError) return String(err.status)
+  return err instanceof Error ? err.name : 'unknown'
+}
+
+/**
+ * Runs each source's loads and logs when the source starts failing and when it recovers, not on every request:
+ * a Twitch or YouTube outage is one line, however many visitors see it.
+ */
+function outageLog() {
+  const failing = new Set<string>()
+  return async <T>(source: string, load: () => Promise<T>): Promise<T> => {
+    try {
+      const value = await load()
+      if (failing.delete(source)) console.warn(`[stream] ${source} recovered`)
+      return value
+    } catch (err) {
+      if (!failing.has(source)) {
+        failing.add(source)
+        console.warn(`[stream] ${source} failed (${reason(err)})`)
+      }
+      throw err
+    }
+  }
+}
+
 const decodeXml = (s: string) =>
   s
     .replace(/&lt;/g, '<')
@@ -40,7 +78,7 @@ export class TwitchClient {
   private async fetchToken(): Promise<string> {
     const body = new URLSearchParams({ client_id: this.opts.clientId, client_secret: this.opts.clientSecret, grant_type: 'client_credentials' })
     const res = await this.opts.fetchImpl('https://id.twitch.tv/oauth2/token', { method: 'POST', body, signal: AbortSignal.timeout(TIMEOUT_MS) })
-    if (!res.ok) throw new Error(`twitch token ${res.status}`)
+    if (!res.ok) throw new StatusError('twitch token', res.status)
     const json = (await res.json()) as { access_token?: string }
     if (!json.access_token) throw new Error('twitch token missing')
     this.token = json.access_token
@@ -55,7 +93,7 @@ export class TwitchClient {
       })
     let res = await call(this.token ?? (await this.fetchToken()))
     if (res.status === 401) res = await call(await this.fetchToken())
-    if (!res.ok) throw new Error(`twitch ${res.status}`)
+    if (!res.ok) throw new StatusError('twitch', res.status)
     return res
   }
 
@@ -69,9 +107,10 @@ export class TwitchClient {
 
 async function youtubeLive(ids: string[], apiKey: string, fetchImpl: typeof fetch): Promise<StreamLive | null> {
   if (!ids.length) return null
-  const url = `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails,snippet&id=${ids.map(encodeURIComponent).join(',')}&key=${encodeURIComponent(apiKey)}`
-  const res = await fetchImpl(url, { signal: AbortSignal.timeout(TIMEOUT_MS) })
-  if (!res.ok) throw new Error(`youtube ${res.status}`)
+  const url = `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails,snippet&id=${ids.map(encodeURIComponent).join(',')}`
+  // The key goes in a header, not the query string, so it stays out of any log that records URLs.
+  const res = await fetchImpl(url, { headers: { 'X-Goog-Api-Key': apiKey }, signal: AbortSignal.timeout(TIMEOUT_MS) })
+  if (!res.ok) throw new StatusError('youtube', res.status)
   const items = ((await res.json()) as { items?: Array<{ id: string; snippet?: { title?: string }; liveStreamingDetails?: { actualStartTime?: string; actualEndTime?: string; concurrentViewers?: string } }> }).items ?? []
   const v = items.find((i) => i.liveStreamingDetails?.actualStartTime && !i.liveStreamingDetails.actualEndTime)
   if (!v) return null
@@ -91,6 +130,7 @@ export function registerStreamRoutes(app: Hono, d: RouteDeps, fetchImpl: typeof 
   const s = d.env.stream
   const twitch = s.twitchClientId && s.twitchClientSecret ? new TwitchClient({ clientId: s.twitchClientId, clientSecret: s.twitchClientSecret, fetchImpl }) : null
   const links = { twitch: LINKS.twitch, youtube: LINKS.youtube }
+  const watch = outageLog()
 
   app.get('/api/stream', async (c) => {
     c.header('Cache-Control', 'public, max-age=30')
@@ -105,12 +145,14 @@ export function registerStreamRoutes(app: Hono, d: RouteDeps, fetchImpl: typeof 
     }
 
     const [feedR, twitchR] = await Promise.allSettled([
-      d.cache.get('stream:yt-feed', FEED_TTL, async () => {
-        const res = await fetchImpl(`https://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(s.youtubeChannelId)}`, { signal: AbortSignal.timeout(TIMEOUT_MS) })
-        if (!res.ok) throw new Error(`feed ${res.status}`)
-        return parseYouTubeFeed(await res.text())
-      }),
-      twitch ? d.cache.get('stream:twitch', LIVE_TTL, () => twitch.live(s.twitchLogin)) : Promise.resolve(null),
+      d.cache.get('stream:yt-feed', FEED_TTL, () =>
+        watch('YouTube feed', async () => {
+          const res = await fetchImpl(`https://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(s.youtubeChannelId)}`, { signal: AbortSignal.timeout(TIMEOUT_MS) })
+          if (!res.ok) throw new StatusError('feed', res.status)
+          return parseYouTubeFeed(await res.text())
+        }),
+      ),
+      twitch ? d.cache.get('stream:twitch', LIVE_TTL, () => watch('Twitch', () => twitch.live(s.twitchLogin))) : Promise.resolve(null),
     ])
     const recent = feedR.status === 'fulfilled' ? feedR.value.value : []
     // LIVE_TTL has no stale window, so `stale: true` here only means the cache's error
@@ -121,7 +163,7 @@ export function registerStreamRoutes(app: Hono, d: RouteDeps, fetchImpl: typeof 
     if (!live && s.youtubeApiKey && recent.length) {
       try {
         const key = s.youtubeApiKey
-        const r = await d.cache.get('stream:yt-live', LIVE_TTL, () => youtubeLive(recent.slice(0, 5).map((v) => v.videoId), key, fetchImpl))
+        const r = await d.cache.get('stream:yt-live', LIVE_TTL, () => watch('YouTube live check', () => youtubeLive(recent.slice(0, 5).map((v) => v.videoId), key, fetchImpl)))
         live = r.stale ? null : r.value
       } catch {
         live = null
