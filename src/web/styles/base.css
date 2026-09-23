@@ -38,30 +38,34 @@ button {
   border: 0;
   cursor: pointer;
 }
+/* Headings speak the game menu: light, uppercase, widely tracked. Section headings are quiet labels so the
+   data leads; player names (.player-name) keep their own casing. */
 h1,
 h2,
 h3 {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  text-transform: uppercase;
   text-wrap: balance;
 }
 h1 {
   font-size: var(--text-display);
-  font-weight: 800;
+  font-weight: 300;
   line-height: 1.15;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.16em;
+  margin-bottom: 14px;
 }
 h2 {
-  font-size: var(--text-title);
-  font-weight: 700;
+  font-size: var(--text-meta);
+  font-weight: 500;
+  letter-spacing: var(--track-menu);
+  color: var(--fg-muted);
 }
 h3 {
   font-size: var(--text-label);
-  font-weight: 700;
-  color: var(--fg-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-weight: 500;
+  letter-spacing: var(--track-menu);
+  color: var(--fg-faint);
 }
 
 .page {
@@ -71,7 +75,6 @@ h3 {
 }
 .card {
   background: var(--bg-card);
-  border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 14px;
   margin-bottom: 14px;
@@ -119,30 +122,34 @@ h3 {
 .spacer {
   flex: 1;
 }
+/* Buttons read like the game's menu entries: uppercase, tracked, square. */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   min-height: 40px;
-  padding: 0 14px;
+  padding: 0 16px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   background: var(--bg-elev);
+  font-size: var(--text-meta);
   font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 .btn:hover {
   background: var(--bg-hover);
 }
 .btn-accent {
-  background: var(--accent);
-  color: var(--accent-fg);
+  background: var(--band);
+  color: var(--band-fg);
   border-color: transparent;
 }
 .chip {
   display: inline-block;
   background: var(--bg-hover);
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: 3px;
   font-size: var(--text-label);
   font-weight: 700;
   line-height: 1.5;
@@ -183,19 +190,21 @@ table.t td {
 }
 table.t th {
   font-size: var(--text-label);
-  font-weight: 700;
+  font-weight: 500;
   color: var(--fg-muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--track-menu);
 }
 table.t td.num,
 table.t th.num {
   text-align: right;
 }
 /* Row tints sit on the cells (not the row) so sticky cells carry them too. */
+/* Your row wears the band. Solid orange per cell (a gradient would restart in every cell). */
 table.t tr.me > td {
-  --cell-bg: color-mix(in srgb, var(--accent) 14%, var(--bg-card));
+  --cell-bg: var(--accent);
   background: var(--cell-bg);
+  color: var(--band-fg);
 }
 @media (hover: hover) {
   table.t tbody tr:hover > td {
@@ -210,39 +219,59 @@ table.t tr.me > td {
   z-index: 30;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   height: calc(var(--nav-h) + env(safe-area-inset-top));
   padding: env(safe-area-inset-top) max(var(--gutter), env(safe-area-inset-right)) 0 max(var(--gutter), env(safe-area-inset-left));
-  background: var(--bg-elev);
-  border-bottom: 1px solid var(--line);
+  background: var(--bar);
+  color: var(--bar-fg);
+  border-bottom: 1px solid var(--bar-line);
 }
 .topbar .brand {
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-right: 8px;
-  color: var(--accent-ink);
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  margin-right: 14px;
+  color: var(--brand);
 }
+.wordmark {
+  display: block;
+  height: 28px;
+  width: auto;
+  overflow: visible;
+}
+/* The game menu's entries: thin uppercase, the current one on the full-height band. */
 .topnav {
   display: none;
-  gap: 4px;
+  align-self: stretch;
 }
 .topnav a.item {
   display: inline-flex;
   align-items: center;
-  height: 40px;
-  padding: 0 10px;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  color: var(--fg-muted);
+  height: 100%;
+  padding: 0 16px;
+  font-size: var(--text-meta);
+  font-weight: 400;
+  letter-spacing: var(--track-menu);
+  text-transform: uppercase;
+  color: var(--bar-muted);
   white-space: nowrap;
 }
 .topnav a.item:hover {
-  color: var(--fg);
+  color: var(--bar-fg);
+  background: rgba(255, 255, 255, 0.05);
 }
 .topnav a.item.active {
-  color: var(--fg);
-  background: var(--bg-hover);
+  color: var(--band-fg);
+  background: var(--band);
+  font-weight: 600;
+}
+/* Controls that live on the teal bar keep light ink in both themes. */
+.topbar .btn {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.24);
+  color: var(--bar-fg);
+}
+.topbar .btn:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 .icon {
   flex: none;
@@ -268,8 +297,8 @@ table.t tr.me > td {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  background: var(--bg-elev);
-  border-top: 1px solid var(--line);
+  background: var(--bar);
+  border-top: 1px solid var(--bar-line);
 }
 .tabbar a {
   position: relative;
@@ -281,8 +310,10 @@ table.t tr.me > td {
   min-width: 0;
   height: var(--tabbar-h);
   font-size: var(--text-tab);
-  font-weight: 600;
-  color: var(--fg-muted);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bar-muted);
 }
 .tabbar a span {
   max-width: 100%;
@@ -291,24 +322,12 @@ table.t tr.me > td {
   white-space: nowrap;
 }
 .tabbar a.active {
-  color: var(--fg);
-}
-.tabbar a.active::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 50%;
-  width: 28px;
-  height: 3px;
-  margin-left: -14px;
-  border-radius: 0 0 3px 3px;
-  background: var(--accent-ink);
-}
-.tabbar a.active .icon {
-  color: var(--accent-ink);
+  color: var(--band-fg);
+  background: var(--band);
+  font-weight: 700;
 }
 .tabbar a:active {
-  background: var(--bg-hover);
+  background: rgba(255, 255, 255, 0.08);
 }
 body {
   padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
@@ -361,6 +380,8 @@ body {
   overflow-y: auto;
   overscroll-behavior: contain;
   margin: 0;
+  background: var(--bg-card-solid);
+  color: var(--fg);
   box-shadow: var(--shadow);
 }
 .identity-panel > p:first-child {
@@ -390,7 +411,7 @@ body {
 }
 
 .banner {
-  padding: 10px 12px;
+  padding: 10px 14px;
   border-radius: var(--radius-sm);
   margin-bottom: 12px;
   font-weight: 600;
@@ -410,7 +431,7 @@ body {
 }
 .skeleton {
   height: 14px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: linear-gradient(90deg, var(--bg-elev), var(--bg-hover), var(--bg-elev));
   background-size: 200% 100%;
   animation: shimmer 1.2s infinite;
@@ -471,10 +492,11 @@ body {
   color: var(--api-c, var(--fg-muted));
   color: oklch(from var(--api-c, var(--fg-muted)) clamp(var(--api-lmin), l, var(--api-lmax)) c h);
 }
+/* Stat tiles are one strip with hairline seams, like the game's menu panels. */
 .tiles {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 2px;
 }
 @media (min-width: 560px) {
   .tiles {
@@ -482,21 +504,22 @@ body {
   }
 }
 .tile {
+  background: var(--bg-card);
+  padding: 12px 14px;
+}
+.card .tile {
   background: var(--bg-elev);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
 }
 .tile .label {
   font-size: var(--text-label);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 700;
-  color: var(--fg-faint);
+  letter-spacing: var(--track-menu);
+  font-weight: 500;
+  color: var(--fg-muted);
 }
 .tile .value {
   font-size: var(--text-stat);
-  font-weight: 800;
+  font-weight: 300;
   line-height: 1.15;
   font-variant-numeric: tabular-nums;
 }
@@ -520,8 +543,11 @@ body {
   align-items: center;
   flex: none;
   min-height: 40px;
-  padding: 0 12px;
-  font-weight: 600;
+  padding: 0 14px;
+  font-size: var(--text-meta);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--fg-muted);
   border-bottom: 2px solid transparent;
   white-space: nowrap;
@@ -529,6 +555,7 @@ body {
 .tabs button[aria-selected='true'],
 .tabs a[aria-current='page'] {
   color: var(--fg);
+  font-weight: 700;
   border-bottom-color: var(--accent-ink);
 }
 /* Recent form: one small tile per game, W/L as letter and color, so it reads without color too. */
@@ -538,9 +565,9 @@ body {
   width: 1.375rem;
   height: 1.375rem;
   margin: 0 3px 3px 0;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   font-size: var(--text-label);
-  font-weight: 800;
+  font-weight: 700;
   background: color-mix(in srgb, currentColor 14%, transparent);
 }
 .form-w.w {
@@ -581,7 +608,7 @@ body {
 }
 .versus-score {
   font-size: var(--text-stat);
-  font-weight: 800;
+  font-weight: 300;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -592,14 +619,14 @@ body {
   table.t .stick-name {
     position: sticky;
     z-index: 1;
-    background: var(--cell-bg, var(--bg-card));
+    background: var(--cell-bg, var(--bg-card-solid));
   }
   /* The shadow paints over the table-wrap's 14px gutter so scrolled cells never show beside the rank. */
   table.t .stick-rank {
     left: 0;
     width: 2.75rem;
     min-width: 2.75rem;
-    box-shadow: -14px 0 0 var(--cell-bg, var(--bg-card));
+    box-shadow: -14px 0 0 var(--cell-bg, var(--bg-card-solid));
   }
   table.t .stick-name {
     left: 2.75rem;
@@ -623,6 +650,8 @@ body {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
+    /* As a flex box the link drops the space before "(you)"; the gap puts it back. */
+    column-gap: 0.3em;
   }
   /* In tables the cell padding already counts toward the target: absorb it so rows stay 44px, not 60+. */
   table.t .plink {
@@ -658,8 +687,8 @@ table.t td.medal-3 {
 
 /* Achievements: earned tiles take the gold, locked ones recede by color, not opacity (text stays legible). */
 .tile.earned {
-  border-color: color-mix(in srgb, var(--accent-ink) 55%, var(--line));
-  background: color-mix(in srgb, var(--accent) 7%, var(--bg-elev));
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-card-solid));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-ink) 45%, transparent);
 }
 .tile.earned .value {
   display: flex;
@@ -691,8 +720,8 @@ table.t td.medal-3 {
   left: 8px;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
-  background: var(--accent);
-  color: var(--accent-fg);
+  background: var(--band);
+  color: var(--band-fg);
   font-weight: 700;
   transform: translateY(-160%);
 }
@@ -758,8 +787,12 @@ main:focus {
   cursor: pointer;
 }
 .search-option[aria-selected='true'] {
-  border-color: var(--accent-ink);
-  background: var(--bg-hover);
+  border-color: transparent;
+  background: var(--band);
+  color: var(--band-fg);
+}
+.search-option[aria-selected='true'] .muted {
+  color: var(--band-fg);
 }
 .search-status {
   margin-top: 8px;
@@ -837,7 +870,7 @@ ul.prose li + li {
 
 /* An item inside a card (a live game): an inset surface, not a second bordered card. */
 .panel {
-  padding: 12px;
+  padding: 12px 14px;
   margin-bottom: 10px;
   border-radius: var(--radius-sm);
   background: var(--bg-elev);
@@ -898,17 +931,21 @@ details.acc[open] {
 }
 .segmented button {
   min-height: 34px;
-  padding: 0 14px;
-  border-radius: 6px;
-  font-weight: 600;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-meta);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--fg-muted);
 }
 .segmented button:hover {
   color: var(--fg);
 }
 .segmented button[aria-pressed="true"] {
-  background: var(--accent);
-  color: var(--accent-fg);
+  background: var(--band);
+  color: var(--band-fg);
+  font-weight: 700;
 }
 
 /* Row that expands in place: reads as data with an affordance, not as a wall of buttons. */
@@ -948,4 +985,74 @@ details.acc[open] {
 /* Controls in a toolbar size to their content (the base .input is full-width for forms). */
 .toolbar .input {
   width: auto;
+}
+
+/* ---- ROUNDS skin: backdrop and the "you are here" band ---- */
+/* html keeps the solid fallback; body must stay clear or it paints over the backdrop layer. */
+body {
+  background: transparent;
+}
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--backdrop);
+  pointer-events: none;
+}
+.backdrop svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.backdrop .l {
+  fill: var(--facet-l);
+}
+.backdrop .d {
+  fill: var(--facet-d);
+}
+.backdrop .x {
+  fill: var(--facet-x);
+}
+
+/* Inside a banded row everything takes the band's ink, game colors and muted text included. */
+table.t tr.me > td :is(.muted, .faint, .good, .bad, .api-color, .tnum),
+.me-row :is(.muted, .faint, .good, .bad, .api-color, .tnum) {
+  color: var(--band-fg);
+}
+table.t tr.me .chip,
+.me-row .chip {
+  background: rgba(10, 28, 34, 0.12);
+}
+table.t tr.me .dot,
+.me-row .dot {
+  background: var(--band-fg);
+  box-shadow: none;
+}
+/* A list row that is you: the band runs the full width of its card, like the game's menu selection. */
+.me-row {
+  margin: 0 -14px;
+  padding: 0 14px;
+  background: var(--band);
+  color: var(--band-fg);
+}
+.player-name {
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-weight: 600;
+}
+/* A player's name keeps its own casing and doesn't pay the menu tracking, even inside an uppercase button. */
+.identity-name {
+  text-transform: none;
+  letter-spacing: 0.01em;
+}
+@media (max-width: 479px) {
+  .wordmark {
+    height: 22px;
+  }
+  .topbar .brand {
+    margin-right: auto;
+  }
+  .identity-name {
+    padding: 0 10px;
+  }
 }

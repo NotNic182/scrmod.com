@@ -1,52 +1,81 @@
-/* Gold on night. One brand color, used rarely: identity (brand, "you"), selection, and what was earned
-   (unlocked achievements, first place). Green/red mean outcome, blue means info and ranked, solid red only
-   ever means LIVE. Every text pair below is checked at 4.5:1 or better on card, hover and page surfaces. */
+/* SCRmod wears the ROUNDS main menu: deep teal under faint low-poly shards, thin uppercase Montserrat, and one
+   orange band that always means "you are here" (current page, current tab, your own row, the pressed filter).
+   The band carries dark ink: white on this orange is under 3:1. Every text pair below is checked at 4.5:1 or
+   better on panel, backdrop and hover surfaces. Light mode is "Mist": the same world in daylight, with the
+   bars staying game-teal. */
+
+/* Metric-matched stand-in while Montserrat loads, so the swap doesn't shift the layout. */
+@font-face {
+  font-family: 'Montserrat Fallback';
+  src: local('Arial');
+  size-adjust: 113.39%;
+  ascent-override: 84.95%;
+  descent-override: 22.04%;
+  line-gap-override: 0%;
+}
+
 :root {
-  --bg: #0e1016;
-  --bg-elev: #151823;
-  --bg-card: #1b1f2c;
-  --bg-hover: #222738;
-  --fg: #eceef4;
-  --fg-muted: #a9b1c0;
-  --fg-faint: #8a93a5;
-  --line: #2a3042;
+  --bg: #082830;
+  --backdrop: radial-gradient(120% 80% at 25% 0%, #104250 0%, #0c3440 45%, #082830 100%);
+  --facet-l: rgba(255, 255, 255, 0.04);
+  --facet-d: rgba(0, 0, 0, 0.1);
+  --facet-x: rgba(120, 220, 235, 0.035);
 
-  /* Brand gold: --accent fills, --accent-ink is gold as text or a thin line on a surface. */
-  --accent: #ffcc33;
-  --accent-fg: #15171d;
-  --accent-ink: #ffcc33;
+  /* Panels are translucent teal glass over the backdrop; -solid is the same color made opaque, for
+     surfaces that sit over scrolling content (sticky table cells, the Find-me panel). */
+  --bg-card: rgba(4, 22, 28, 0.55);
+  --bg-card-solid: #09272f;
+  --bg-elev: rgba(0, 0, 0, 0.18);
+  --bg-hover: rgba(255, 255, 255, 0.06);
+  --fg: #eef6f7;
+  --fg-muted: #b6cdd2;
+  --fg-faint: #9dbcc3;
+  --line: rgba(255, 255, 255, 0.09);
 
-  --good: #55d846;
-  --bad: #ff5c5c;
+  /* Game chrome: the top bar and the phone tab bar are ROUNDS teal in both themes. */
+  --bar: #0b303a;
+  --bar-fg: #eef6f7;
+  --bar-muted: #b6cdd2;
+  --bar-line: rgba(255, 255, 255, 0.08);
+
+  /* Orange: --accent fills, --band is the selection bar, --accent-ink is orange as text/lines on a surface. */
+  --brand: #f08c17;
+  --accent: #f08c17;
+  --accent-fg: #0a1c22;
+  --accent-ink: #f7a64d;
+  --band: linear-gradient(100deg, #e57a0c 0%, #f08c17 38%, #f59a2c 70%, #e98311 100%);
+  --band-fg: #0a1c22;
+
+  --good: #6ee35c;
+  --bad: #ff968a;
   --live: #c92a2a;
   --live-fg: #ffffff;
-  --info: #77a3fc;
-  --rare: #c58af5;
-  --medal-1: var(--accent-ink);
-  --medal-2: #c3cad6;
-  --medal-3: #d9925a;
+  --info: #92baff;
+  --rare: #d3a4f8;
+  --medal-1: #ffd25a;
+  --medal-2: #c9d6db;
+  --medal-3: #eca872;
 
-  /* Colors that come from the game (rank tiers, titles) are designed for the game, not this page: the
-     darkest are invisible on a night card. They keep their hue but are held to this lightness band. */
+  /* Colors that come from the game (rank tiers, titles) keep their hue but are held to this lightness band. */
   --api-lmin: 0.74;
   --api-lmax: 1;
 
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --radius: 2px;
+  --radius-sm: 2px;
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --font: 'Montserrat Variable', 'Montserrat Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Type roles, in rem so the reader's browser font size is honoured (16px default = the values in comments).
-     One family; numbers use its tabular figures. Weights: 400 body, 600 emphasis, 700 labels/titles, 800 display. */
-  --text-display: 1.75rem; /* 28: page titles */
-  --text-stat: 1.375rem; /* 22: the number a tile or scoreboard exists to show */
-  --text-title: 1.125rem; /* 18: card headings, scoreboard names */
+  /* Type roles, in rem so the reader's browser font size is honoured (16px default = the values in comments). */
+  --text-display: 1.75rem; /* 28: page titles, light uppercase */
+  --text-stat: 1.625rem; /* 26: the number a tile or scoreboard exists to show, light weight */
+  --text-title: 1.125rem; /* 18: scoreboard names */
   --text-body: 1rem; /* 16: default reading size */
-  --text-data: 0.9375rem; /* 15: dense tables, where columns earn the extra pixel */
-  --text-meta: 0.8125rem; /* 13: timestamps, subtitles, footer */
-  --text-label: 0.75rem; /* 12: uppercase labels and chips, always bold */
-  --text-tab: 0.6875rem; /* 11: under-icon tab bar labels only (platform convention) */
+  --text-data: 0.9375rem; /* 15: dense tables */
+  --text-meta: 0.8125rem; /* 13: timestamps, subtitles, footer, menu labels */
+  --text-label: 0.75rem; /* 12: uppercase labels and chips */
+  --text-tab: 0.6875rem; /* 11: under-icon tab bar labels only */
+  --track-menu: 0.14em; /* the game menu's wide uppercase tracking */
   --nav-h: 56px;
   --tabbar-h: 58px;
   --gutter: 16px;
@@ -55,32 +84,37 @@
 }
 
 :root[data-theme='light'] {
-  --bg: #f4f5f9;
-  --bg-elev: #ffffff;
-  --bg-card: #ffffff;
-  --bg-hover: #eef0f6;
-  --fg: #171a22;
-  --fg-muted: #474e5d;
-  --fg-faint: #636b7c;
-  --line: #dde1ea;
+  --bg: #dfeaec;
+  --backdrop: radial-gradient(120% 80% at 25% 0%, #eef5f6 0%, #dfeaec 50%, #d1e0e3 100%);
+  --facet-l: rgba(255, 255, 255, 0.5);
+  --facet-d: rgba(12, 52, 64, 0.05);
+  --facet-x: rgba(12, 52, 64, 0.03);
 
-  /* The fill stays true brand gold (dark text on it); gold as ink deepens to stay legible on white. */
-  --accent: #ffcc33;
-  --accent-fg: #15171d;
-  --accent-ink: #8a5d00;
+  --bg-card: rgba(255, 255, 255, 0.82);
+  --bg-card-solid: #f9fbfc;
+  --bg-elev: rgba(12, 52, 64, 0.05);
+  --bg-hover: rgba(12, 52, 64, 0.06);
+  --fg: #0b2a33;
+  --fg-muted: #3f5d65;
+  --fg-faint: #4b6870;
+  --line: rgba(12, 52, 64, 0.12);
 
-  --good: #177a33;
-  --bad: #cf222e;
+  --bar: #0c3440;
+
+  --accent-ink: #9a4d05;
+
+  --good: #136b2c;
+  --bad: #c21f2b;
   --live: #cf222e;
-  --live-fg: #ffffff;
-  --info: #0b62c9;
-  --rare: #8a3fd1;
-  --medal-2: #5f6878;
-  --medal-3: #9a5520;
+  --info: #0b5cbd;
+  --rare: #7e36c4;
+  --medal-1: #8a5d00;
+  --medal-2: #56606e;
+  --medal-3: #8f4e1c;
 
   --api-lmin: 0;
   --api-lmax: 0.46;
 
-  --shadow: 0 8px 24px rgba(20, 24, 40, 0.1);
+  --shadow: 0 12px 32px rgba(12, 52, 64, 0.18);
   color-scheme: light;
 }

@@ -2,8 +2,10 @@ import { Suspense, useEffect, useRef, type ReactNode } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
 import { useOnline } from '../lib/online'
 import { useTheme } from '../lib/theme'
+import { Backdrop } from './Backdrop'
 import { ErrorBoundary } from './ErrorBoundary'
 import { Icon, type IconName } from './Icon'
+import { Wordmark } from './Wordmark'
 
 const NAV: Array<{ to: string; label: string; icon: IconName; end?: boolean; match?: string }> = [
   { to: '/', label: 'Home', icon: 'home', end: true },
@@ -48,12 +50,13 @@ export function Layout({ identity }: { identity?: ReactNode }) {
 
   return (
     <>
+      <Backdrop />
       <a className="skip-link" href="#main">
         Skip to content
       </a>
       <header className="topbar">
-        <NavLink to="/" className="brand" end>
-          SCRmod
+        <NavLink to="/" className="brand" end aria-label="SCRmod home">
+          <Wordmark />
         </NavLink>
         {/* Wide screens: links live in the top bar. Narrow screens: the bottom tab bar below. */}
         <nav className="topnav" aria-label="Primary">
