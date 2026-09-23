@@ -6,6 +6,7 @@ import { QueryState } from '../components/QueryState'
 import { PlayerLink } from '../components/PlayerLink'
 import { FfaLobbyCard, LiveSeries1v1, LiveSeries2v2, SpectateCard } from '../components/LiveSeriesCard'
 import { ResultTable } from '../components/ResultTable'
+import { RecentBroadcasts, StreamCard } from '../components/Stream'
 import { useIdentity } from '../lib/identity'
 import { agoFromMinutes } from '../lib/format'
 import { useFirst } from '../components/ShowMore'
@@ -44,6 +45,7 @@ export function Home() {
       <p className="page-intro">
         <Link to="/guide">New to ranked ROUNDS? Start here →</Link>
       </p>
+      <StreamCard />
       <QueryState q={q} label="live data">
         {(d, meta) => {
           const liveCount = d.live.series_1v1.length + d.live.series_2v2.length + d.live.ffa_lobbies.length
@@ -134,6 +136,7 @@ export function Home() {
           )
         }}
       </QueryState>
+      <RecentBroadcasts />
     </>
   )
 }

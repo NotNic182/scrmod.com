@@ -29,6 +29,7 @@ import type {
   ResultsResponse,
   SearchResponse,
   StatusResponse,
+  StreamResponse,
   TournamentHistoryResponse,
   TournamentsResponse,
 } from './types'
@@ -179,4 +180,8 @@ export function useSearch(q: string) {
 
 export function useStatus() {
   return useQuery({ queryKey: ['status'], queryFn: () => hubGet<StatusResponse>('/_status'), staleTime: 60_000, refetchInterval: false })
+}
+
+export function useStream() {
+  return useQuery({ queryKey: ['stream'], queryFn: () => hubGet<StreamResponse>('/stream'), refetchInterval: 60_000, refetchIntervalInBackground: false, staleTime: 30_000 })
 }

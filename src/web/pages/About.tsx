@@ -42,6 +42,8 @@ export function About() {
             Your Discord name appears only if you switched on <strong>Show Discord</strong> in the game.
           </li>
           <li>Deleting your data in the game removes it here within a minute.</li>
+          <li>The live stream player comes from Twitch or YouTube and only loads when you press play.</li>
+          <li>Search engines may keep an older copy of a public page for a while after data changes. Player profile pages ask search engines not to index them.</li>
         </ul>
       </div>
       <div className="card">
