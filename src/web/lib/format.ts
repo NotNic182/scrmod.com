@@ -64,3 +64,8 @@ export function agoFromMinutes(m: number | null | undefined): string {
   if (h < 24) return `${h}h ago`
   return `${Math.floor(h / 24)}d ago`
 }
+
+/** "1 player" / "3 players". English-only, like the rest of the copy; irregular plurals pass `many`. */
+export function plural(n: number, one: string, many = `${one}s`): string {
+  return `${num(n)} ${n === 1 ? one : many}`
+}

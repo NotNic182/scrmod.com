@@ -5,10 +5,11 @@ import type { HubProfile } from '../api/types'
 import { EmptyState } from '../components/EmptyState'
 import { QueryState } from '../components/QueryState'
 import { RankChip } from '../components/RankChip'
-import { Tabs } from '../components/Tabs'
+import { TabPanel, Tabs } from '../components/Tabs'
 import { TitleTag } from '../components/TitleTag'
 import { useIdentity } from '../lib/identity'
 import { relTime } from '../lib/format'
+import { useTitle } from '../lib/title'
 import { NotFound } from './NotFound'
 import { Overview } from './player/Overview'
 import { Matches } from './player/Matches'
@@ -47,6 +48,7 @@ export function Player() {
   const meta = useMeta()
   const valid = !!steamId && /^\d{17}$/.test(steamId)
   const q = usePlayer(valid ? steamId : undefined, id.me?.steam_id ?? null)
+  useTitle(valid ? (q.data?.data.display_name ?? 'Player') : 'Not found')
   if (!valid) return <NotFound />
 
   const isMe = id.me?.steam_id === steamId
@@ -60,14 +62,14 @@ export function Player() {
           <header className="card">
             <div className="row" style={{ alignItems: 'flex-start' }}>
               <div>
-                <h1 style={{ marginBottom: 4 }}>
-                  {p.display_name}
-                  {isMe ? <span className="faint" style={{ fontSize: 14 }}> (you)</span> : null}
+                <h1 className="player-name" style={{ marginBottom: 4 }}>
+                  <bdi>{p.display_name}</bdi>
+                  {isMe ? <span className="faint you"> (you)</span> : null}
                 </h1>
                 <div className="row">
                   <RankChip name={p.rank_name} color={p.rank_color} rating={p.rating} tiers={meta.data?.data.rank_tiers} />
                   <TitleTag title={p.active_title} color={p.active_title_color} />
-                  {p.show_discord && p.discord_display_name ? <span className="chip" style={{ background: 'var(--bg-elev)' }}>Discord: {p.discord_display_name}</span> : null}
+                  {p.show_discord && p.discord_display_name ? <span className="chip">Discord: {p.discord_display_name}</span> : null}
                 </div>
                 <div className="faint" style={{ marginTop: 6 }}>
                   {p.last_match ? `last match ${relTime(p.last_match)}` : 'no matches yet'}
@@ -82,8 +84,10 @@ export function Player() {
               ) : null}
             </div>
           </header>
-          <Tabs tabs={tabs} value={tab} onChange={(t) => setParams(t === 'overview' ? {} : { tab: t }, { replace: true })} />
-          {(TabBody[tab] ?? (() => <EmptyState title="Coming soon" />))({ p, me: id.me?.steam_id ?? null })}
+          <Tabs tabs={tabs} value={tab} onChange={(t) => setParams(t === 'overview' ? {} : { tab: t }, { replace: true })} panelId="player-panel" label="Player sections" />
+          <TabPanel id="player-panel" value={tab}>
+            {(TabBody[tab] ?? (() => <EmptyState title="Coming soon" />))({ p, me: id.me?.steam_id ?? null })}
+          </TabPanel>
         </>
       )}
     </QueryState>

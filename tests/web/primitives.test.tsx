@@ -11,13 +11,18 @@ describe('primitives', () => {
     renderApp(<PlayerLink steamId="76561198040410653" name="Sid" title="FFA 1st Place" titleColor="#FFD700" online />)
     const link = screen.getByRole('link', { name: /Sid/ })
     expect(link).toHaveAttribute('href', '/players/76561198040410653')
-    expect(screen.getByText('FFA 1st Place')).toHaveStyle({ color: 'rgb(255, 215, 0)' })
+    // The server color feeds the legibility guard (.api-color clamps its lightness per theme in CSS).
+    const tag = screen.getByText('FFA 1st Place')
+    expect(tag).toHaveClass('api-color')
+    expect(tag.style.getPropertyValue('--api-c')).toBe('#FFD700')
     expect(screen.getByLabelText('online')).toBeInTheDocument()
   })
 
   it('RankChip uses the server name and color when given, else derives the tier from the rating', () => {
     renderApp(<RankChip name="Grand Master IV" color="#E52745" />)
-    expect(screen.getByText('Grand Master IV')).toHaveStyle({ borderColor: 'rgb(229, 39, 69)' })
+    const chip = screen.getByText('Grand Master IV')
+    expect(chip).toHaveClass('api-color')
+    expect(chip.style.getPropertyValue('--api-c')).toBe('#E52745')
     renderApp(<RankChip rating={1700} />)
     expect(screen.getByText('Advanced')).toBeInTheDocument()
   })

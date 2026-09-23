@@ -15,5 +15,5 @@ if (!env.fixtures) version.refresh().catch(() => {})
 
 serve({ fetch: app.fetch, port: env.port }, (info) => {
   const base = env.basePath === '/' ? '' : env.basePath
-  console.log(`[scr-hub] ${modeOf(env)} mode listening on http://localhost:${info.port}${base}/  (upstream ${env.upstreamBase})`)
+  console.log(`[scrmod] ${modeOf(env)} mode listening on http://localhost:${info.port}${base}/  (upstream ${env.upstreamBase})`)
 })

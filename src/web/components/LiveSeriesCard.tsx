@@ -4,7 +4,7 @@ import { PlayerLink } from './PlayerLink'
 
 export function LiveSeries1v1({ s }: { s: ActiveSeries }) {
   return (
-    <div className="card" style={{ marginBottom: 10 }}>
+    <div className="panel">
       <div className="row">
         <span className="chip live-pill">{s.phase === 'live' ? 'LIVE' : 'STARTING'}</span>
         {s.is_tournament && s.tournament_label ? <span className="chip">{s.tournament_label}</span> : null}
@@ -12,14 +12,18 @@ export function LiveSeries1v1({ s }: { s: ActiveSeries }) {
         <span className="spacer" />
         <span className="faint">{relTime(s.started_at)}</span>
       </div>
-      <div className="row" style={{ marginTop: 8, fontSize: 17 }}>
-        <PlayerLink steamId={s.p1_steam_id} name={s.p1_name} bold />
-        <span className="muted mono">{s.p1_rating}</span>
-        <span className="mono" style={{ fontWeight: 900, fontSize: 20, margin: '0 8px' }}>
-          {s.p1_wins} – {s.p2_wins}
+      <div className="versus">
+        <div className="side">
+          <PlayerLink steamId={s.p1_steam_id} name={s.p1_name} bold />
+          <span className="muted tnum">{s.p1_rating}</span>
+        </div>
+        <span className="versus-score tnum">
+          {s.p1_wins}–{s.p2_wins}
         </span>
-        <span className="muted mono">{s.p2_rating}</span>
-        <PlayerLink steamId={s.p2_steam_id} name={s.p2_name} bold />
+        <div className="side end">
+          <PlayerLink steamId={s.p2_steam_id} name={s.p2_name} bold />
+          <span className="muted tnum">{s.p2_rating}</span>
+        </div>
       </div>
       <div className="faint" style={{ marginTop: 4 }}>
         Best of 3 · current game {s.live_p1_points}–{s.live_p2_points}
@@ -39,7 +43,7 @@ export function LiveSeries2v2({ s }: { s: ActiveTeamSeries }) {
     </span>
   )
   return (
-    <div className="card" style={{ marginBottom: 10 }}>
+    <div className="panel">
       <div className="row">
         <span className="chip live-pill">LIVE 2v2</span>
         <span className="spacer" />
@@ -47,7 +51,7 @@ export function LiveSeries2v2({ s }: { s: ActiveTeamSeries }) {
       </div>
       <div style={{ marginTop: 8 }}>
         {team([s.t1a_steam, s.t1a_name], [s.t1b_steam, s.t1b_name], s.t1_color_hex)}
-        <div className="mono" style={{ fontWeight: 900, fontSize: 20, margin: '4px 0' }}>
+        <div className="versus-score" style={{ margin: '4px 0' }}>
           {s.t1_wins} – {s.t2_wins}
         </div>
         {team([s.t2a_steam, s.t2a_name], [s.t2b_steam, s.t2b_name], s.t2_color_hex)}
@@ -61,10 +65,12 @@ export function LiveSeries2v2({ s }: { s: ActiveTeamSeries }) {
 
 export function FfaLobbyCard({ l }: { l: FfaLobby }) {
   return (
-    <div className="card" style={{ marginBottom: 10 }}>
+    <div className="panel">
       <div className="row">
         <span className="chip live-pill">FFA LOBBY</span>
-        <strong>{l.host_name}'s lobby</strong>
+        <strong>
+          <bdi>{l.host_name}</bdi>'s lobby
+        </strong>
         <span className="muted">
           {l.player_count}/{l.max_players}
         </span>
@@ -74,8 +80,8 @@ export function FfaLobbyCard({ l }: { l: FfaLobby }) {
       </div>
       <div className="row" style={{ marginTop: 6 }}>
         {l.members.map((m, i) => (
-          <span key={i} className="chip" style={{ background: 'var(--bg-elev)' }}>
-            {m.name} <span className="muted">{m.rating}</span>
+          <span key={i} className="chip">
+            <bdi>{m.name}</bdi> <span className="muted">{m.rating}</span>
           </span>
         ))}
       </div>
@@ -85,10 +91,12 @@ export function FfaLobbyCard({ l }: { l: FfaLobby }) {
 
 export function SpectateCard({ g }: { g: SpectateGame }) {
   return (
-    <div className="card" style={{ marginBottom: 10 }}>
+    <div className="panel">
       <div className="row">
         <span className="chip">{g.mode.toUpperCase()}</span>
-        <strong>{g.names}</strong>
+        <strong>
+          <bdi>{g.names}</bdi>
+        </strong>
         <span className="spacer" />
         <span className="faint">
           {g.spectatable ? `${g.spectator_count}/${g.spectator_cap} watching` : 'not spectatable'}

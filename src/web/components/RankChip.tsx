@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { FALLBACK_TIERS, tierFor, type RankTier } from '../../shared/rank'
 
 interface Props {
@@ -17,7 +18,7 @@ export function RankChip({ name, color, rating, tiers }: Props) {
   }
   if (!label) return null
   return (
-    <span className="chip" style={{ border: `1px solid ${c || 'var(--line)'}`, color: c || 'var(--fg-muted)' }}>
+    <span className="chip api-color" style={{ '--api-c': c || undefined, border: '1px solid currentColor' } as CSSProperties}>
       {label}
     </span>
   )

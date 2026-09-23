@@ -4,8 +4,23 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
-    <title>SCR Hub</title>
+    <meta name="theme-color" content="#151823" />
+    <!-- Before first paint: apply the saved (or system) theme so light-mode visitors never see a dark flash
+         while the app downloads. Mirrors lib/theme.ts; the key must stay in sync. -->
+    <script>
+      try {
+        var t = localStorage.getItem("scrhub.theme")
+        if (t !== "dark" && t !== "light") t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"
+        document.documentElement.dataset.theme = t
+        if (t === "light") document.querySelector("meta[name=theme-color]").content = "#ffffff"
+      } catch (e) {}
+    </script>
+    <title>SCRmod</title>
     <meta name="description" content="Sid's Competitive Rounds from your browser: who is online, live games, leaderboards and stats." />
+    <meta property="og:site_name" content="SCRmod" />
+    <meta property="og:title" content="SCRmod · scrmod.com" />
+    <meta property="og:description" content="Sid's Competitive Rounds from your browser: who is online, live games, leaderboards and stats." />
+    <meta name="twitter:card" content="summary" />
   </head>
   <body>
     <div id="root"></div>

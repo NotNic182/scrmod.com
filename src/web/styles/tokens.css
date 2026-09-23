@@ -1,24 +1,54 @@
+/* Gold on night. One brand color, used rarely: identity (brand, "you"), selection, and what was earned
+   (unlocked achievements, first place). Green/red mean outcome, blue means info and ranked, solid red only
+   ever means LIVE. Every text pair below is checked at 4.5:1 or better on card, hover and page surfaces. */
 :root {
   --bg: #0e1016;
   --bg-elev: #151823;
   --bg-card: #1b1f2c;
   --bg-hover: #222738;
   --fg: #eceef4;
-  --fg-muted: #98a1b3;
-  --fg-faint: #6b7385;
+  --fg-muted: #a9b1c0;
+  --fg-faint: #8a93a5;
   --line: #2a3042;
+
+  /* Brand gold: --accent fills, --accent-ink is gold as text or a thin line on a surface. */
   --accent: #ffcc33;
   --accent-fg: #15171d;
+  --accent-ink: #ffcc33;
+
   --good: #55d846;
   --bad: #ff5c5c;
-  --live: #ff3b3b;
+  --live: #c92a2a;
+  --live-fg: #ffffff;
   --info: #77a3fc;
+  --rare: #c58af5;
+  --medal-1: var(--accent-ink);
+  --medal-2: #c3cad6;
+  --medal-3: #d9925a;
+
+  /* Colors that come from the game (rank tiers, titles) are designed for the game, not this page: the
+     darkest are invisible on a night card. They keep their hue but are held to this lightness band. */
+  --api-lmin: 0.74;
+  --api-lmax: 1;
+
   --radius: 12px;
   --radius-sm: 8px;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Type roles, in rem so the reader's browser font size is honoured (16px default = the values in comments).
+     One family; numbers use its tabular figures. Weights: 400 body, 600 emphasis, 700 labels/titles, 800 display. */
+  --text-display: 1.75rem; /* 28: page titles */
+  --text-stat: 1.375rem; /* 22: the number a tile or scoreboard exists to show */
+  --text-title: 1.125rem; /* 18: card headings, scoreboard names */
+  --text-body: 1rem; /* 16: default reading size */
+  --text-data: 0.9375rem; /* 15: dense tables, where columns earn the extra pixel */
+  --text-meta: 0.8125rem; /* 13: timestamps, subtitles, footer */
+  --text-label: 0.75rem; /* 12: uppercase labels and chips, always bold */
+  --text-tab: 0.6875rem; /* 11: under-icon tab bar labels only (platform convention) */
   --nav-h: 56px;
+  --tabbar-h: 58px;
   --gutter: 16px;
   --maxw: 1100px;
   color-scheme: dark;
@@ -30,11 +60,27 @@
   --bg-card: #ffffff;
   --bg-hover: #eef0f6;
   --fg: #171a22;
-  --fg-muted: #4f5666;
-  --fg-faint: #8a92a3;
+  --fg-muted: #474e5d;
+  --fg-faint: #636b7c;
   --line: #dde1ea;
-  --accent: #d99a00;
-  --accent-fg: #ffffff;
+
+  /* The fill stays true brand gold (dark text on it); gold as ink deepens to stay legible on white. */
+  --accent: #ffcc33;
+  --accent-fg: #15171d;
+  --accent-ink: #8a5d00;
+
+  --good: #177a33;
+  --bad: #cf222e;
+  --live: #cf222e;
+  --live-fg: #ffffff;
+  --info: #0b62c9;
+  --rare: #8a3fd1;
+  --medal-2: #5f6878;
+  --medal-3: #9a5520;
+
+  --api-lmin: 0;
+  --api-lmax: 0.46;
+
   --shadow: 0 8px 24px rgba(20, 24, 40, 0.1);
   color-scheme: light;
 }

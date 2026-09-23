@@ -15,7 +15,7 @@ describe('identity', () => {
     mockHub({ '/me': SIGNED_OUT, '/players/search?q=nic': env({ results: [{ steam_id: '76561199311926326', display_name: 'NotNic', rating: 1101 }] }) })
     renderApp(<IdentityMenu />)
     await userEvent.click(await screen.findByRole('button', { name: /find me/i }))
-    await userEvent.type(screen.getByRole('searchbox'), 'nic')
+    await userEvent.type(screen.getByRole('combobox'), 'nic')
     await userEvent.click(await screen.findByRole('option', { name: /NotNic/ }))
     await waitFor(() => expect(screen.getByRole('link', { name: /NotNic/ })).toHaveAttribute('href', '/players/76561199311926326'))
     expect(readPinned()).toEqual({ steam_id: '76561199311926326', display_name: 'NotNic' })

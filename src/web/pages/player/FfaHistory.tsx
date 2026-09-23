@@ -32,7 +32,7 @@ export function FfaHistoryTab({ steamId }: { steamId: string }) {
                     <td className="num">{g.kills}</td>
                     <td className="num">{g.rounds_won}</td>
                     <td className="num">{g.points_total}</td>
-                    <td className={`num mono ${g.rating_change >= 0 ? 'good' : 'bad'}`}>{signed(g.rating_change, 1)}</td>
+                    <td className={`num tnum ${g.rating_change >= 0 ? 'good' : 'bad'}`}>{signed(g.rating_change, 1)}</td>
                     <td className="faint">{(g.participants ?? []).join(', ')}</td>
                   </tr>
                 ))}

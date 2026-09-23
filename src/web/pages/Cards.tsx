@@ -1,11 +1,13 @@
+import { useTitle } from '../lib/title'
 import { Fragment, useState } from 'react'
 import { useCardLeaders, useCardPickers, useCards } from '../api/hooks'
 import { PlayerLink } from '../components/PlayerLink'
 import { QueryState } from '../components/QueryState'
-import { Tabs } from '../components/Tabs'
-import { num, pct } from '../lib/format'
+import { Icon } from '../components/Icon'
+import { Segmented } from '../components/Segmented'
+import { num, pct, plural } from '../lib/format'
 
-const FILTERS = [
+const FILTERS: Array<{ id: 'all' | 'ranked' | 'casual'; label: string }> = [
   { id: 'all', label: 'All' },
   { id: 'ranked', label: 'Ranked' },
   { id: 'casual', label: 'Casual' },
@@ -23,13 +25,13 @@ function Pickers({ name }: { name: string }) {
   return (
     <QueryState q={q} label="top pickers" empty={(d) => !d.display_names?.length}>
       {(d) => (
-        <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+        <ul className="plain-list">
           {d.display_names.map((n, i) => (
             <li key={d.steam_ids[i] ?? i} className="row" style={{ minHeight: 30 }}>
               <PlayerLink steamId={d.steam_ids[i]} name={n} />
               <span className="spacer" />
-              <span className="muted">{d.picks[i]} picks</span>
-              <span className={`mono ${d.win_rates[i] >= 0.55 ? 'good' : d.win_rates[i] <= 0.45 ? 'bad' : ''}`}>{pct(d.win_rates[i])}</span>
+              <span className="muted">{plural(d.picks[i], 'pick')}</span>
+              <span className={`tnum ${d.win_rates[i] >= 0.55 ? 'good' : d.win_rates[i] <= 0.45 ? 'bad' : ''}`}>{pct(d.win_rates[i])}</span>
             </li>
           ))}
         </ul>
@@ -39,25 +41,29 @@ function Pickers({ name }: { name: string }) {
 }
 
 export function Cards() {
-  const [filter, setFilter] = useState('all')
+  useTitle('Cards')
+  const [filter, setFilter] = useState<'all' | 'ranked' | 'casual'>('all')
   const [sort, setSort] = useState('times_picked')
   const [open, setOpen] = useState<string | null>(null)
-  const order = sort === 'pass_rate' ? 'desc' : 'desc'
-  const q = useCards(filter, sort, order)
+  const q = useCards(filter, sort, 'desc')
   const leaders = useCardLeaders()
   return (
     <>
       <h1>Cards</h1>
-      <Tabs tabs={FILTERS} value={filter} onChange={setFilter} />
-      <div className="row" style={{ marginBottom: 10 }}>
-        <label className="muted">Sort</label>
-        <select className="input" style={{ maxWidth: 220 }} value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort cards">
-          {SORTS.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.label}
-            </option>
-          ))}
-        </select>
+      <div className="toolbar">
+        <Segmented options={FILTERS} value={filter} onChange={setFilter} label="Games counted" />
+        <div className="row">
+          <label className="muted" htmlFor="cards-sort">
+            Sort
+          </label>
+          <select id="cards-sort" className="input" style={{ maxWidth: 220 }} value={sort} onChange={(e) => setSort(e.target.value)}>
+            {SORTS.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       <div className="card">
         <QueryState q={q} label="card stats" empty={(d) => d.length === 0}>
@@ -81,11 +87,12 @@ export function Cards() {
                     <Fragment key={c.card_name}>
                       <tr>
                         <td>
-                          <button className="btn" style={{ minHeight: 32, padding: '0 8px' }} onClick={() => setOpen(open === c.card_name ? null : c.card_name)} aria-expanded={open === c.card_name}>
+                          <button className="disclosure" onClick={() => setOpen(open === c.card_name ? null : c.card_name)} aria-expanded={open === c.card_name}>
+                            <Icon name="chevron" size={16} />
                             {c.card_name}
                           </button>
                         </td>
-                        <td className="faint">{c.card_rarity}</td>
+                        <td className={`rarity-${String(c.card_rarity).toLowerCase()}`}>{c.card_rarity}</td>
                         <td className="num">{num(c.times_picked)}</td>
                         <td className="num">{num(c.times_offered)}</td>
                         <td className="num">{pct(c.pass_rate)}</td>
@@ -114,13 +121,13 @@ export function Cards() {
           <h2>Most wins with a card</h2>
           <QueryState q={leaders} label="card leaders" empty={(d) => !d.winners?.length}>
             {(d) => (
-              <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+              <ul className="plain-list">
                 {[...d.winners].sort((a, b) => b.count - a.count).slice(0, 15).map((w, i) => (
                   <li key={i} className="row" style={{ minHeight: 30 }}>
                     <span>{w.card}</span>
                     <span className="muted">{w.player}</span>
                     <span className="spacer" />
-                    <span className="mono">{w.count}</span>
+                    <span className="tnum">{w.count}</span>
                   </li>
                 ))}
               </ul>
@@ -131,13 +138,13 @@ export function Cards() {
           <h2>Most 5-0 sweeps with a card</h2>
           <QueryState q={leaders} label="card leaders" empty={(d) => !d.sweepers?.length}>
             {(d) => (
-              <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+              <ul className="plain-list">
                 {[...d.sweepers].sort((a, b) => b.count - a.count).slice(0, 15).map((w, i) => (
                   <li key={i} className="row" style={{ minHeight: 30 }}>
                     <span>{w.card}</span>
                     <span className="muted">{w.player}</span>
                     <span className="spacer" />
-                    <span className="mono">{w.count}</span>
+                    <span className="tnum">{w.count}</span>
                   </li>
                 ))}
               </ul>

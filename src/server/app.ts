@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { compress } from 'hono/compress'
 import { Cache, MemoryCacheStore, type CacheStore } from './cache'
 import { type Env } from './env'
 import { registerAuthRoutes } from './routes/auth'
@@ -56,6 +57,8 @@ export function createApp(deps: AppDeps) {
   })
 
   if (env.rateLimit) app.use('*', rateLimit({ now, prefix: env.basePath }))
+  // JSON compresses ~5-10x and the live pages poll it every 15 s. Static files compress themselves (static.ts).
+  app.use('/api/*', compress())
 
   registerStatusRoutes(app, routeDeps)
   registerMetaRoutes(app, routeDeps)

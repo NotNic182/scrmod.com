@@ -1,3 +1,4 @@
+import { useTitle } from '../lib/title'
 import { useParams } from 'react-router'
 import { useTournaments } from '../api/hooks'
 import { QueryState } from '../components/QueryState'
@@ -6,6 +7,7 @@ import { CurrentCard } from './tournaments/CurrentCard'
 import { History } from './tournaments/History'
 
 export function Tournaments() {
+  useTitle('Tournaments')
   const { id } = useParams()
   const q = useTournaments()
   return (

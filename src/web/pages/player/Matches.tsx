@@ -2,16 +2,24 @@ import { useState } from 'react'
 import type { CardPick, PlayerMatch } from '../../../shared/api-types'
 import { usePlayerSub } from '../../api/hooks'
 import { PlayerLink } from '../../components/PlayerLink'
+import { Segmented } from '../../components/Segmented'
+import { TitleTag } from '../../components/TitleTag'
 import { QueryState } from '../../components/QueryState'
 import { fmtDate, pct, signed } from '../../lib/format'
 import { groupSeries } from '../../lib/series'
+
+const GAME_FILTERS = [
+  { id: 'all' as const, label: 'All' },
+  { id: 'ranked' as const, label: 'Ranked' },
+  { id: 'casual' as const, label: 'Casual' },
+]
 
 function Cards({ cards }: { cards: CardPick[] | undefined }) {
   if (!cards?.length) return <span className="faint">no picks</span>
   return (
     <span className="row" style={{ gap: 4, display: 'inline-flex' }}>
       {cards.map((c, i) => (
-        <span key={i} className="chip" style={{ background: 'var(--bg-elev)', fontWeight: 500, opacity: c.rolled ? 0.5 : 1 }} title={`${c.card_rarity} · pick ${c.pick_order}, round ${c.round_number}`}>
+        <span key={i} className="chip card-chip" style={c.rolled ? { opacity: 0.5 } : undefined} title={`${c.card_rarity} · pick ${c.pick_order}, round ${c.round_number}`}>
           {c.card_name}
         </span>
       ))}
@@ -26,7 +34,7 @@ function Game({ g, n }: { g: PlayerMatch; n: number }) {
       <div className="row">
         <span className="faint">Game {n}</span>
         <strong className={g.won ? 'good' : 'bad'}>{g.won ? 'W' : 'L'}</strong>
-        <span className="mono">
+        <span className="tnum">
           {g.player_rounds_won}–{g.opponent_rounds_won}
         </span>
         <span className="faint">
@@ -54,29 +62,39 @@ export function Matches({ steamId }: { steamId: string }) {
   const q = usePlayerSub(steamId, 'matches', { limit: 100 })
   return (
     <div className="card">
-      <div className="row" style={{ marginBottom: 8 }}>
-        {(['all', 'ranked', 'casual'] as const).map((f) => (
-          <button key={f} className={`btn${filter === f ? ' btn-accent' : ''}`} onClick={() => setFilter(f)}>
-            {f}
-          </button>
-        ))}
+      <div className="toolbar">
+        <Segmented options={GAME_FILTERS} value={filter} onChange={setFilter} label="Games shown" />
       </div>
       <QueryState q={q} label="matches" empty={(d) => d.length === 0} emptyHint="Matches appear once the mod reports them.">
         {(rows) => {
           const groups = groupSeries(rows).filter((g) => filter === 'all' || (filter === 'ranked') === g.ranked)
           if (!groups.length) return <div className="empty">No {filter} matches in the last 100 games.</div>
           return groups.map((g) => (
-            <details key={g.key} className="card" style={{ marginBottom: 8 }}>
-              <summary className="row" style={{ cursor: 'pointer', minHeight: 40 }}>
-                <span className={`chip ${g.ranked ? 'live-pill' : ''}`} style={g.ranked ? { background: 'var(--info)' } : { background: 'var(--bg-elev)' }}>
+            <details key={g.key} className="acc">
+              <summary className="row">
+                <span className={`chip ${g.ranked ? 'tone-info' : ''}`}>
                   {g.ranked ? 'RANKED' : 'casual'}
                 </span>
-                <PlayerLink steamId={g.opponent_steam_id} name={g.opponent_name} title={g.opponent_title} titleColor={g.opponent_title_color} />
+                {/* A summary can't hold a link (nested controls): the name is text here, the profile link sits inside. */}
+                <strong>
+                  <bdi>{g.opponent_name}</bdi>
+                </strong>
+                <TitleTag title={g.opponent_title} color={g.opponent_title_color} />
                 <span className="spacer" />
-                {g.ranked && g.score ? <strong className="mono">{g.score}</strong> : <strong className="mono">{g.games[0].won ? 'W' : 'L'}</strong>}
-                {g.rating_change !== null ? <span className={`mono ${g.rating_change >= 0 ? 'good' : 'bad'}`}>{signed(g.rating_change, 1)}</span> : null}
+                {g.ranked && g.score ? (
+                  <strong className="tnum">{g.score}</strong>
+                ) : (
+                  <strong className="tnum">
+                    {g.games[0].won ? 'W' : 'L'}
+                    <span className="sr-only">{g.games[0].won ? ' (win)' : ' (loss)'}</span>
+                  </strong>
+                )}
+                {g.rating_change !== null ? <span className={`tnum ${g.rating_change >= 0 ? 'good' : 'bad'}`}>{signed(g.rating_change, 1)}</span> : null}
                 <span className="faint">{fmtDate(g.ended_at)}</span>
               </summary>
+              <div className="details-link">
+                <PlayerLink steamId={g.opponent_steam_id} name={`${g.opponent_name}'s profile`} />
+              </div>
               {[...g.games].reverse().map((game, i) => (
                 <Game key={game.match_id} g={game} n={i + 1} />
               ))}

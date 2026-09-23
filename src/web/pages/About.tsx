@@ -1,11 +1,13 @@
+import { useTitle } from '../lib/title'
 import { useStatus } from '../api/hooks'
 
 export function About() {
+  useTitle('About & privacy')
   const s = useStatus()
   const st = s.data
   return (
     <>
-      <h1>About SCR Hub</h1>
+      <h1>About SCRmod</h1>
       <div className="card">
         <h2>What this is</h2>
         <p>
@@ -23,7 +25,7 @@ export function About() {
           Everything here is read from the mod's public API, the same data every mod client and the Discord bot receive. Nothing is collected beyond that. Live pages refresh every 15 seconds
           while the tab is visible, leaderboards every minute, and every panel shows how old its data is.
         </p>
-        <ul>
+        <ul className="prose">
           <li>
             <strong>Appear offline</strong> in the game (F5 → Settings) removes you from the online lists here too.
           </li>

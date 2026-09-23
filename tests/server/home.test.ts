@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { gunzipSync } from 'node:zlib'
 import { makeApp } from './helpers/makeApp'
 import { json } from './helpers/fakeUpstream'
 
@@ -73,5 +74,18 @@ describe('GET /api/home', () => {
     expect(body.data.queue.online).toBe(PRESENCE.online_count)
     expect(body.data.queue.ranked_searching).toBe(0)
     expect(body.errors).toEqual(['queue'])
+  })
+})
+
+describe('API compression', () => {
+  it('gzips JSON for clients that accept it and leaves others alone', async () => {
+    const { app } = makeApp(ALL)
+    const zipped = await app.request('/api/home', { headers: { 'Accept-Encoding': 'gzip, br' } })
+    expect(zipped.headers.get('content-encoding')).toBe('gzip')
+    expect(zipped.headers.get('vary')).toContain('Accept-Encoding')
+    const body = JSON.parse(gunzipSync(Buffer.from(await zipped.arrayBuffer())).toString())
+    expect(body.data.presence.online[0].display_name).toBe('Spirit')
+    const plain = await makeApp(ALL).app.request('/api/home')
+    expect(plain.headers.get('content-encoding')).toBeNull()
   })
 })

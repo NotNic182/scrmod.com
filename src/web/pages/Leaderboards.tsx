@@ -1,13 +1,17 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useRef, useState, type ReactNode } from 'react'
 import { NavLink, useParams } from 'react-router'
 import type { FfaLeaderboardEntry, LeaderboardEntry, OvtLeaderboardEntry, TeamLeaderboardEntry } from '../../shared/api-types'
 import { useLeaderboard, useMeta } from '../api/hooks'
 import type { AnyBoard } from '../api/types'
+import { EmptyState } from '../components/EmptyState'
 import { PlayerLink } from '../components/PlayerLink'
 import { QueryState } from '../components/QueryState'
 import { RankChip } from '../components/RankChip'
+import { useKeepActiveInView } from '../components/Tabs'
+import { Icon } from '../components/Icon'
 import { useIdentity } from '../lib/identity'
-import { goldText, pct } from '../lib/format'
+import { useTitle } from '../lib/title'
+import { goldText, pct, plural } from '../lib/format'
 
 const PAGE = 50
 
@@ -30,7 +34,7 @@ interface Col {
 }
 
 function colsFor(mode: string, tiers: Parameters<typeof RankChip>[0]['tiers']): Col[] {
-  const rating: Col = { key: 'rating', label: 'Rating', num: true, cell: (r) => <strong className="mono">{'rating' in r ? Math.round(r.rating) : '–'}</strong> }
+  const rating: Col = { key: 'rating', label: 'Rating', num: true, cell: (r) => <strong className="tnum">{'rating' in r ? Math.round(r.rating) : '–'}</strong> }
   const level: Col = { key: 'level', label: 'Lvl', num: true, cell: (r) => r.level }
   if (mode === '2v2') {
     return [
@@ -85,20 +89,23 @@ export function Leaderboards() {
   const q = useLeaderboard(mode, inactive)
   const meta = useMeta()
   const id = useIdentity()
+  useTitle(`${MODES.find((m) => m.id === mode)?.label ?? mode} leaderboard`)
   const cols = useMemo(() => colsFor(mode, meta.data?.data.rank_tiers), [mode, meta.data])
+  const modes = useRef<HTMLElement>(null)
+  useKeepActiveInView(modes, '[aria-current="page"]', mode)
 
   return (
     <>
       <h1>Leaderboards</h1>
-      <div className="tabs" role="tablist">
+      <nav className="tabs" aria-label="Leaderboard mode" ref={modes}>
         {MODES.map((m) => (
-          <NavLink key={m.id} to={`/leaderboards/${m.id}`} role="tab" aria-selected={m.id === mode} className="btn" style={{ border: 0, borderRadius: 0 }} onClick={() => { setPage(0); setFilter('') }}>
+          <NavLink key={m.id} to={`/leaderboards/${m.id}`} onClick={() => { setPage(0); setFilter('') }}>
             {m.label}
           </NavLink>
         ))}
-      </div>
+      </nav>
       <div className="row" style={{ marginBottom: 10 }}>
-        <input className="input" type="search" role="searchbox" aria-label="Filter by name" placeholder="Filter by name" value={filter} onChange={(e) => { setFilter(e.target.value); setPage(0) }} style={{ maxWidth: 320 }} />
+        <input className="input" type="search" role="searchbox" aria-label="Filter by name" placeholder="Filter by name" maxLength={64} value={filter} onChange={(e) => { setFilter(e.target.value); setPage(0) }} style={{ maxWidth: 320 }} />
         <label className="row" style={{ gap: 6 }}>
           <input type="checkbox" checked={inactive} onChange={(e) => { setInactive(e.target.checked); setPage(0) }} /> show inactive (90+ days)
         </label>
@@ -110,28 +117,32 @@ export function Leaderboards() {
             const needle = filter.trim().toLowerCase()
             const rows = needle ? all.filter((r) => r.display_name.toLowerCase().includes(needle)) : all
             const pages = Math.max(1, Math.ceil(rows.length / PAGE))
-            const slice = rows.slice(page * PAGE, page * PAGE + PAGE)
+            // A refresh can shrink the board under the current page; fall back to the last page that exists.
+            const at = Math.min(page, pages - 1)
+            const slice = rows.slice(at * PAGE, at * PAGE + PAGE)
             return (
               <>
                 <div className="row muted" style={{ marginBottom: 6 }}>
-                  <span>{board.total_players} players ranked</span>
+                  <span>{plural(board.total_players, 'player')} ranked</span>
                   <span className="spacer" />
                   {pages > 1 ? (
                     <span className="row">
-                      <button className="btn" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>‹</button>
+                      <button className="btn icon-btn" disabled={at === 0} onClick={() => setPage(at - 1)} aria-label="Previous page"><span className="rot-prev"><Icon name="chevron" size={18} /></span></button>
                       <span>
-                        {page + 1} / {pages}
+                        <span className="sr-only">Page </span>
+                        {at + 1} / {pages}
                       </span>
-                      <button className="btn" disabled={page >= pages - 1} onClick={() => setPage((p) => p + 1)}>›</button>
+                      <button className="btn icon-btn" disabled={at >= pages - 1} onClick={() => setPage(at + 1)} aria-label="Next page"><span className="rot-next"><Icon name="chevron" size={18} /></span></button>
                     </span>
                   ) : null}
                 </div>
-                <div className="table-wrap">
+                {needle && rows.length === 0 ? <EmptyState title={`No player on this board matches “${filter.trim()}”.`} hint={inactive ? undefined : 'Players inactive for 90+ days are hidden; tick “show inactive” to include them.'} /> : null}
+                <div className="table-wrap" hidden={needle !== '' && rows.length === 0}>
                   <table className="t">
                     <thead>
                       <tr>
-                        <th className="num">#</th>
-                        <th>Player</th>
+                        <th className="num stick-rank">#</th>
+                        <th className="stick-name">Player</th>
                         {cols.map((c) => (
                           <th key={c.key} className={c.num ? 'num' : undefined}>
                             {c.label}
@@ -142,8 +153,8 @@ export function Leaderboards() {
                     <tbody>
                       {slice.map((r) => (
                         <tr key={r.steam_id} className={id.me?.steam_id === r.steam_id ? 'me' : undefined}>
-                          <td className="num mono">{r.rank}</td>
-                          <td>
+                          <td className={`num tnum stick-rank${r.rank <= 3 ? ` medal-${r.rank}` : ''}`}>{r.rank}</td>
+                          <td className="stick-name">
                             <PlayerLink steamId={r.steam_id} name={r.display_name} title={r.title} titleColor={r.title_color} online={r.is_online} me={id.me?.steam_id === r.steam_id} />
                             {r.inactive ? <span className="chip faint">inactive</span> : null}
                           </td>

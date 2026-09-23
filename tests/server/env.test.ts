@@ -20,8 +20,8 @@ describe('parseEnv', () => {
   })
 
   it('carries the origin into the User-Agent (spec 6.2)', () => {
-    expect(parseEnv({ PUBLIC_BASE_URL: 'https://hub.test/hub', BASE_PATH: '/hub' }).userAgent).toBe('scr-hub/0.1.0 (+https://hub.test)')
-    expect(parseEnv({}).userAgent).toBe('scr-hub/0.1.0')
+    expect(parseEnv({ PUBLIC_BASE_URL: 'https://hub.test/hub', BASE_PATH: '/hub' }).userAgent).toBe('scrmod/0.1.0 (+https://hub.test)')
+    expect(parseEnv({}).userAgent).toBe('scrmod/0.1.0')
   })
 
   it('disables sign-in with a loud warning when SESSION_SECRET is too short', () => {
