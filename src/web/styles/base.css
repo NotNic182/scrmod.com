@@ -1587,3 +1587,9 @@ details.acc > summary.series-row::before {
 .key-ffa::before {
   background: var(--info);
 }
+
+/* The one line under a page heading that says what the page is. */
+.page-intro {
+  margin: calc(-1 * var(--space-xs)) 0 var(--space-md);
+  color: var(--fg-muted);
+}

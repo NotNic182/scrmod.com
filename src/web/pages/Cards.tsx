@@ -7,6 +7,7 @@ import { Icon } from '../components/Icon'
 import { Segmented } from '../components/Segmented'
 import { num, pct, plural } from '../lib/format'
 import { useFirst } from '../components/ShowMore'
+import { INTROS, pageMeta } from '../../shared/seo'
 import type { CardStat } from '../../shared/api-types'
 
 const FILTERS: Array<{ id: 'all' | 'ranked' | 'casual'; label: string }> = [
@@ -43,7 +44,7 @@ function Pickers({ name }: { name: string }) {
 }
 
 export function Cards() {
-  useTitle('Cards')
+  useTitle(pageMeta({ kind: 'cards' }).title)
   const [filter, setFilter] = useState<'all' | 'ranked' | 'casual'>('all')
   const [sort, setSort] = useState('times_picked')
   const [open, setOpen] = useState<string | null>(null)
@@ -52,6 +53,7 @@ export function Cards() {
   return (
     <>
       <h1>Cards</h1>
+      <p className="page-intro">{INTROS.cards}</p>
       <div className="toolbar">
         <Segmented options={FILTERS} value={filter} onChange={setFilter} label="Games counted" />
         <div className="row">

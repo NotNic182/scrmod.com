@@ -1,8 +1,9 @@
 import { useTitle } from '../lib/title'
 import { Link } from 'react-router'
+import { pageMeta } from '../../shared/seo'
 
 export function NotFound() {
-  useTitle('Not found')
+  useTitle(pageMeta({ kind: 'not-found' }).title)
   return (
     <div className="card">
       <h1>Nothing here</h1>

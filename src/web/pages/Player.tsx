@@ -12,6 +12,7 @@ import { StatTile } from '../components/StatTile'
 import { useIdentity } from '../lib/identity'
 import { ratio, relTime, signed } from '../lib/format'
 import { useTitle } from '../lib/title'
+import { pageMeta } from '../../shared/seo'
 import { NotFound } from './NotFound'
 import { Overview } from './player/Overview'
 import { Matches } from './player/Matches'
@@ -51,7 +52,7 @@ export function Player() {
   const valid = !!steamId && /^\d{17}$/.test(steamId)
   const q = usePlayer(valid ? steamId : undefined, id.me?.steam_id ?? null)
   const nameId = useId()
-  useTitle(valid ? (q.data?.data.display_name ?? 'Player') : 'Not found')
+  useTitle(valid ? pageMeta({ kind: 'player', id: steamId! }, { player: q.data ? { display_name: q.data.data.display_name } : undefined }).title : pageMeta({ kind: 'not-found' }).title)
   if (!valid) return <NotFound />
 
   const isMe = id.me?.steam_id === steamId

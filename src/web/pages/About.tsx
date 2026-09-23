@@ -1,9 +1,10 @@
 import { useTitle } from '../lib/title'
 import { useStatus } from '../api/hooks'
 import { LINKS } from '../../shared/links'
+import { pageMeta } from '../../shared/seo'
 
 export function About() {
-  useTitle('About & privacy')
+  useTitle(pageMeta({ kind: 'about' }).title)
   const s = useStatus()
   const st = s.data
   return (

@@ -12,17 +12,9 @@ import { Icon } from '../components/Icon'
 import { useIdentity } from '../lib/identity'
 import { useTitle } from '../lib/title'
 import { goldText, pct, plural } from '../lib/format'
+import { BOARD_MODES, INTROS, pageMeta } from '../../shared/seo'
 
 const PAGE = 50
-
-const MODES: Array<{ id: string; label: string }> = [
-  { id: '1v1', label: '1v1' },
-  { id: '2v2', label: '2v2' },
-  { id: 'ffa', label: 'FFA' },
-  { id: '1v2', label: '1v2' },
-  { id: '1v2-solo', label: '1v2 solo' },
-  { id: '1v2-duo', label: '1v2 duo' },
-]
 
 type Row = LeaderboardEntry | TeamLeaderboardEntry | FfaLeaderboardEntry | OvtLeaderboardEntry
 
@@ -114,7 +106,7 @@ export function Leaderboards() {
   const q = useLeaderboard(mode, inactive)
   const meta = useMeta()
   const id = useIdentity()
-  useTitle(`${MODES.find((m) => m.id === mode)?.label ?? mode} leaderboard`)
+  useTitle(pageMeta({ kind: 'leaderboard', mode }).title)
   const cols = useMemo(() => colsFor(mode, meta.data?.data.rank_tiers), [mode, meta.data])
   const modes = useRef<HTMLElement>(null)
   const boardCard = useRef<HTMLDivElement>(null)
@@ -137,8 +129,9 @@ export function Leaderboards() {
   return (
     <>
       <h1>Leaderboards</h1>
+      <p className="page-intro">{BOARD_MODES.find((m) => m.id === mode)?.ranked === false ? INTROS.leaderboards1v2 : INTROS.leaderboards}</p>
       <nav className="tabs" aria-label="Leaderboard mode" ref={modes}>
-        {MODES.map((m) => (
+        {BOARD_MODES.map((m) => (
           <NavLink key={m.id} to={`/leaderboards/${m.id}`} onClick={() => { setPage(0); setFilter('') }}>
             {m.label}
           </NavLink>

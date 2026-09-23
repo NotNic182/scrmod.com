@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 
-/** Per-route document title: screen readers announce it on navigation, and tabs/history become tellable apart. */
-export function useTitle(title: string | null | undefined) {
+/** Sets the document title (built by pageMeta, so it matches the server-rendered one). */
+export function useTitle(title: string) {
   useEffect(() => {
-    document.title = title ? `${title} · SCRmod` : 'SCRmod'
+    document.title = title
   }, [title])
 }

@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router'
 import { useOnline } from '../lib/online'
 import { useTheme } from '../lib/theme'
 import { FOOTER_NOTE, NAV_LINKS } from '../../shared/brand'
+import { LINKS } from '../../shared/links'
 import { Backdrop } from './Backdrop'
 import { ErrorBoundary } from './ErrorBoundary'
 import { Icon, type IconName } from './Icon'
@@ -89,7 +90,14 @@ export function Layout({ identity }: { identity?: ReactNode }) {
         </ErrorBoundary>
       </main>
       <footer className="footer">
-        {FOOTER_NOTE} <NavLink to="/about">About &amp; privacy</NavLink>
+        {FOOTER_NOTE} <NavLink to="/about">About &amp; privacy</NavLink> · <NavLink to="/guide">Guide</NavLink> · Watch on{' '}
+        <a href={LINKS.twitch} rel="noopener">
+          Twitch
+        </a>{' '}
+        ·{' '}
+        <a href={LINKS.youtube} rel="noopener">
+          YouTube
+        </a>
       </footer>
       <nav className="tabbar" aria-label="Primary">
         {NAV.map((n) => (

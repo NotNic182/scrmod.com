@@ -5,15 +5,16 @@ import { QueryState } from '../components/QueryState'
 import { Bracket } from './tournaments/Bracket'
 import { CurrentCard } from './tournaments/CurrentCard'
 import { History } from './tournaments/History'
+import { INTROS, pageMeta } from '../../shared/seo'
 
 export function Tournaments() {
-  useTitle('Tournaments')
+  useTitle(pageMeta({ kind: 'tournaments' }).title)
   const { id } = useParams()
   const q = useTournaments()
   return (
     <>
       <h1>Tournaments</h1>
-      <p className="muted">Sign up, vote and play from the game (F5 → Tournaments). This page is the live view.</p>
+      <p className="page-intro">{INTROS.tournaments} Sign up, vote and play from the game (F5 → Tournaments).</p>
       {id && /^[0-9a-f-]{36}$/i.test(id) ? <Bracket id={id} /> : null}
       <QueryState q={q} label="tournaments">
         {(d, meta) => (
