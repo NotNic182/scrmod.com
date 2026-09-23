@@ -64,6 +64,11 @@ export function createApp(deps: AppDeps) {
 
   app.use('*', canonicalHost(env))
   if (env.rateLimit) app.use('*', rateLimit({ now, prefix: env.basePath }))
+  // Crawlers may fetch the API (pages render from it) but must not index it: robots.txt leaves /api/ open for that.
+  app.use('/api/*', async (c, next) => {
+    c.header('X-Robots-Tag', 'noindex')
+    await next()
+  })
   // JSON compresses ~5-10x and the live pages poll it every 15 s. Static files compress themselves (static.ts).
   app.use('/api/*', compress())
 
