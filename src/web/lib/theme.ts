@@ -17,8 +17,8 @@ export function useTheme() {
   const [theme, setTheme] = useState<Theme>(initial)
   useEffect(() => {
     document.documentElement.dataset.theme = theme
-    // Browser chrome (mobile address bar) follows the app surface.
-    document.querySelector<HTMLMetaElement>('meta[name=theme-color]')?.setAttribute('content', theme === 'light' ? '#ffffff' : '#151823')
+    // Browser chrome (mobile address bar) matches the game-teal top bar, which is teal in both themes.
+    document.querySelector<HTMLMetaElement>('meta[name=theme-color]')?.setAttribute('content', '#0c3440')
     try {
       localStorage.setItem(KEY, theme)
     } catch {

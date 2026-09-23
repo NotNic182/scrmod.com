@@ -4,7 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="theme-color" content="#151823" />
+    <meta name="theme-color" content="#0c3440" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <!-- Before first paint: apply the saved (or system) theme so light-mode visitors never see a dark flash
          while the app downloads. Mirrors lib/theme.ts; the key must stay in sync. -->
     <script>
@@ -12,7 +14,6 @@
         var t = localStorage.getItem("scrhub.theme")
         if (t !== "dark" && t !== "light") t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"
         document.documentElement.dataset.theme = t
-        if (t === "light") document.querySelector("meta[name=theme-color]").content = "#ffffff"
       } catch (e) {}
     </script>
     <title>SCRmod</title>
@@ -20,7 +21,8 @@
     <meta property="og:site_name" content="SCRmod" />
     <meta property="og:title" content="SCRmod · scrmod.com" />
     <meta property="og:description" content="Sid's Competitive Rounds from your browser: who is online, live games, leaderboards and stats." />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://scrmod.com/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>

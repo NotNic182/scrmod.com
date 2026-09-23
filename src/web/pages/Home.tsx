@@ -113,7 +113,7 @@ export function Home() {
                   {d.presence.online.length === 0 ? <div className="empty">Nobody online at the moment.</div> : null}
                   <ul className="plain-list">
                     {d.presence.online.map((p) => (
-                      <li key={p.steam_id} className="row" style={{ minHeight: 36 }}>
+                      <li key={p.steam_id} className={`row${id.me?.steam_id === p.steam_id ? ' me-row' : ''}`} style={{ minHeight: 36 }}>
                         <PlayerLink steamId={p.steam_id} name={p.display_name} title={p.title} titleColor={p.title_color} online me={id.me?.steam_id === p.steam_id} />
                         <span className="spacer" />
                         <span className="tnum muted">{p.rating}</span>
@@ -125,7 +125,7 @@ export function Home() {
                       <h3 style={{ marginTop: 12 }}>Recently online</h3>
                       <ul className="plain-list">
                         {d.presence.recent.map((p) => (
-                          <li key={p.steam_id} className="row" style={{ minHeight: 32 }}>
+                          <li key={p.steam_id} className={`row${id.me?.steam_id === p.steam_id ? ' me-row' : ''}`} style={{ minHeight: 32 }}>
                             <PlayerLink steamId={p.steam_id} name={p.display_name} title={p.title} titleColor={p.title_color} me={id.me?.steam_id === p.steam_id} />
                             <span className="spacer" />
                             <span className="faint">{agoFromMinutes(p.minutes_ago)}</span>
