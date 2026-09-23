@@ -1,0 +1,1022 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-23T05:47:32.049Z",
+  "title": "Design System: SCRmod",
+  "extensions": {
+    "colorMeta": {
+      "band-orange": {
+        "role": "primary",
+        "displayName": "Menu Selection Orange",
+        "canonical": "#f08c17",
+        "oklch": "oklch(73.2% 0.164 61.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.041 61.3)",
+          "oklch(26.4% 0.067 61.3)",
+          "oklch(37.9% 0.114 61.3)",
+          "oklch(49.3% 0.161 61.3)",
+          "oklch(60.7% 0.161 61.3)",
+          "oklch(72.1% 0.114 61.3)",
+          "oklch(83.6% 0.067 61.3)",
+          "oklch(95.0% 0.041 61.3)"
+        ]
+      },
+      "band-orange-deep": {
+        "role": "primary",
+        "displayName": "Band Edge Orange",
+        "canonical": "#e57a0c",
+        "oklch": "oklch(68.7% 0.165 56.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.041 56.0)",
+          "oklch(26.4% 0.068 56.0)",
+          "oklch(37.9% 0.115 56.0)",
+          "oklch(49.3% 0.162 56.0)",
+          "oklch(60.7% 0.162 56.0)",
+          "oklch(72.1% 0.115 56.0)",
+          "oklch(83.6% 0.068 56.0)",
+          "oklch(95.0% 0.041 56.0)"
+        ]
+      },
+      "band-orange-bright": {
+        "role": "primary",
+        "displayName": "Band Sheen Orange",
+        "canonical": "#f59a2c",
+        "oklch": "oklch(76.3% 0.157 65.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.039 65.1)",
+          "oklch(26.4% 0.065 65.1)",
+          "oklch(37.9% 0.110 65.1)",
+          "oklch(49.3% 0.155 65.1)",
+          "oklch(60.7% 0.155 65.1)",
+          "oklch(72.1% 0.110 65.1)",
+          "oklch(83.6% 0.065 65.1)",
+          "oklch(95.0% 0.039 65.1)"
+        ]
+      },
+      "band-orange-end": {
+        "role": "primary",
+        "displayName": "Band Tail Orange",
+        "canonical": "#e98311",
+        "oklch": "oklch(70.7% 0.163 59.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.041 59.2)",
+          "oklch(26.4% 0.067 59.2)",
+          "oklch(37.9% 0.114 59.2)",
+          "oklch(49.3% 0.161 59.2)",
+          "oklch(60.7% 0.161 59.2)",
+          "oklch(72.1% 0.114 59.2)",
+          "oklch(83.6% 0.067 59.2)",
+          "oklch(95.0% 0.041 59.2)"
+        ]
+      },
+      "band-ink": {
+        "role": "primary",
+        "displayName": "Band Ink",
+        "canonical": "#0a1c22",
+        "oklch": "oklch(21.4% 0.027 222.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.007 222.0)",
+          "oklch(26.4% 0.011 222.0)",
+          "oklch(37.9% 0.018 222.0)",
+          "oklch(49.3% 0.026 222.0)",
+          "oklch(60.7% 0.026 222.0)",
+          "oklch(72.1% 0.018 222.0)",
+          "oklch(83.6% 0.011 222.0)",
+          "oklch(95.0% 0.007 222.0)"
+        ]
+      },
+      "ember-ink": {
+        "role": "primary",
+        "displayName": "Ember Ink",
+        "canonical": "#f7a64d",
+        "oklch": "oklch(78.9% 0.141 65.6)",
+        "tonalRamp": [
+          "oklch(15.0% 0.035 65.6)",
+          "oklch(26.4% 0.058 65.6)",
+          "oklch(37.9% 0.098 65.6)",
+          "oklch(49.3% 0.138 65.6)",
+          "oklch(60.7% 0.138 65.6)",
+          "oklch(72.1% 0.098 65.6)",
+          "oklch(83.6% 0.058 65.6)",
+          "oklch(95.0% 0.035 65.6)"
+        ]
+      },
+      "ember-ink-mist": {
+        "role": "primary",
+        "displayName": "Burnt Ember",
+        "canonical": "#9a4d05",
+        "oklch": "oklch(50.6% 0.125 53.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.031 53.9)",
+          "oklch(26.4% 0.051 53.9)",
+          "oklch(37.9% 0.087 53.9)",
+          "oklch(49.3% 0.123 53.9)",
+          "oklch(60.7% 0.123 53.9)",
+          "oklch(72.1% 0.087 53.9)",
+          "oklch(83.6% 0.051 53.9)",
+          "oklch(95.0% 0.031 53.9)"
+        ]
+      },
+      "abyss-teal": {
+        "role": "neutral",
+        "displayName": "Abyss Teal",
+        "canonical": "#082830",
+        "oklch": "oklch(25.8% 0.039 217.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.010 217.7)",
+          "oklch(26.4% 0.016 217.7)",
+          "oklch(37.9% 0.027 217.7)",
+          "oklch(49.3% 0.038 217.7)",
+          "oklch(60.7% 0.038 217.7)",
+          "oklch(72.1% 0.027 217.7)",
+          "oklch(83.6% 0.016 217.7)",
+          "oklch(95.0% 0.010 217.7)"
+        ]
+      },
+      "menu-teal": {
+        "role": "neutral",
+        "displayName": "ROUNDS Menu Teal",
+        "canonical": "#0c3440",
+        "oklch": "oklch(30.4% 0.048 221.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 221.9)",
+          "oklch(26.4% 0.020 221.9)",
+          "oklch(37.9% 0.033 221.9)",
+          "oklch(49.3% 0.047 221.9)",
+          "oklch(60.7% 0.047 221.9)",
+          "oklch(72.1% 0.033 221.9)",
+          "oklch(83.6% 0.020 221.9)",
+          "oklch(95.0% 0.012 221.9)"
+        ]
+      },
+      "shard-teal": {
+        "role": "neutral",
+        "displayName": "Shard Light Teal",
+        "canonical": "#104250",
+        "oklch": "oklch(35.3% 0.056 220.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.014 220.7)",
+          "oklch(26.4% 0.023 220.7)",
+          "oklch(37.9% 0.039 220.7)",
+          "oklch(49.3% 0.055 220.7)",
+          "oklch(60.7% 0.055 220.7)",
+          "oklch(72.1% 0.039 220.7)",
+          "oklch(83.6% 0.023 220.7)",
+          "oklch(95.0% 0.014 220.7)"
+        ]
+      },
+      "bar-teal": {
+        "role": "neutral",
+        "displayName": "Bar Teal",
+        "canonical": "#0b303a",
+        "oklch": "oklch(28.8% 0.044 219.5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.011 219.5)",
+          "oklch(26.4% 0.018 219.5)",
+          "oklch(37.9% 0.031 219.5)",
+          "oklch(49.3% 0.044 219.5)",
+          "oklch(60.7% 0.044 219.5)",
+          "oklch(72.1% 0.031 219.5)",
+          "oklch(83.6% 0.018 219.5)",
+          "oklch(95.0% 0.011 219.5)"
+        ]
+      },
+      "smoked-glass": {
+        "role": "neutral",
+        "displayName": "Smoked Glass",
+        "canonical": "rgba(4, 22, 28, 0.55)",
+        "oklch": "oklch(18.8% 0.028 221.5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.007 221.5)",
+          "oklch(26.4% 0.011 221.5)",
+          "oklch(37.9% 0.019 221.5)",
+          "oklch(49.3% 0.027 221.5)",
+          "oklch(60.7% 0.027 221.5)",
+          "oklch(72.1% 0.019 221.5)",
+          "oklch(83.6% 0.011 221.5)",
+          "oklch(95.0% 0.007 221.5)"
+        ]
+      },
+      "solid-glass": {
+        "role": "neutral",
+        "displayName": "Solid Glass",
+        "canonical": "#09272f",
+        "oklch": "oklch(25.5% 0.038 218.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.009 218.8)",
+          "oklch(26.4% 0.016 218.8)",
+          "oklch(37.9% 0.026 218.8)",
+          "oklch(49.3% 0.037 218.8)",
+          "oklch(60.7% 0.037 218.8)",
+          "oklch(72.1% 0.026 218.8)",
+          "oklch(83.6% 0.016 218.8)",
+          "oklch(95.0% 0.009 218.8)"
+        ]
+      },
+      "inset-shade": {
+        "role": "neutral",
+        "displayName": "Inset Shade",
+        "canonical": "rgba(0, 0, 0, 0.18)",
+        "oklch": "oklch(0.0% 0.000 0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 0)",
+          "oklch(26.4% 0.000 0)",
+          "oklch(37.9% 0.000 0)",
+          "oklch(49.3% 0.000 0)",
+          "oklch(60.7% 0.000 0)",
+          "oklch(72.1% 0.000 0)",
+          "oklch(83.6% 0.000 0)",
+          "oklch(95.0% 0.000 0)"
+        ]
+      },
+      "hover-wash": {
+        "role": "neutral",
+        "displayName": "Hover Wash",
+        "canonical": "rgba(255, 255, 255, 0.06)",
+        "oklch": "oklch(100.0% 0.000 0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 0)",
+          "oklch(26.4% 0.000 0)",
+          "oklch(37.9% 0.000 0)",
+          "oklch(49.3% 0.000 0)",
+          "oklch(60.7% 0.000 0)",
+          "oklch(72.1% 0.000 0)",
+          "oklch(83.6% 0.000 0)",
+          "oklch(95.0% 0.000 0)"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "rgba(255, 255, 255, 0.09)",
+        "oklch": "oklch(100.0% 0.000 0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 0)",
+          "oklch(26.4% 0.000 0)",
+          "oklch(37.9% 0.000 0)",
+          "oklch(49.3% 0.000 0)",
+          "oklch(60.7% 0.000 0)",
+          "oklch(72.1% 0.000 0)",
+          "oklch(83.6% 0.000 0)",
+          "oklch(95.0% 0.000 0)"
+        ]
+      },
+      "frost-ink": {
+        "role": "neutral",
+        "displayName": "Frost Ink",
+        "canonical": "#eef6f7",
+        "oklch": "oklch(96.7% 0.009 205.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.002 205.9)",
+          "oklch(26.4% 0.004 205.9)",
+          "oklch(37.9% 0.006 205.9)",
+          "oklch(49.3% 0.008 205.9)",
+          "oklch(60.7% 0.008 205.9)",
+          "oklch(72.1% 0.006 205.9)",
+          "oklch(83.6% 0.004 205.9)",
+          "oklch(95.0% 0.002 205.9)"
+        ]
+      },
+      "seaglass-ink": {
+        "role": "neutral",
+        "displayName": "Sea-Glass Ink",
+        "canonical": "#b6cdd2",
+        "oklch": "oklch(83.3% 0.026 212.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.006 212.3)",
+          "oklch(26.4% 0.011 212.3)",
+          "oklch(37.9% 0.018 212.3)",
+          "oklch(49.3% 0.025 212.3)",
+          "oklch(60.7% 0.025 212.3)",
+          "oklch(72.1% 0.018 212.3)",
+          "oklch(83.6% 0.011 212.3)",
+          "oklch(95.0% 0.006 212.3)"
+        ]
+      },
+      "tide-ink": {
+        "role": "neutral",
+        "displayName": "Tide Ink",
+        "canonical": "#9dbcc3",
+        "oklch": "oklch(77.4% 0.035 212.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.009 212.9)",
+          "oklch(26.4% 0.014 212.9)",
+          "oklch(37.9% 0.024 212.9)",
+          "oklch(49.3% 0.034 212.9)",
+          "oklch(60.7% 0.034 212.9)",
+          "oklch(72.1% 0.024 212.9)",
+          "oklch(83.6% 0.014 212.9)",
+          "oklch(95.0% 0.009 212.9)"
+        ]
+      },
+      "mist": {
+        "role": "neutral",
+        "displayName": "Mist",
+        "canonical": "#dfeaec",
+        "oklch": "oklch(92.9% 0.012 209.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.003 209.8)",
+          "oklch(26.4% 0.005 209.8)",
+          "oklch(37.9% 0.008 209.8)",
+          "oklch(49.3% 0.012 209.8)",
+          "oklch(60.7% 0.012 209.8)",
+          "oklch(72.1% 0.008 209.8)",
+          "oklch(83.6% 0.005 209.8)",
+          "oklch(95.0% 0.003 209.8)"
+        ]
+      },
+      "mist-glow": {
+        "role": "neutral",
+        "displayName": "Mist Glow",
+        "canonical": "#eef5f6",
+        "oklch": "oklch(96.5% 0.008 207.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.002 0)",
+          "oklch(26.4% 0.003 207.1)",
+          "oklch(37.9% 0.005 207.1)",
+          "oklch(49.3% 0.007 207.1)",
+          "oklch(60.7% 0.007 207.1)",
+          "oklch(72.1% 0.005 207.1)",
+          "oklch(83.6% 0.003 207.1)",
+          "oklch(95.0% 0.002 0)"
+        ]
+      },
+      "mist-shade": {
+        "role": "neutral",
+        "displayName": "Mist Shade",
+        "canonical": "#d1e0e3",
+        "oklch": "oklch(89.6% 0.017 211.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.004 211.0)",
+          "oklch(26.4% 0.007 211.0)",
+          "oklch(37.9% 0.012 211.0)",
+          "oklch(49.3% 0.016 211.0)",
+          "oklch(60.7% 0.016 211.0)",
+          "oklch(72.1% 0.012 211.0)",
+          "oklch(83.6% 0.007 211.0)",
+          "oklch(95.0% 0.004 211.0)"
+        ]
+      },
+      "frosted-pane": {
+        "role": "neutral",
+        "displayName": "Frosted Pane",
+        "canonical": "rgba(255, 255, 255, 0.82)",
+        "oklch": "oklch(100.0% 0.000 0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 0)",
+          "oklch(26.4% 0.000 0)",
+          "oklch(37.9% 0.000 0)",
+          "oklch(49.3% 0.000 0)",
+          "oklch(60.7% 0.000 0)",
+          "oklch(72.1% 0.000 0)",
+          "oklch(83.6% 0.000 0)",
+          "oklch(95.0% 0.000 0)"
+        ]
+      },
+      "frosted-pane-solid": {
+        "role": "neutral",
+        "displayName": "Solid Frosted Pane",
+        "canonical": "#f9fbfc",
+        "oklch": "oklch(98.7% 0.003 228.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.001 0)",
+          "oklch(26.4% 0.001 0)",
+          "oklch(37.9% 0.002 0)",
+          "oklch(49.3% 0.002 228.8)",
+          "oklch(60.7% 0.002 228.8)",
+          "oklch(72.1% 0.002 0)",
+          "oklch(83.6% 0.001 0)",
+          "oklch(95.0% 0.001 0)"
+        ]
+      },
+      "mist-hairline": {
+        "role": "neutral",
+        "displayName": "Mist Hairline",
+        "canonical": "rgba(12, 52, 64, 0.12)",
+        "oklch": "oklch(30.4% 0.048 221.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 221.9)",
+          "oklch(26.4% 0.020 221.9)",
+          "oklch(37.9% 0.033 221.9)",
+          "oklch(49.3% 0.047 221.9)",
+          "oklch(60.7% 0.047 221.9)",
+          "oklch(72.1% 0.033 221.9)",
+          "oklch(83.6% 0.020 221.9)",
+          "oklch(95.0% 0.012 221.9)"
+        ]
+      },
+      "mist-inset": {
+        "role": "neutral",
+        "displayName": "Mist Inset",
+        "canonical": "rgba(12, 52, 64, 0.05)",
+        "oklch": "oklch(30.4% 0.048 221.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 221.9)",
+          "oklch(26.4% 0.020 221.9)",
+          "oklch(37.9% 0.033 221.9)",
+          "oklch(49.3% 0.047 221.9)",
+          "oklch(60.7% 0.047 221.9)",
+          "oklch(72.1% 0.033 221.9)",
+          "oklch(83.6% 0.020 221.9)",
+          "oklch(95.0% 0.012 221.9)"
+        ]
+      },
+      "mist-wash": {
+        "role": "neutral",
+        "displayName": "Mist Wash",
+        "canonical": "rgba(12, 52, 64, 0.06)",
+        "oklch": "oklch(30.4% 0.048 221.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 221.9)",
+          "oklch(26.4% 0.020 221.9)",
+          "oklch(37.9% 0.033 221.9)",
+          "oklch(49.3% 0.047 221.9)",
+          "oklch(60.7% 0.047 221.9)",
+          "oklch(72.1% 0.033 221.9)",
+          "oklch(83.6% 0.020 221.9)",
+          "oklch(95.0% 0.012 221.9)"
+        ]
+      },
+      "deep-teal-ink": {
+        "role": "neutral",
+        "displayName": "Deep Teal Ink",
+        "canonical": "#0b2a33",
+        "oklch": "oklch(26.7% 0.039 220.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.010 220.4)",
+          "oklch(26.4% 0.016 220.4)",
+          "oklch(37.9% 0.027 220.4)",
+          "oklch(49.3% 0.039 220.4)",
+          "oklch(60.7% 0.039 220.4)",
+          "oklch(72.1% 0.027 220.4)",
+          "oklch(83.6% 0.016 220.4)",
+          "oklch(95.0% 0.010 220.4)"
+        ]
+      },
+      "slate-teal-ink": {
+        "role": "neutral",
+        "displayName": "Slate Teal Ink",
+        "canonical": "#3f5d65",
+        "oklch": "oklch(45.8% 0.038 216.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.009 216.2)",
+          "oklch(26.4% 0.015 216.2)",
+          "oklch(37.9% 0.026 216.2)",
+          "oklch(49.3% 0.037 216.2)",
+          "oklch(60.7% 0.037 216.2)",
+          "oklch(72.1% 0.026 216.2)",
+          "oklch(83.6% 0.015 216.2)",
+          "oklch(95.0% 0.009 216.2)"
+        ]
+      },
+      "harbor-ink": {
+        "role": "neutral",
+        "displayName": "Harbor Ink",
+        "canonical": "#4b6870",
+        "oklch": "oklch(49.8% 0.036 216.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.009 216.7)",
+          "oklch(26.4% 0.015 216.7)",
+          "oklch(37.9% 0.025 216.7)",
+          "oklch(49.3% 0.036 216.7)",
+          "oklch(60.7% 0.036 216.7)",
+          "oklch(72.1% 0.025 216.7)",
+          "oklch(83.6% 0.015 216.7)",
+          "oklch(95.0% 0.009 216.7)"
+        ]
+      },
+      "win-green": {
+        "role": "signal",
+        "displayName": "Win Green",
+        "canonical": "#6ee35c",
+        "oklch": "oklch(81.9% 0.205 141.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.051 141.1)",
+          "oklch(26.4% 0.084 141.1)",
+          "oklch(37.9% 0.142 141.1)",
+          "oklch(49.3% 0.201 141.1)",
+          "oklch(60.7% 0.201 141.1)",
+          "oklch(72.1% 0.142 141.1)",
+          "oklch(83.6% 0.084 141.1)",
+          "oklch(95.0% 0.051 141.1)"
+        ]
+      },
+      "win-green-mist": {
+        "role": "signal",
+        "displayName": "Win Green (Mist)",
+        "canonical": "#136b2c",
+        "oklch": "oklch(46.4% 0.125 147.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.031 147.8)",
+          "oklch(26.4% 0.052 147.8)",
+          "oklch(37.9% 0.087 147.8)",
+          "oklch(49.3% 0.123 147.8)",
+          "oklch(60.7% 0.123 147.8)",
+          "oklch(72.1% 0.087 147.8)",
+          "oklch(83.6% 0.052 147.8)",
+          "oklch(95.0% 0.031 147.8)"
+        ]
+      },
+      "loss-coral": {
+        "role": "signal",
+        "displayName": "Loss Coral",
+        "canonical": "#ff968a",
+        "oklch": "oklch(78.0% 0.128 27.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.032 27.3)",
+          "oklch(26.4% 0.053 27.3)",
+          "oklch(37.9% 0.089 27.3)",
+          "oklch(49.3% 0.126 27.3)",
+          "oklch(60.7% 0.126 27.3)",
+          "oklch(72.1% 0.089 27.3)",
+          "oklch(83.6% 0.053 27.3)",
+          "oklch(95.0% 0.032 27.3)"
+        ]
+      },
+      "loss-coral-mist": {
+        "role": "signal",
+        "displayName": "Loss Coral (Mist)",
+        "canonical": "#c21f2b",
+        "oklch": "oklch(52.6% 0.195 24.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.049 24.3)",
+          "oklch(26.4% 0.080 24.3)",
+          "oklch(37.9% 0.136 24.3)",
+          "oklch(49.3% 0.192 24.3)",
+          "oklch(60.7% 0.192 24.3)",
+          "oklch(72.1% 0.136 24.3)",
+          "oklch(83.6% 0.080 24.3)",
+          "oklch(95.0% 0.049 24.3)"
+        ]
+      },
+      "on-air-red": {
+        "role": "signal",
+        "displayName": "On-Air Red",
+        "canonical": "#c92a2a",
+        "oklch": "oklch(54.6% 0.195 26.6)",
+        "tonalRamp": [
+          "oklch(15.0% 0.049 26.6)",
+          "oklch(26.4% 0.080 26.6)",
+          "oklch(37.9% 0.136 26.6)",
+          "oklch(49.3% 0.191 26.6)",
+          "oklch(60.7% 0.191 26.6)",
+          "oklch(72.1% 0.136 26.6)",
+          "oklch(83.6% 0.080 26.6)",
+          "oklch(95.0% 0.049 26.6)"
+        ]
+      },
+      "on-air-red-mist": {
+        "role": "signal",
+        "displayName": "On-Air Red (Mist)",
+        "canonical": "#cf222e",
+        "oklch": "oklch(55.2% 0.205 24.5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.051 24.5)",
+          "oklch(26.4% 0.084 24.5)",
+          "oklch(37.9% 0.143 24.5)",
+          "oklch(49.3% 0.201 24.5)",
+          "oklch(60.7% 0.201 24.5)",
+          "oklch(72.1% 0.143 24.5)",
+          "oklch(83.6% 0.084 24.5)",
+          "oklch(95.0% 0.051 24.5)"
+        ]
+      },
+      "on-air-ink": {
+        "role": "signal",
+        "displayName": "On-Air Ink",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 0)",
+          "oklch(26.4% 0.000 0)",
+          "oklch(37.9% 0.000 0)",
+          "oklch(49.3% 0.000 0)",
+          "oklch(60.7% 0.000 0)",
+          "oklch(72.1% 0.000 0)",
+          "oklch(83.6% 0.000 0)",
+          "oklch(95.0% 0.000 0)"
+        ]
+      },
+      "signal-blue": {
+        "role": "signal",
+        "displayName": "Signal Blue",
+        "canonical": "#92baff",
+        "oklch": "oklch(78.6% 0.108 261.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.027 261.0)",
+          "oklch(26.4% 0.044 261.0)",
+          "oklch(37.9% 0.075 261.0)",
+          "oklch(49.3% 0.106 261.0)",
+          "oklch(60.7% 0.106 261.0)",
+          "oklch(72.1% 0.075 261.0)",
+          "oklch(83.6% 0.044 261.0)",
+          "oklch(95.0% 0.027 261.0)"
+        ]
+      },
+      "signal-blue-mist": {
+        "role": "signal",
+        "displayName": "Signal Blue (Mist)",
+        "canonical": "#0b5cbd",
+        "oklch": "oklch(49.0% 0.169 257.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.042 257.2)",
+          "oklch(26.4% 0.069 257.2)",
+          "oklch(37.9% 0.117 257.2)",
+          "oklch(49.3% 0.166 257.2)",
+          "oklch(60.7% 0.166 257.2)",
+          "oklch(72.1% 0.117 257.2)",
+          "oklch(83.6% 0.069 257.2)",
+          "oklch(95.0% 0.042 257.2)"
+        ]
+      },
+      "rare-violet": {
+        "role": "signal",
+        "displayName": "Rare Violet",
+        "canonical": "#d3a4f8",
+        "oklch": "oklch(79.1% 0.126 309.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.031 309.4)",
+          "oklch(26.4% 0.052 309.4)",
+          "oklch(37.9% 0.088 309.4)",
+          "oklch(49.3% 0.124 309.4)",
+          "oklch(60.7% 0.124 309.4)",
+          "oklch(72.1% 0.088 309.4)",
+          "oklch(83.6% 0.052 309.4)",
+          "oklch(95.0% 0.031 309.4)"
+        ]
+      },
+      "rare-violet-mist": {
+        "role": "signal",
+        "displayName": "Rare Violet (Mist)",
+        "canonical": "#7e36c4",
+        "oklch": "oklch(50.5% 0.208 302.6)",
+        "tonalRamp": [
+          "oklch(15.0% 0.052 302.6)",
+          "oklch(26.4% 0.086 302.6)",
+          "oklch(37.9% 0.145 302.6)",
+          "oklch(49.3% 0.205 302.6)",
+          "oklch(60.7% 0.205 302.6)",
+          "oklch(72.1% 0.145 302.6)",
+          "oklch(83.6% 0.086 302.6)",
+          "oklch(95.0% 0.052 302.6)"
+        ]
+      },
+      "medal-gold": {
+        "role": "signal",
+        "displayName": "Medal Gold",
+        "canonical": "#ffd25a",
+        "oklch": "oklch(88.1% 0.145 88.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.036 88.4)",
+          "oklch(26.4% 0.059 88.4)",
+          "oklch(37.9% 0.101 88.4)",
+          "oklch(49.3% 0.142 88.4)",
+          "oklch(60.7% 0.142 88.4)",
+          "oklch(72.1% 0.101 88.4)",
+          "oklch(83.6% 0.059 88.4)",
+          "oklch(95.0% 0.036 88.4)"
+        ]
+      },
+      "medal-gold-mist": {
+        "role": "signal",
+        "displayName": "Medal Gold (Mist)",
+        "canonical": "#8a5d00",
+        "oklch": "oklch(51.4% 0.108 76.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.027 76.1)",
+          "oklch(26.4% 0.044 76.1)",
+          "oklch(37.9% 0.075 76.1)",
+          "oklch(49.3% 0.106 76.1)",
+          "oklch(60.7% 0.106 76.1)",
+          "oklch(72.1% 0.075 76.1)",
+          "oklch(83.6% 0.044 76.1)",
+          "oklch(95.0% 0.027 76.1)"
+        ]
+      },
+      "medal-silver": {
+        "role": "signal",
+        "displayName": "Medal Silver",
+        "canonical": "#c9d6db",
+        "oklch": "oklch(86.8% 0.016 222.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.004 222.7)",
+          "oklch(26.4% 0.006 222.7)",
+          "oklch(37.9% 0.011 222.7)",
+          "oklch(49.3% 0.015 222.7)",
+          "oklch(60.7% 0.015 222.7)",
+          "oklch(72.1% 0.011 222.7)",
+          "oklch(83.6% 0.006 222.7)",
+          "oklch(95.0% 0.004 222.7)"
+        ]
+      },
+      "medal-silver-mist": {
+        "role": "signal",
+        "displayName": "Medal Silver (Mist)",
+        "canonical": "#56606e",
+        "oklch": "oklch(48.6% 0.026 256.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.006 256.8)",
+          "oklch(26.4% 0.011 256.8)",
+          "oklch(37.9% 0.018 256.8)",
+          "oklch(49.3% 0.025 256.8)",
+          "oklch(60.7% 0.025 256.8)",
+          "oklch(72.1% 0.018 256.8)",
+          "oklch(83.6% 0.011 256.8)",
+          "oklch(95.0% 0.006 256.8)"
+        ]
+      },
+      "medal-bronze": {
+        "role": "signal",
+        "displayName": "Medal Bronze",
+        "canonical": "#eca872",
+        "oklch": "oklch(78.5% 0.107 58.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.027 58.8)",
+          "oklch(26.4% 0.044 58.8)",
+          "oklch(37.9% 0.074 58.8)",
+          "oklch(49.3% 0.105 58.8)",
+          "oklch(60.7% 0.105 58.8)",
+          "oklch(72.1% 0.074 58.8)",
+          "oklch(83.6% 0.044 58.8)",
+          "oklch(95.0% 0.027 58.8)"
+        ]
+      },
+      "medal-bronze-mist": {
+        "role": "signal",
+        "displayName": "Medal Bronze (Mist)",
+        "canonical": "#8f4e1c",
+        "oklch": "oklch(49.3% 0.107 54.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.027 54.0)",
+          "oklch(26.4% 0.044 54.0)",
+          "oklch(37.9% 0.075 54.0)",
+          "oklch(49.3% 0.105 54.0)",
+          "oklch(60.7% 0.105 54.0)",
+          "oklch(72.1% 0.075 54.0)",
+          "oklch(83.6% 0.044 54.0)",
+          "oklch(95.0% 0.027 54.0)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page titles: light, uppercase, tracked 0.16em."
+      },
+      "stat": {
+        "displayName": "Stat",
+        "purpose": "The number a tile or scoreboard exists to show; light, tabular."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Player names on the live scoreboard."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default reading size; prose capped at 64ch."
+      },
+      "data": {
+        "displayName": "Data",
+        "purpose": "Dense tables; tabular figures."
+      },
+      "section": {
+        "displayName": "Section",
+        "purpose": "Section headings inside cards, uppercase and tracked, in the muted ink."
+      },
+      "menu": {
+        "displayName": "Menu",
+        "purpose": "Buttons, tabs and filters: uppercase, tracked 0.1em."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Timestamps, subtitles, the footer, \"as of\" lines."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Tile labels, table headers, sub-section headings; chips at weight 700."
+      },
+      "tab-bar": {
+        "displayName": "Tab Bar",
+        "purpose": "Under-icon labels in the phone tab bar only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "float",
+        "value": "0 12px 32px rgba(0, 0, 0, 0.45)",
+        "purpose": "The identity panel, the one surface that floats over the page. Mist: 0 12px 32px rgba(12, 52, 64, 0.18)."
+      },
+      {
+        "name": "earned-ring",
+        "value": "inset 0 0 0 1px color-mix(in srgb, #f7a64d 45%, transparent)",
+        "purpose": "An unlocked achievement tile, over a 14% orange tint."
+      },
+      {
+        "name": "online-halo",
+        "value": "0 0 0 3px color-mix(in srgb, #6ee35c 25%, transparent)",
+        "purpose": "The dot beside a player who is online."
+      }
+    ],
+    "motion": [
+      {
+        "name": "chevron-turn",
+        "value": "transform 0.15s ease-out",
+        "purpose": "The chevron on an expandable row or card disclosure. Snaps under reduced motion."
+      },
+      {
+        "name": "placeholder-sweep",
+        "value": "shimmer 1.2s ease infinite",
+        "purpose": "The loading placeholder. Under reduced motion it stays but stops sweeping."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wordmark-compact",
+        "value": "max-width: 479px"
+      },
+      {
+        "name": "phone-rows",
+        "value": "max-width: 559px"
+      },
+      {
+        "name": "pairs",
+        "value": "min-width: 760px"
+      },
+      {
+        "name": "top-menu",
+        "value": "min-width: 840px"
+      },
+      {
+        "name": "landscape-short",
+        "value": "max-width: 839px and max-height: 500px and orientation: landscape"
+      },
+      {
+        "name": "feed-stack",
+        "value": "container feed, max-width: 34rem"
+      },
+      {
+        "name": "touch",
+        "value": "pointer: coarse (44px targets)"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Menu Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "The default control: a flat, square menu entry in tracked capitals.",
+      "html": "<button class=\"ds-btn\" type=\"button\">Show all 15</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 1px solid var(--line, rgba(255,255,255,0.09)); border-radius: var(--radius-sm, 2px); background: var(--bg-elev, rgba(0,0,0,0.18)); color: var(--fg, #eef6f7); font: 600 0.8125rem/1.5 var(--font, 'Montserrat Variable', 'Montserrat Fallback', system-ui, sans-serif); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; } .ds-btn:hover { background: var(--bg-hover, rgba(255,255,255,0.06)); } .ds-btn:focus-visible { outline: 2px solid var(--accent-ink, #f7a64d); outline-offset: 2px; } .ds-btn[aria-disabled='true'] { opacity: 0.6; cursor: not-allowed; }"
+    },
+    {
+      "name": "Band Button",
+      "kind": "button",
+      "refersTo": "button-accent",
+      "description": "The one call to action in a view, on the orange band with dark ink.",
+      "html": "<a class=\"ds-btn-band\" href=\"#\">Sign in with Discord</a>",
+      "css": ".ds-btn-band { display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border: 1px solid transparent; border-radius: var(--radius-sm, 2px); background: var(--band, linear-gradient(100deg, #e57a0c 0%, #f08c17 38%, #f59a2c 70%, #e98311 100%)); color: var(--band-fg, #0a1c22); font: 600 0.8125rem/1.5 var(--font, 'Montserrat Variable', 'Montserrat Fallback', system-ui, sans-serif); letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; } .ds-btn-band:focus-visible { outline: 2px solid var(--accent-ink, #f7a64d); outline-offset: 2px; }"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Filters and search: an inset field, never under 16px text.",
+      "html": "<input class=\"ds-input\" type=\"search\" placeholder=\"Filter by name\" aria-label=\"Filter by name\">",
+      "css": ".ds-input { min-height: 40px; width: 20rem; max-width: 100%; padding: 0 12px; border: 1px solid var(--line, rgba(255,255,255,0.09)); border-radius: var(--radius-sm, 2px); background: var(--bg-elev, rgba(0,0,0,0.18)); color: var(--fg, #eef6f7); font: 400 max(16px, 1rem)/1.5 var(--font, 'Montserrat Variable', 'Montserrat Fallback', system-ui, sans-serif); caret-color: var(--accent-ink, #f7a64d); } .ds-input::placeholder { color: var(--fg-faint, #9dbcc3); } .ds-input:focus-visible { outline: 2px solid var(--accent-ink, #f7a64d); outline-offset: 2px; }"
+    },
+    {
+      "name": "Top Menu",
+      "kind": "nav",
+      "refersTo": "top-bar",
+      "description": "The game-teal bar: wordmark, menu entries, the current one on the full-height band.",
+      "html": "<nav class=\"ds-topbar\" aria-label=\"Primary\"><span class=\"ds-brand\">SCRmod</span><a class=\"ds-item ds-active\" href=\"#\" aria-current=\"page\">Home</a><a class=\"ds-item\" href=\"#\">Boards</a><a class=\"ds-item\" href=\"#\">Results</a><a class=\"ds-item\" href=\"#\">Tournaments</a><a class=\"ds-item\" href=\"#\">Cards</a></nav>",
+      "css": ".ds-topbar { display: flex; align-items: stretch; height: 56px; padding: 0 16px; background: var(--bar, #0b303a); border-bottom: 1px solid var(--bar-line, rgba(255,255,255,0.08)); font-family: var(--font, 'Montserrat Variable', 'Montserrat Fallback', system-ui, sans-serif); } .ds-brand { display: flex; align-items: center; margin-right: 14px; color: var(--brand, #f08c17); font-weight: 800; font-size: 1.25rem; } .ds-item { display: inline-flex; align-items: center; padding: 0 16px; font-size: 0.8125rem; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bar-muted, #b6cdd2); text-decoration: none; white-space: nowrap; } .ds-item:hover { color: var(--bar-fg, #eef6f7); background: rgba(255,255,255,0.05); } .ds-item.ds-active { background: var(--band, linear-gradient(100deg, #e57a0c 0%, #f08c17 38%, #f59a2c 70%, #e98311 100%)); color: var(--band-fg, #0a1c22); font-weight: 600; } .ds-item:focus-visible { outline: 2px solid var(--bar-ring, #f7a64d); outline-offset: -4px; } .ds-item.ds-active:focus-visible { outline-color: var(--band-fg, #0a1c22); }"
+    },
+    {
+      "name": "Tabs",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Sections of a page: the selected tab takes full ink and an ember underline.",
+      "html": "<div class=\"ds-tabs\" role=\"tablist\" aria-label=\"Player sections\"><button class=\"ds-tab\" role=\"tab\" aria-selected=\"true\">Overview</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">1v1 matches</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Achievements</button></div>",
+      "css": ".ds-tabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--line, rgba(255,255,255,0.09)); font-family: var(--font, 'Montserrat Variable', 'Montserrat Fallback', system-ui, sans-serif); } .ds-tab { flex: none; min-height: 40px; padding: 0 14px; background: none; border: 0; border-bottom: 2px solid transparent; color: var(--fg-muted, #b6cdd2); font: 500 0.8125rem/1.5 var(--font, 'Montserrat Variable', 'Montserrat Fallback', system-ui, sans-serif); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; } .ds-tab[aria-selected='true'] { color: var(--fg, #eef6f7); font-weight: 700; border-bottom-color: var(--accent-ink, #f7a64d); } .ds-tab:focus-visible { outline: 2px solid var(--accent-ink, #f7a64d); outline-offset: -2px; }"
+    },
+    {
+      "name": "Chips",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Short labels: plain, toned (ink on a 14% wash of itself), the live pill, and a game-colored rank chip.",
+      "html": "<span class=\"ds-chips\"><span class=\"ds-chip\">2v2</span><span class=\"ds-chip ds-tone\">RANKED</span><span class=\"ds-chip ds-live\">LIVE</span><span class=\"ds-chip ds-rank\">Gold II</span></span>",
+      "css": ".ds-chips { display: inline-flex; flex-wrap: wrap; gap: 8px; font-family: var(--font, 'Montserrat Variable', 'Montserrat Fallback', system-ui, sans-serif); } .ds-chip { display: inline-block; padding: 2px 8px; border-radius: 3px; background: var(--bg-hover, rgba(255,255,255,0.06)); color: var(--fg, #eef6f7); font-size: 0.75rem; font-weight: 700; line-height: 1.5; white-space: nowrap; } .ds-tone { color: var(--info, #92baff); background: color-mix(in srgb, currentColor 14%, transparent); } .ds-live { background: var(--live, #c92a2a); color: var(--live-fg, #ffffff); } .ds-rank { color: #f2c94c; background: transparent; border: 1px solid currentColor; }"
+    },
+    {
+      "name": "Stat Strip",
+      "kind": "card",
+      "refersTo": "stat-tile",
+      "description": "The numbers a page leads with: tiles in one strip with 2px seams.",
+      "html": "<div class=\"ds-tiles\"><div class=\"ds-tile\"><div class=\"ds-label\">Rating</div><div class=\"ds-value\">1102</div><div class=\"ds-sub\">peak 1338</div></div><div class=\"ds-tile\"><div class=\"ds-label\">Standing</div><div class=\"ds-value\">#189</div><div class=\"ds-sub\">of 198</div></div><div class=\"ds-tile\"><div class=\"ds-label\">Ranked series</div><div class=\"ds-value\">45-95</div><div class=\"ds-sub\">32% win rate</div></div><div class=\"ds-tile\"><div class=\"ds-label\">Streak</div><div class=\"ds-value ds-good\">+2</div><div class=\"ds-sub\">series</div></div></div>",
+      "css": ".ds-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(8.5rem, 100%), 1fr)); gap: 2px; font-family: var(--font, 'Montserrat Variable', 'Montserrat Fallback', system-ui, sans-serif); } .ds-tile { padding: 12px 16px; background: var(--bg-card, rgba(4,22,28,0.55)); color: var(--fg, #eef6f7); } .ds-label { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-muted, #b6cdd2); } .ds-value { font-size: 1.625rem; font-weight: 300; line-height: 1.15; font-variant-numeric: tabular-nums; } .ds-sub { font-size: 0.8125rem; color: var(--fg-muted, #b6cdd2); } .ds-good { color: var(--good, #6ee35c); }"
+    },
+    {
+      "name": "List With Your Row",
+      "kind": "custom",
+      "refersTo": "row-you",
+      "description": "A card's list where your own row wears the band edge to edge.",
+      "html": "<section class=\"ds-card\"><h2 class=\"ds-h2\">Who's on</h2><ul class=\"ds-list\"><li class=\"ds-row\"><a href=\"#\" class=\"ds-name\">galaxy ice</a><span class=\"ds-num\">1831</span></li><li class=\"ds-row ds-you\"><a href=\"#\" class=\"ds-name\">NotNic <span>(you)</span></a><span class=\"ds-num\">1101</span></li><li class=\"ds-row\"><a href=\"#\" class=\"ds-name\">Spirit</a><span class=\"ds-num\">1852</span></li></ul></section>",
+      "css": ".ds-card { padding: 16px; border-radius: var(--radius, 2px); background: var(--bg-card, rgba(4,22,28,0.55)); color: var(--fg, #eef6f7); font-family: var(--font, 'Montserrat Variable', 'Montserrat Fallback', system-ui, sans-serif); } .ds-h2 { margin: 0 0 8px; font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-muted, #b6cdd2); } .ds-list { list-style: none; margin: 0; padding: 0; } .ds-row { display: flex; align-items: center; gap: 8px; min-height: 2.25rem; } .ds-row .ds-name { flex: 1; color: inherit; font-weight: 600; text-decoration: none; } .ds-row .ds-num { font-variant-numeric: tabular-nums; color: var(--fg-muted, #b6cdd2); } .ds-you { margin: 0 -16px; padding: 0 16px; background: var(--band, linear-gradient(100deg, #e57a0c 0%, #f08c17 38%, #f59a2c 70%, #e98311 100%)); color: var(--band-fg, #0a1c22); } .ds-you .ds-name { font-weight: 800; } .ds-you .ds-num { color: var(--band-fg, #0a1c22); } .ds-row .ds-name:focus-visible { outline: 2px solid var(--accent-ink, #f7a64d); outline-offset: 2px; } .ds-you .ds-name:focus-visible { outline-color: var(--band-fg, #0a1c22); }"
+    },
+    {
+      "name": "Segmented Filter",
+      "kind": "custom",
+      "refersTo": "button",
+      "description": "A filter over the data below it: one pressed segment, on the band.",
+      "html": "<div class=\"ds-seg\" role=\"group\" aria-label=\"Games shown\"><button type=\"button\" aria-pressed=\"true\">All</button><button type=\"button\" aria-pressed=\"false\">Ranked</button><button type=\"button\" aria-pressed=\"false\">Casual</button></div>",
+      "css": ".ds-seg { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line, rgba(255,255,255,0.09)); border-radius: var(--radius-sm, 2px); background: var(--bg-elev, rgba(0,0,0,0.18)); } .ds-seg button { min-height: 34px; padding: 0 16px; border: 0; border-radius: var(--radius-sm, 2px); background: none; color: var(--fg-muted, #b6cdd2); font: 500 0.8125rem/1.5 var(--font, 'Montserrat Variable', 'Montserrat Fallback', system-ui, sans-serif); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; } .ds-seg button:hover { color: var(--fg, #eef6f7); } .ds-seg button[aria-pressed='true'] { background: var(--band, linear-gradient(100deg, #e57a0c 0%, #f08c17 38%, #f59a2c 70%, #e98311 100%)); color: var(--band-fg, #0a1c22); font-weight: 700; } .ds-seg button:focus-visible { outline: 2px solid var(--accent-ink, #f7a64d); outline-offset: 2px; }"
+    },
+    {
+      "name": "Live Scoreboard",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "A live 1v1 series: names hold their sides, the score stays centered.",
+      "html": "<div class=\"ds-panel\"><span class=\"ds-pill\">LIVE</span><div class=\"ds-versus\"><div class=\"ds-side\"><a href=\"#\">NotNic</a><span>1101</span></div><span class=\"ds-score\">1–0</span><div class=\"ds-side ds-end\"><a href=\"#\">Sid</a><span>2564</span></div></div><div class=\"ds-meta\">Best of 3 · current game 1–0 · bets locked</div></div>",
+      "css": ".ds-panel { padding: 12px 16px; border-radius: var(--radius-sm, 2px); background: var(--bg-elev, rgba(0,0,0,0.18)); color: var(--fg, #eef6f7); font-family: var(--font, 'Montserrat Variable', 'Montserrat Fallback', system-ui, sans-serif); } .ds-pill { display: inline-block; padding: 2px 8px; border-radius: 3px; background: var(--live, #c92a2a); color: var(--live-fg, #fff); font-size: 0.75rem; font-weight: 700; } .ds-versus { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 12px; margin-top: 8px; font-size: 1.125rem; } .ds-side { display: flex; flex-direction: column; gap: 2px; min-width: 0; } .ds-side a { color: inherit; font-weight: 800; text-decoration: none; overflow-wrap: anywhere; } .ds-side span { font-size: 0.8125rem; color: var(--fg-muted, #b6cdd2); font-variant-numeric: tabular-nums; } .ds-end { align-items: flex-end; text-align: right; } .ds-score { font-size: 1.625rem; font-weight: 300; font-variant-numeric: tabular-nums; white-space: nowrap; } .ds-meta { margin-top: 4px; color: var(--fg-faint, #9dbcc3); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Menu Outside the Game",
+    "overview": "SCRmod is the ROUNDS menu carried into the browser. A player who knows the game should recognize it on sight: the same deep teal with faint low-poly shards behind everything, the same thin capitals tracked wide, and the same single orange band that marks where you are. The site exists to be checked quickly, often on a phone between matches, so it stays calm: surfaces are quiet, numbers are exact and line up, and nothing competes with the data.\n\nThe mood is calm, exact and game-native. It belongs to ROUNDS rather than to a generic stats dashboard. Identity comes from a few precise commitments (the teal, the capitals, the band, the outlined wordmark with the game's crowned face standing in for the O) and never from decoration. Dark is the home look, and the site follows the visitor's system setting unless they pick the other theme. \"Mist\" is the same world in daylight: surfaces and ink invert, the orange darkens into ink for legibility, and the bars stay game-teal.\n\nDensity is that of a scoreboard: tables and lists carry most pages, stat tiles lead only where a single number is the point, and expandable rows hold the detail. Every text pair is checked at 4.5:1 or better on the panel, backdrop and hover surfaces, in both themes.",
+    "keyCharacteristics": [
+      "A deep teal world with a fixed, faint low-poly shard backdrop; content scrolls over it like the game's menu.",
+      "Light, uppercase, widely tracked Montserrat for everything that labels; player names keep their own casing.",
+      "One orange band, always meaning \"you are here\", always carrying dark ink.",
+      "Translucent teal glass panels instead of shadows; near-square 2px corners.",
+      "Tabular figures for every number that lines up with another."
+    ],
+    "rules": [
+      {
+        "name": "The One Band Rule",
+        "body": "Orange fills one thing per context: where you are. It never decorates, never marks a link, never highlights a number.",
+        "section": "colors"
+      },
+      {
+        "name": "The Dark Ink Rule",
+        "body": "Anything on the band is Band Ink. White on this orange is under 3:1.",
+        "section": "colors"
+      },
+      {
+        "name": "The Held Hue Rule",
+        "body": "Colors that come from the game (rank tiers, titles) keep their hue but have their lightness held to the theme's legible band (OKLCH lightness 0.74 to 1 on dark, 0 to 0.46 on Mist).",
+        "section": "colors"
+      },
+      {
+        "name": "The Menu Voice Rule",
+        "body": "Headings, buttons, tabs, filters and labels speak in the menu voice: uppercase, tracked 0.08 to 0.16em. Chips don't, because they carry names, titles and card names; a chip that names a category (LIVE, RANKED, CASUAL) is written in capitals. Player names never do: they keep their own casing and normal tracking (0.01em as a page heading), at weight 600 (800 when it's you or on the scoreboard).",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Every number that lines up with another (ratings, scores, deltas, counts in tables) uses tabular figures.",
+        "section": "typography"
+      },
+      {
+        "name": "The Group Step Rule",
+        "body": "The space between two groups (24px) is always larger than any space inside one (12px at most). If a heading sits as close to the section before it as to its own content, the spacing is wrong.",
+        "section": "layout"
+      },
+      {
+        "name": "The Wide Band Rule",
+        "body": "A row that is you runs the full width of its card, edge to edge, like the game's menu selection.",
+        "section": "layout"
+      },
+      {
+        "name": "The Glass, Not Shadow Rule",
+        "body": "Panels separate from the backdrop by tone, never by a drop shadow. A shadow means the surface floats over content.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Near-Square Rule",
+        "body": "No pills, no large radii. A rounder corner would read as a different game.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** use the tokens and the spacing scale (2, 4, 8, 12, 16, 24, 32, 48px); a value off the scale needs a reason.",
+      "**Do** keep the space between groups (24px) larger than any space inside one.",
+      "**Do** mark \"you are here\" with the band and Band Ink, running full width in lists and tables.",
+      "**Do** check every new text pair at 4.5:1 or better on the panel, backdrop and hover surfaces, in both themes, including game-supplied colors held to their lightness band.",
+      "**Do** isolate player names in running text so a right-to-left name can't reorder what's around it, and let a 32-character unbroken name break rather than widen the page.",
+      "**Do** give every control a 44px target on touch, and keep an exhausted control focusable (aria-disabled) instead of disabling it.",
+      "**Do** say meaning in words as well as color: W or L letters, \"won\", \"rolled\", \"online\"."
+    ],
+    "donts": [
+      "**Don't** put white text on the orange band.",
+      "**Don't** use orange for decoration, links, or emphasis on numbers.",
+      "**Don't** add drop shadows to cards or tiles, or blur behind them.",
+      "**Don't** use gradients anywhere but the band, the backdrop and the loading placeholder's sweep.",
+      "**Don't** raise, glow or enlarge a selected control; selection is the band.",
+      "**Don't** uppercase or track player names.",
+      "**Don't** dim meaning-bearing text with opacity; use a muted ink that still passes contrast.",
+      "**Don't** put information only in a hover tooltip; touch users never see it.",
+      "**Don't** round corners past 3px, except status dots."
+    ]
+  }
+}
