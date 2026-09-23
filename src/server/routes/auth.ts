@@ -4,6 +4,7 @@ import type { PlayerByDiscord } from '../../shared/api-types'
 import type { MeResponse } from '../../shared/hub-types'
 import { TTL } from '../cache'
 import type { Env } from '../env'
+import { requestOrigin } from '../seo/site'
 import { randomState, signSession, verifySession } from '../session'
 import { UpstreamError } from '../upstream'
 import { errorResponse, type RouteDeps } from './common'
@@ -15,10 +16,7 @@ const DISCORD_ID_RE = /^\d{1,32}$/
 
 /** A configured https site is https even when the proxy forwards no header. */
 function isHttps(c: Context, env: Env): boolean {
-  if (env.publicBaseUrl?.startsWith('https://')) return true
-  if (c.req.url.startsWith('https://')) return true
-  const proto = c.req.header('x-forwarded-proto')?.split(',')[0]?.trim()
-  return proto === 'https'
+  return !!env.publicBaseUrl?.startsWith('https://') || requestOrigin(c).startsWith('https://')
 }
 
 export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: typeof fetch }) {
@@ -38,8 +36,7 @@ export function registerAuthRoutes(app: Hono, d: RouteDeps & { discordFetch?: ty
   const f = d.discordFetch ?? fetch
   const redirectUri = (c: Context) => {
     // `publicBaseUrl` is an origin by the time parseEnv is done, so the prefix is added once.
-    const origin =
-      d.env.publicBaseUrl ?? `${isHttps(c, d.env) ? 'https' : 'http'}://${c.req.header('host') ?? new URL(c.req.url).host}`
+    const origin = d.env.publicBaseUrl ?? requestOrigin(c)
     return `${origin}${prefix}/auth/discord/callback`
   }
 

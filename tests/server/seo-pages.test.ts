@@ -116,6 +116,14 @@ describe('server-rendered pages', () => {
     expect((await found.request(`/tournaments/${id}`)).status).toBe(200)
   })
 
+  it('without PUBLIC_BASE_URL, links the https address a TLS proxy was reached on', async () => {
+    const built = makeApp({})
+    registerStatic(built.app, { root, basePath: built.env.basePath, deps: built.deps })
+    const html = await (await built.app.request('http://x.up.railway.app/guide', { headers: { 'x-forwarded-proto': 'https' } })).text()
+    expect(html).toContain('<link rel="canonical" href="https://x.up.railway.app/guide" />')
+    expect(html).toContain('"mainEntityOfPage":"https://x.up.railway.app/guide"')
+  })
+
   it('redirects /leaderboards under a base path with the base path kept in the location', async () => {
     const built = makeApp({}, { BASE_PATH: '/hub', PUBLIC_BASE_URL: 'https://example.org/hub' })
     registerStatic(built.app, { root, basePath: '/hub', deps: built.deps })

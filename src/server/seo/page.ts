@@ -57,7 +57,7 @@ export type PageResult = { redirect: string } | { status: 200 | 404; head: strin
 
 export async function resolvePage(d: RouteDeps, path: string, c: Context): Promise<PageResult> {
   const base = basePrefix(d.env)
-  const site = siteUrl(d.env, c.req.url)
+  const site = siteUrl(d.env, c)
   // Player and tournament ids come from the address, so a client over its API budget gets those pages without data.
   const overBudget = c.get('overBudget') === true
   let match = matchRoute(path)

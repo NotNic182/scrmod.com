@@ -32,7 +32,7 @@ npm run contract  # hits the live API once per endpoint and checks the shapes (m
 | `SCR_MOD_VERSION_OVERRIDE` | unset | Pin the `X-Mod-Version` header (otherwise discovered) |
 | `SCR_FEATURES` | empty | Comma list, e.g. `chat` |
 | `BASE_PATH` | `/` | Mount under a sub-path, e.g. `/hub` |
-| `PUBLIC_BASE_URL` | derived | Absolute site URL for OAuth redirects and canonical links; page requests on other hosts are redirected to it |
+| `PUBLIC_BASE_URL` | derived | Absolute site URL (`https://…`) for OAuth redirects and canonical links; page requests on other hosts are redirected to it. Required in production for correct canonical URLs: without it they follow whatever host the request came in on |
 | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `SESSION_SECRET` | unset | All three enable Discord sign-in |
 | `SCR_FIXTURES` | unset | `1` answers from `fixtures/` (demo, tests) |
 | `SCR_FIXTURES_DIR` | `fixtures` | Where fixture mode reads from |

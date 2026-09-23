@@ -11,11 +11,11 @@ export function registerCrawlRoutes(app: Hono, d: RouteDeps) {
     const base = basePrefix(d.env)
     c.header('Content-Type', 'text/plain; charset=utf-8')
     c.header('Cache-Control', 'public, max-age=3600')
-    return c.body(`User-agent: *\nAllow: /\nDisallow: ${base}/api/\nDisallow: ${base}/auth/\n\nSitemap: ${siteUrl(d.env, c.req.url)}/sitemap.xml\n`)
+    return c.body(`User-agent: *\nAllow: /\nDisallow: ${base}/api/\nDisallow: ${base}/auth/\n\nSitemap: ${siteUrl(d.env, c)}/sitemap.xml\n`)
   })
 
   app.get('/sitemap.xml', async (c) => {
-    const site = siteUrl(d.env, c.req.url)
+    const site = siteUrl(d.env, c)
     const urls: Array<{ path: string; lastmod?: string }> = [
       { path: '/' },
       ...BOARD_MODES.map((m) => ({ path: `/leaderboards/${m.id}` })),
