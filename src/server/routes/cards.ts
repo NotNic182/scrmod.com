@@ -1,10 +1,12 @@
 import type { Hono } from 'hono'
-import type { CardLeadersSummary } from '../../shared/api-types'
-import { TTL } from '../cache'
+import type { CardLeadersSummary, CardStat } from '../../shared/api-types'
+import { TTL, type CachedResult } from '../cache'
 import { errorResponse, loaderFor, ok, type RouteDeps } from './common'
 
 const SORTS = new Set(['times_picked', 'win_rate', 'pass_rate', 'unique_players', 'matches_appeared', 'wins_with_card', 'times_offered'])
 const FILTERS = new Set(['all', 'ranked', 'casual'])
+
+export type CardFilter = 'all' | 'ranked' | 'casual'
 
 export interface CardLeader {
   card: string
@@ -25,6 +27,23 @@ export function parseLeaders(rows: string[] | undefined): CardLeader[] {
   return out
 }
 
+/** The card stats list, under the same cache key the /api/cards route uses. */
+export function loadCards(d: RouteDeps, filter: CardFilter = 'all', sort = 'times_picked', order: 'asc' | 'desc' = 'desc') {
+  return loaderFor(d)<CardStat[]>(`cards:${filter}:${sort}:${order}`, TTL.REF, '/cards', {
+    limit: 200,
+    min_picks: 5,
+    sort_by: sort,
+    order,
+    is_ranked: filter === 'ranked' ? 'true' : filter === 'casual' ? 'false' : undefined,
+  })
+}
+
+/** Card leaders, parsed from the upstream's pipe-joined strings. */
+export async function loadCardLeaders(d: RouteDeps): Promise<CachedResult<{ sweepers: CardLeader[]; winners: CardLeader[] }>> {
+  const r = await loaderFor(d)<CardLeadersSummary>('cards:leaders', TTL.REF, '/cards/leaders-summary', { limit_per_card: 5 })
+  return { ...r, value: { sweepers: parseLeaders(r.value.sweepers), winners: parseLeaders(r.value.winners) } }
+}
+
 export function registerCardRoutes(app: Hono, d: RouteDeps) {
   app.get('/api/cards', async (c) => {
     const filter = c.req.query('filter') ?? 'all'
@@ -33,16 +52,7 @@ export function registerCardRoutes(app: Hono, d: RouteDeps) {
     if (!FILTERS.has(filter)) return c.json({ error: 'bad_filter', filters: [...FILTERS] }, 400)
     if (!SORTS.has(sort)) return c.json({ error: 'bad_sort', sorts: [...SORTS] }, 400)
     try {
-      return ok(
-        c,
-        await loaderFor(d)(`cards:${filter}:${sort}:${order}`, TTL.REF, '/cards', {
-          limit: 200,
-          min_picks: 5,
-          sort_by: sort,
-          order,
-          is_ranked: filter === 'ranked' ? 'true' : filter === 'casual' ? 'false' : undefined,
-        }),
-      )
+      return ok(c, await loadCards(d, filter as CardFilter, sort, order))
     } catch (err) {
       return errorResponse(c, err)
     }
@@ -50,8 +60,7 @@ export function registerCardRoutes(app: Hono, d: RouteDeps) {
 
   app.get('/api/cards/leaders', async (c) => {
     try {
-      const r = await loaderFor(d)<CardLeadersSummary>('cards:leaders', TTL.REF, '/cards/leaders-summary', { limit_per_card: 5 })
-      return ok(c, { ...r, value: { sweepers: parseLeaders(r.value.sweepers), winners: parseLeaders(r.value.winners) } })
+      return ok(c, await loadCardLeaders(d))
     } catch (err) {
       return errorResponse(c, err)
     }

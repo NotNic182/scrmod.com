@@ -1,6 +1,6 @@
 import type { Context, Hono } from 'hono'
 import { KEEP_FOR_PROFILE_MASK, maskProfile, scrubPrivate, slimMatch } from '../../shared/privacy'
-import { TTL, type TtlSpec } from '../cache'
+import { TTL, type CachedResult, type TtlSpec } from '../cache'
 import type { Query } from '../upstream'
 import { errorResponse, intParam, isSteamId, loaderFor, ok, type RouteDeps } from './common'
 
@@ -39,6 +39,20 @@ const SUB: Record<string, SubSpec> = {
   tournaments: { path: (id) => `/tournaments/players/${id}/tournaments`, spec: TTL.PLAYER },
 }
 
+/** A profile with the privacy masks applied, under the same cache key the /api/players/:id route uses. */
+export async function loadProfile(d: RouteDeps, id: string, viewer?: string): Promise<CachedResult<Record<string, unknown>>> {
+  // The cache holds the profile with the discord fields already gone; `hide_gold` is
+  // held back so `maskProfile` can still turn it into `gold_hidden` on the way out.
+  const r = await loaderFor(d)<Record<string, unknown>>(
+    `player:${id}:${viewer ?? ''}`,
+    TTL.PLAYER,
+    `/players/${id}`,
+    { viewer_steam_id: viewer },
+    (raw) => scrubPrivate(raw as Record<string, unknown>, KEEP_FOR_PROFILE_MASK),
+  )
+  return { ...r, value: maskProfile(r.value) }
+}
+
 export function registerPlayerRoutes(app: Hono, d: RouteDeps) {
   app.get('/api/players/:id', async (c) => {
     const id = c.req.param('id')
@@ -46,16 +60,7 @@ export function registerPlayerRoutes(app: Hono, d: RouteDeps) {
     const me = c.req.query('me')
     const viewer = isSteamId(me) && me !== id ? me : undefined
     try {
-      // The cache holds the profile with the discord fields already gone; `hide_gold` is
-      // held back so `maskProfile` can still turn it into `gold_hidden` on the way out.
-      const r = await loaderFor(d)<Record<string, unknown>>(
-        `player:${id}:${viewer ?? ''}`,
-        TTL.PLAYER,
-        `/players/${id}`,
-        { viewer_steam_id: viewer },
-        (raw) => scrubPrivate(raw as Record<string, unknown>, KEEP_FOR_PROFILE_MASK),
-      )
-      return ok(c, { ...r, value: maskProfile(r.value) })
+      return ok(c, await loadProfile(d, id, viewer))
     } catch (err) {
       return errorResponse(c, err)
     }

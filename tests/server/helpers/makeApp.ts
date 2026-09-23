@@ -8,6 +8,7 @@ export function makeApp(
   envOverrides: Record<string, string | undefined> = {},
   nowRef?: { now: number },
   store: CacheStore = new MemoryCacheStore(),
+  streamFetch?: typeof fetch,
 ) {
   const fake = fakeUpstream(map)
   const env = parseEnv({ SCR_UPSTREAM_BASE: 'https://up.test', SCR_MOD_VERSION_OVERRIDE: '1.40.3', ...envOverrides })
@@ -16,6 +17,7 @@ export function makeApp(
     fetchImpl: fake.fetchImpl,
     store,
     now: nowRef ? () => nowRef.now : undefined,
+    streamFetch,
   })
   return { ...built, fake, env, store }
 }

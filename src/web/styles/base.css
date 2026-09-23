@@ -31,6 +31,17 @@ a {
   color: inherit;
   text-decoration: none;
 }
+/* A link inside reading text keeps the text's color, so an underline is what marks it (WCAG 1.4.1). Navigation,
+   tabs, tables, player names and buttons stay plain: where they sit already says what they are. */
+.prose a,
+.card p a,
+.page-intro a,
+.subline a,
+.card.guide a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
 button {
   font: inherit;
   color: inherit;
@@ -309,7 +320,7 @@ table.t tr.me > td {
   inset: auto 0 0 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   background: var(--bar);
   border-top: 1px solid var(--bar-line);
@@ -655,7 +666,7 @@ body {
   }
 }
 
-/* Touch: every control meets a 44px target, player names included. */
+/* Touch: every control meets a 44px target, player and card names included. */
 @media (pointer: coarse) {
   .btn,
   .btn-sm,
@@ -667,7 +678,8 @@ body {
   .icon-btn {
     width: 44px;
   }
-  .plink {
+  .plink,
+  .card-link {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
@@ -675,7 +687,9 @@ body {
     column-gap: 0.3em;
   }
   /* In tables the cell padding already counts toward the target: absorb it so rows stay 44px, not 60+. */
-  table.t .plink {
+  table.t .plink,
+  table.t .card-link,
+  table.t .disclosure {
     margin-block: calc(-1 * var(--space-xs));
   }
 }
@@ -999,8 +1013,15 @@ details.acc[open] {
   .segmented button {
     min-height: 44px;
   }
+  /* The cards table's pickers toggle is an icon alone: a 44px square around it, kept on the card name's line (the
+     pinned name column widens rather than stacking the two). */
   .disclosure {
+    min-width: 44px;
     min-height: 44px;
+    justify-content: center;
+  }
+  table.t .stick-lead .row {
+    flex-wrap: nowrap;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1586,4 +1607,56 @@ details.acc > summary.series-row::before {
 }
 .key-ffa::before {
   background: var(--info);
+}
+
+/* The one line under a page heading that says what the page is. */
+.page-intro {
+  margin: calc(-1 * var(--space-xs)) 0 var(--space-md);
+  color: var(--fg-muted);
+}
+
+/* The guide's numbered steps read like the bulleted ones. */
+ol.prose {
+  max-width: 64ch;
+  padding-left: 1.25rem;
+}
+ol.prose li + li {
+  margin-top: var(--space-2xs);
+}
+.card.guide p {
+  margin: var(--space-xs) 0;
+}
+
+/* The live stream: one compact row (what is on, and a button) until the visitor asks for the player, so the
+   live data below stays in view. On a phone the button wraps under the title. */
+.stream-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.stream-info {
+  display: flex;
+  flex: 1 1 16rem;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  min-width: 0;
+}
+.stream-title {
+  font-size: var(--text-title);
+  font-weight: 800;
+}
+.stream-meta {
+  font-size: var(--text-meta);
+}
+/* The player: 16:9 at the card's width, up to 800px on a wide screen. */
+.stream-frame {
+  max-width: 800px;
+  aspect-ratio: 16 / 9;
+}
+.stream-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }

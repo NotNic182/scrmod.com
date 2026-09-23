@@ -4,6 +4,14 @@ export interface DiscordConfig {
   sessionSecret: string
 }
 
+export interface StreamConfig {
+  twitchLogin: string
+  twitchClientId?: string
+  twitchClientSecret?: string
+  youtubeChannelId: string
+  youtubeApiKey?: string
+}
+
 export interface Env {
   upstreamBase: string
   internalKey?: string
@@ -20,6 +28,9 @@ export interface Env {
   webRoot: string
   port: number
   rateLimit: boolean
+  googleVerification?: string
+  bingVerification?: string
+  stream: StreamConfig
 }
 
 export const DEFAULT_UPSTREAM = 'https://competitive-rounds.duckdns.org:8444'
@@ -94,6 +105,15 @@ export function parseEnv(raw: Record<string, string | undefined>): Env {
     webRoot: raw.SCR_WEB_ROOT || 'dist/web',
     port: parsePort(raw.PORT),
     rateLimit: raw.SCR_RATE_LIMIT !== 'off',
+    googleVerification: raw.GOOGLE_SITE_VERIFICATION || undefined,
+    bingVerification: raw.BING_SITE_VERIFICATION || undefined,
+    stream: {
+      twitchLogin: raw.STREAM_TWITCH_LOGIN || 'sidscompetitiverounds',
+      twitchClientId: raw.TWITCH_CLIENT_ID || undefined,
+      twitchClientSecret: raw.TWITCH_CLIENT_SECRET || undefined,
+      youtubeChannelId: raw.STREAM_YOUTUBE_CHANNEL_ID || 'UCz9MIFturPcCSJsFFzgyBxw',
+      youtubeApiKey: raw.YOUTUBE_API_KEY || undefined,
+    },
   }
 }
 

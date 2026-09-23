@@ -4,14 +4,18 @@ import { Cache, MemoryCacheStore, type CacheStore } from './cache'
 import { type Env } from './env'
 import { registerAuthRoutes } from './routes/auth'
 import { registerBoardRoutes } from './routes/boards'
+import { registerCardPageRoute } from './routes/card'
 import { registerCardRoutes } from './routes/cards'
 import { registerChatRoutes } from './routes/chat'
 import { registerHomeRoutes } from './routes/home'
 import { registerMetaRoutes } from './routes/meta'
 import { registerPlayerRoutes } from './routes/players'
 import { registerStatusRoutes } from './routes/status'
+import { registerStreamRoutes } from './stream'
 import { registerTournamentRoutes } from './routes/tournaments'
 import type { RouteDeps } from './routes/common'
+import { canonicalHost } from './seo/host'
+import { registerCrawlRoutes } from './seo/crawl'
 import { rateLimit } from './ratelimit'
 import { Upstream } from './upstream'
 import { ModVersionSource } from './version'
@@ -23,6 +27,8 @@ export interface AppDeps {
   now?: () => number
   /** fetch used for Discord's own API; defaults to fetchImpl or global fetch. */
   discordFetch?: typeof fetch
+  /** fetch used for Twitch and YouTube; defaults to the global fetch. */
+  streamFetch?: typeof fetch
 }
 
 export function createApp(deps: AppDeps) {
@@ -56,6 +62,7 @@ export function createApp(deps: AppDeps) {
     return c.json({ error: 'internal' }, 500)
   })
 
+  app.use('*', canonicalHost(env))
   if (env.rateLimit) app.use('*', rateLimit({ now, prefix: env.basePath }))
   // JSON compresses ~5-10x and the live pages poll it every 15 s. Static files compress themselves (static.ts).
   app.use('/api/*', compress())
@@ -67,8 +74,11 @@ export function createApp(deps: AppDeps) {
   registerPlayerRoutes(app, routeDeps)
   registerTournamentRoutes(app, routeDeps)
   registerCardRoutes(app, routeDeps)
+  registerCardPageRoute(app, routeDeps)
   registerChatRoutes(app, routeDeps)
   registerAuthRoutes(app, { ...routeDeps, discordFetch: deps.discordFetch ?? deps.fetchImpl })
+  registerCrawlRoutes(app, routeDeps)
+  registerStreamRoutes(app, routeDeps, deps.streamFetch ?? fetch)
 
   return { app, cache, upstream, version, deps: routeDeps }
 }

@@ -24,7 +24,8 @@
         var p = location.pathname.slice(base.length).replace(/\/$/, "") || "/"
         var want = []
         var m
-        if (p === "/") want.push("/home")
+        if (p === "/") want.push("/home", "/stream")
+        else if (p === "/watch") want.push("/stream")
         else if ((m = /^\/leaderboards(?:\/([\w-]+))?$/.exec(p))) want.push("/leaderboard/" + (m[1] || "1v1"), "/meta")
         else if ((m = /^\/players\/(\d{17})$/.exec(p))) {
           // The profile request names the pinned viewer (for head-to-head), exactly as usePlayer() does on first render.
@@ -36,7 +37,7 @@
         } else if ((m = /^\/tournaments(?:\/([0-9a-f-]{36}))?$/i.exec(p))) {
           want.push("/tournaments", "/tournaments/history")
           if (m[1]) want.push("/tournaments/" + m[1] + "/bracket")
-        }
+        } else if ((m = /^\/cards\/([^/]+)$/.exec(p))) want.push("/card/" + m[1])
         var early = (window.__scrEarly = {})
         want.forEach(function (w) {
           var res = fetch(base + "/api" + w, { headers: { Accept: "application/json" }, credentials: "same-origin" })
@@ -45,6 +46,7 @@
         })
       } catch (e) {}
     </script>
+    <!--seo:head:start-->
     <title>SCRmod</title>
     <meta name="description" content="Sid's Competitive Rounds from your browser: who is online, live games, leaderboards and stats." />
     <meta property="og:site_name" content="SCRmod" />
@@ -52,9 +54,10 @@
     <meta property="og:description" content="Sid's Competitive Rounds from your browser: who is online, live games, leaderboards and stats." />
     <meta property="og:image" content="https://scrmod.com/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
+    <!--seo:head:end-->
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--seo:body--></div>
     <script type="module" src="/main.tsx"></script>
   </body>
 </html>

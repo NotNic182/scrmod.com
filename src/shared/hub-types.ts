@@ -2,6 +2,7 @@ import type {
   ActiveSeries,
   ActiveTeamSeries,
   AlertItem,
+  CardStat,
   FfaLobby,
   ModVersion,
   MultimodeEntry,
@@ -10,6 +11,7 @@ import type {
   ReleasePost,
   SpectateGame,
 } from './api-types'
+import type { CardLeader } from '../server/routes/cards'
 import type { RankTier } from './rank'
 
 /** Every hub JSON response has this envelope. */
@@ -62,6 +64,40 @@ export interface MeData {
 export interface MeResponse {
   data: MeData
   auth_enabled: boolean
+}
+
+/** One card's page: its stats overall, ranked and casual, who wins with it, and its neighbours by pick count. */
+export interface CardPageData {
+  slug: string
+  card: CardStat
+  ranked: CardStat | null
+  casual: CardStat | null
+  winners: CardLeader[]
+  sweepers: CardLeader[]
+  prev: { name: string; slug: string } | null
+  next: { name: string; slug: string } | null
+}
+
+export interface StreamLive {
+  platform: 'twitch' | 'youtube'
+  title: string
+  viewers: number | null
+  started_at: string | null
+  url: string
+  embed: { kind: 'twitch'; channel: string } | { kind: 'youtube'; videoId: string }
+}
+
+export interface StreamVideo {
+  title: string
+  url: string
+  videoId: string
+  published_at: string
+}
+
+export interface StreamData {
+  live: StreamLive | null
+  recent: StreamVideo[]
+  links: { twitch: string; youtube: string }
 }
 
 export interface StatusResponse {

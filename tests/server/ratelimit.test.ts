@@ -1,7 +1,12 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { Hono } from 'hono'
+import { mkdtemp, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
 import { clientIp, rateLimit } from '../../src/server/ratelimit'
+import { registerStatic } from '../../src/server/static'
 import { makeApp } from './helpers/makeApp'
+import type { RouteMap } from './helpers/fakeUpstream'
 
 const BOARD = { '/leaderboard': { entries: [], total_players: 0 } }
 const IP = (ip: string) => ({ headers: { 'x-forwarded-for': ip } })
@@ -162,5 +167,51 @@ describe('rate limit', () => {
     expect(mw.buckets()).toBe(3)
     for (let i = 5; i <= 40; i++) await app.request('/api/x', IP(`10.0.0.${i}`))
     expect(mw.buckets()).toBe(3)
+  })
+})
+
+describe('rate limit on pages that look up an id from the address', () => {
+  let root: string
+  beforeAll(async () => {
+    root = await mkdtemp(path.join(tmpdir(), 'scr-rl-'))
+    await writeFile(path.join(root, 'index.html'), '<!doctype html><html><head><!--seo:head:start--><title>SCRmod</title><!--seo:head:end--></head><body><div id="root"><!--seo:body--></div></body></html>')
+  })
+  function site(map: RouteMap) {
+    const built = makeApp(map, {}, { now: 1_000_000 })
+    registerStatic(built.app, { root, basePath: built.env.basePath, deps: built.deps })
+    return built
+  }
+
+  it('player pages draw from the API budget and render without data once it is gone, never 429', async () => {
+    const ids = Array.from({ length: 70 }, (_, i) => `765611990000${String(i).padStart(5, '0')}`)
+    const { app, fake } = site(Object.fromEntries(ids.map((id) => [`/players/${id}`, { steam_id: id, display_name: `Named ${id}` }])))
+    const statuses = new Set<number>()
+    let last: Response | undefined
+    for (const id of ids) {
+      last = await app.request(`/players/${id}`, IP('1.1.1.1'))
+      statuses.add(last.status)
+    }
+    expect([...statuses]).toEqual([200])
+    expect(fake.calls.filter((c) => c.url.pathname.startsWith('/api/v1/players/'))).toHaveLength(60)
+    // Over budget: the generic player page, not the player's.
+    const html = await last!.text()
+    expect(html).toContain('<h1>Player</h1>')
+    expect(html).not.toContain(`Named ${ids[69]}`)
+    // One budget: the API is spent too, and another client is not.
+    expect((await app.request('/api/leaderboard/1v1', IP('1.1.1.1'))).status).toBe(429)
+    const other = await app.request(`/players/${ids[69]}`, IP('2.2.2.2'))
+    expect(other.status).toBe(200)
+    expect(await other.text()).toContain(`Named ${ids[69]}`)
+  })
+
+  it('a tournament page over budget skips its bracket; pages with fixed data are not metered', async () => {
+    const id = '3f2b8c1e-0000-4000-8000-000000000001'
+    const { app, fake } = site({ ...BOARD, [`/tournaments/${id}/bracket-detail`]: { tournament_id: id }, '/cards': [] })
+    await drain(app, '/api/leaderboard/1v1', 60, IP('1.1.1.1'))
+    const res = await app.request(`/tournaments/${id}`, IP('1.1.1.1'))
+    expect(res.status).toBe(200)
+    expect(fake.calls.some((c) => c.url.pathname.includes('/bracket-detail'))).toBe(false)
+    expect((await app.request('/cards', IP('1.1.1.1'))).status).toBe(200)
+    expect(fake.calls.some((c) => c.url.pathname === '/api/v1/cards')).toBe(true)
   })
 })

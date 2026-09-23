@@ -6,6 +6,7 @@ import { QueryState } from '../components/QueryState'
 import { ResultTable, modeOf } from '../components/ResultTable'
 import { TabPanel, Tabs } from '../components/Tabs'
 import { relTime, signed } from '../lib/format'
+import { INTROS, pageMeta } from '../../shared/seo'
 
 const TABS = [
   { id: 'all', label: 'All' },
@@ -16,13 +17,14 @@ const TABS = [
 ]
 
 export function Results() {
-  useTitle('Results')
+  useTitle(pageMeta({ kind: 'results' }).title)
   const [tab, setTab] = useState('all')
   const feed = useResults(100, tab !== '1v1')
   const series = useResults1v1(50, tab === '1v1')
   return (
     <>
       <h1>Results</h1>
+      <p className="page-intro">{INTROS.results}</p>
       <Tabs tabs={TABS} value={tab} onChange={setTab} panelId="results-panel" label="Game mode" />
       <TabPanel id="results-panel" value={tab}>
         <div className="card">

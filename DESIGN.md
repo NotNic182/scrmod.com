@@ -278,7 +278,7 @@ Spacing follows one scale (2, 4, 8, 12, 16, 24, 32, 48px). Inside a group the st
 
 - **Pairs:** equivalent cards (sync and async tournaments, top and worst cards) sit side by side from 760px and stretch to equal heights; unequal neighbors (live games beside who's on) keep their own heights.
 - **Tiles:** as many across as fit (at least 8.5rem each; 11rem for achievements), stretched to fill, so three tiles are thirds rather than three quarters and a gap.
-- **Navigation:** from 840px the menu lives in the top bar; below it, a five-entry tab bar sits at the bottom within thumb reach. On a short landscape phone the top bar scrolls away and the tab bar slims to one 44px line.
+- **Navigation:** from 840px the menu lives in the top bar; below it, a six-entry tab bar sits at the bottom within thumb reach. On a short landscape phone the top bar scrolls away and the tab bar slims to one 44px line.
 - **Tables** scroll sideways inside their card, never the page. Below 840px the rank and name columns (or the card name) stay pinned while the numbers scroll under them, and a player's title chip moves under the name to keep the pinned column narrow.
 - **The results feed** stacks each game onto two lines when its card is under 34rem wide.
 - **Long lists** open with their first few (5 recently-online players, 20 cards, 20 series) and a "Show all" that also folds them away again.
@@ -349,7 +349,7 @@ Every control is a menu entry: flat, square, uppercase and tracked. Selection is
 - **Checkboxes and radios:** the native control in the accent color; on touch their label row is a 44px target.
 
 ### Navigation
-- **Top bar:** Bar Teal, 56px, sticky. The wordmark is on the left and the five menu entries follow: 13px capitals tracked 0.14em at weight 400, in Sea-Glass Ink. The current entry is a full-height band with Band Ink at 600. The identity button and the theme toggle sit on the right.
+- **Top bar:** Bar Teal, 56px, sticky. The wordmark is on the left and the six menu entries follow: 13px capitals tracked 0.14em at weight 400, in Sea-Glass Ink. The current entry is a full-height band with Band Ink at 600. The identity button and the theme toggle sit on the right.
 - **Phone tab bar:** Bar Teal, fixed to the bottom, 58px plus the safe-area inset, with a 22px icon over the Tab bar label. The current entry wears the band.
 - **Tabs** (a page's sections, the leaderboard modes): 13px capitals tracked 0.1em at weight 500, in Sea-Glass Ink. The selected tab turns Frost Ink at 700 over a 2px Ember Ink underline. The strip scrolls sideways and keeps the selected tab in view.
 - **Segmented filter** (All, Ranked, Casual): an Inset Shade track with 3px of padding; the pressed segment wears the band.

@@ -14,6 +14,7 @@ import type {
   TournamentHistoryRow,
 } from '../../shared/api-types'
 import type { CardLeader } from '../../server/routes/cards'
+import type { CardPageData, StreamData } from '../../shared/hub-types'
 
 export type { HomeEnvelope, MetaEnvelope, MeResponse, HubProfile, StatusResponse } from '../../shared/hub-types'
 
@@ -36,3 +37,5 @@ export type BracketResponse = Env<BracketDetail>
 export type CardsResponse = Env<CardStat[]>
 export type CardLeadersResponse = Env<{ sweepers: CardLeader[]; winners: CardLeader[] }>
 export type CardPickersResponse = Env<CardTopPickers>
+export type CardPageResponse = Env<CardPageData>
+export type StreamResponse = Env<StreamData>

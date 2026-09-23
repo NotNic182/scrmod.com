@@ -64,9 +64,12 @@ const Player = page(() => import('./pages/Player'), 'Player')
 const Results = page(() => import('./pages/Results'), 'Results')
 const Tournaments = page(() => import('./pages/Tournaments'), 'Tournaments')
 const Cards = page(() => import('./pages/Cards'), 'Cards')
+const Card = page(() => import('./pages/Card'), 'Card')
+const Guide = page(() => import('./pages/Guide'), 'Guide')
 const About = page(() => import('./pages/About'), 'About')
+const Watch = page(() => import('./pages/Watch'), 'Watch')
 const NotFound = page(() => import('./pages/NotFound'), 'NotFound')
-const LAZY = [Leaderboards, Player, Results, Tournaments, Cards, About, NotFound]
+const LAZY = [Leaderboards, Player, Results, Tournaments, Cards, Card, Guide, About, Watch, NotFound]
 
 /** Which page's code a path needs (mirrors the <Routes> below). Home is in the main bundle. */
 const ROUTE_PAGES: Array<[RegExp, (typeof LAZY)[number]]> = [
@@ -74,8 +77,11 @@ const ROUTE_PAGES: Array<[RegExp, (typeof LAZY)[number]]> = [
   [/^\/players\//, Player],
   [/^\/results\/?$/, Results],
   [/^\/tournaments(\/|$)/, Tournaments],
+  [/^\/cards\/[^/]+\/?$/, Card],
   [/^\/cards\/?$/, Cards],
+  [/^\/guide\/?$/, Guide],
   [/^\/about\/?$/, About],
+  [/^\/watch\/?$/, Watch],
 ]
 
 /** Downloads the code for the page at `pathname`, so main.tsx can render the entry page in one go. Never rejects. */
@@ -118,7 +124,10 @@ export function App() {
             <Route path="tournaments" element={<Tournaments.Component />} />
             <Route path="tournaments/:id" element={<Tournaments.Component />} />
             <Route path="cards" element={<Cards.Component />} />
+            <Route path="cards/:slug" element={<Card.Component />} />
+            <Route path="guide" element={<Guide.Component />} />
             <Route path="about" element={<About.Component />} />
+            <Route path="watch" element={<Watch.Component />} />
             <Route path="*" element={<NotFound.Component />} />
           </Route>
         </Routes>

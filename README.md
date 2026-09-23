@@ -32,14 +32,19 @@ npm run contract  # hits the live API once per endpoint and checks the shapes (m
 | `SCR_MOD_VERSION_OVERRIDE` | unset | Pin the `X-Mod-Version` header (otherwise discovered) |
 | `SCR_FEATURES` | empty | Comma list, e.g. `chat` |
 | `BASE_PATH` | `/` | Mount under a sub-path, e.g. `/hub` |
-| `PUBLIC_BASE_URL` | derived | Absolute site URL for OAuth redirects |
+| `PUBLIC_BASE_URL` | derived | Absolute site URL (`https://…`) for OAuth redirects and canonical links; page requests on other hosts are redirected to it. Required in production for correct canonical URLs: without it they follow whatever host the request came in on |
 | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `SESSION_SECRET` | unset | All three enable Discord sign-in |
 | `SCR_FIXTURES` | unset | `1` answers from `fixtures/` (demo, tests) |
 | `SCR_FIXTURES_DIR` | `fixtures` | Where fixture mode reads from |
 | `SCR_APP_VERSION` | `0.1.0` | Reported by `/api/_status` and sent in the `User-Agent` |
-| `SCR_RATE_LIMIT` | on | `off` disables the per-client limit (`/api/*` 60 per 10 s, `/auth/*` 10 per 60 s; `/api/_status` is exempt) |
+| `SCR_RATE_LIMIT` | on | `off` disables the per-client limit (`/api/*` 60 per 10 s, `/auth/*` 10 per 60 s; `/api/_status` is exempt). Player and tournament pages spend the `/api/*` budget; over it they are served without their data rather than refused |
 | `PORT` | `8080` | Node listen port |
 | `SCR_WEB_ROOT` | `dist/web` | Directory the built SPA is served from |
+| `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION` | unset | Search console verification meta tags |
+| `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | unset | Twitch app credentials: show when the stream is live |
+| `YOUTUBE_API_KEY` | unset | Optional: detect a live YouTube stream (recent videos work without it) |
+| `STREAM_TWITCH_LOGIN` | `sidscompetitiverounds` | Twitch channel to show |
+| `STREAM_YOUTUBE_CHANNEL_ID` | `UCz9MIFturPcCSJsFFzgyBxw` | YouTube channel to show |
 
 `PUBLIC_BASE_URL` may be given with or without `BASE_PATH` on the end (spec 9.2's compose
 snippet includes it); it is reduced to an origin either way. `SESSION_SECRET` must be at
@@ -55,11 +60,13 @@ every visitor against one shared bucket.
 
 ## API (served to the frontend)
 
-`/api/home`, `/api/leaderboard/:mode`, `/api/results`, `/api/results/1v1`, `/api/players/search?q=`, `/api/players/:id`, `/api/players/:id/{matches,matches-summary,rating-history,team-history,ffa-history,ovt-history,team-stats,achievements,tournaments}`, `/api/players/:id/vs/:opp`, `/api/tournaments`, `/api/tournaments/history`, `/api/tournaments/:id/bracket`, `/api/cards`, `/api/cards/leaders`, `/api/cards/:name/pickers`, `/api/chat/recent` (feature `chat`), `/api/meta`, `/api/me`, `/api/_status`.
+`/api/home`, `/api/leaderboard/:mode`, `/api/results`, `/api/results/1v1`, `/api/players/search?q=`, `/api/players/:id`, `/api/players/:id/{matches,matches-summary,rating-history,team-history,ffa-history,ovt-history,team-stats,achievements,tournaments}`, `/api/players/:id/vs/:opp`, `/api/tournaments`, `/api/tournaments/history`, `/api/tournaments/:id/bracket`, `/api/cards`, `/api/cards/leaders`, `/api/cards/:name/pickers`, `/api/card/:slug`, `/api/stream`, `/api/chat/recent` (feature `chat`), `/api/meta`, `/api/me`, `/api/_status`. For crawlers: `/robots.txt` and `/sitemap.xml`.
 
 Data routes answer with `{ data, fetched_at, stale }`. The aggregates (`/api/home`, `/api/meta`,
 `/api/tournaments`, `/api/tournaments/history`) add `errors[]`, naming the upstream items that
 failed with nothing cached. `/api/me` and `/api/_status` have their own shapes.
+
+Under `BASE_PATH`, robots.txt is served at `{BASE_PATH}/robots.txt`, where crawlers don't look: they read it only at the domain root.
 
 ## Deploy
 

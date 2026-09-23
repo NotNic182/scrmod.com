@@ -6,9 +6,11 @@ import { QueryState } from '../components/QueryState'
 import { PlayerLink } from '../components/PlayerLink'
 import { FfaLobbyCard, LiveSeries1v1, LiveSeries2v2, SpectateCard } from '../components/LiveSeriesCard'
 import { ResultTable } from '../components/ResultTable'
+import { StreamCard } from '../components/Stream'
 import { useIdentity } from '../lib/identity'
 import { agoFromMinutes } from '../lib/format'
 import { useFirst } from '../components/ShowMore'
+import { pageMeta } from '../../shared/seo'
 import type { PresenceEntry } from '../../shared/api-types'
 
 /** Players seen lately but not online now: the five most recent, the rest on request. */
@@ -34,12 +36,16 @@ function RecentlyOnline({ players, me }: { players: PresenceEntry[]; me: string 
 }
 
 export function Home() {
-  useTitle(null)
+  useTitle(pageMeta({ kind: 'home' }).title)
   const q = useHome()
   const id = useIdentity()
   return (
     <>
       <h1>Right now</h1>
+      <p className="page-intro">
+        <Link to="/guide">New to ranked ROUNDS? Start here →</Link>
+      </p>
+      <StreamCard watchLink />
       <QueryState q={q} label="live data">
         {(d, meta) => {
           const liveCount = d.live.series_1v1.length + d.live.series_2v2.length + d.live.ffa_lobbies.length

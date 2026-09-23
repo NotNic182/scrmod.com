@@ -17,6 +17,7 @@ import type {
   BoardMode,
   BracketResponse,
   CardLeadersResponse,
+  CardPageResponse,
   CardPickersResponse,
   CardsResponse,
   Env,
@@ -28,6 +29,7 @@ import type {
   ResultsResponse,
   SearchResponse,
   StatusResponse,
+  StreamResponse,
   TournamentHistoryResponse,
   TournamentsResponse,
 } from './types'
@@ -148,6 +150,15 @@ export function useCardPickers(name: string | null) {
   })
 }
 
+export function useCard(slug: string | undefined) {
+  return useQuery({
+    queryKey: ['card', slug],
+    queryFn: () => hubGet<CardPageResponse>(`/card/${encodeURIComponent(slug!)}`),
+    enabled: !!slug,
+    ...ref,
+  })
+}
+
 export function useMeta() {
   return useQuery({ queryKey: ['meta'], queryFn: () => hubGet<MetaEnvelope>('/meta'), ...ref })
 }
@@ -169,4 +180,8 @@ export function useSearch(q: string) {
 
 export function useStatus() {
   return useQuery({ queryKey: ['status'], queryFn: () => hubGet<StatusResponse>('/_status'), staleTime: 60_000, refetchInterval: false })
+}
+
+export function useStream() {
+  return useQuery({ queryKey: ['stream'], queryFn: () => hubGet<StreamResponse>('/stream'), refetchInterval: 60_000, refetchIntervalInBackground: false, staleTime: 30_000 })
 }

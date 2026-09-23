@@ -1,0 +1,15 @@
+{
+  "live": {
+    "platform": "youtube",
+    "title": "Zezima (1480) vs NotNic (1101) — Ranked BO3 [0-0] | Sid's Competitive Rounds",
+    "viewers": 14,
+    "started_at": "2026-09-23T08:21:24Z",
+    "url": "https://www.youtube.com/watch?v=i9k3zvlJ4XI",
+    "embed": { "kind": "youtube", "videoId": "i9k3zvlJ4XI" }
+  },
+  "recent": [
+    { "title": "Spirit (1868) vs galaxy ice (1818) — Ranked BO3 [0-1] | Sid's Competitive Rounds", "url": "https://www.youtube.com/watch?v=q4FLmnOqvto", "videoId": "q4FLmnOqvto", "published_at": "2026-09-23T07:06:15+00:00" },
+    { "title": "Stan (2065), SlopsOn1 (1436), NotNic (1317), TechTara (1313) — Ranked FFA | Sid's Competitive Rounds", "url": "https://www.youtube.com/watch?v=C3KMBsQz6ZM", "videoId": "C3KMBsQz6ZM", "published_at": "2026-09-23T01:22:08+00:00" }
+  ],
+  "links": { "twitch": "https://www.twitch.tv/sidscompetitiverounds", "youtube": "https://www.youtube.com/@SidsCompetitiveRounds" }
+}

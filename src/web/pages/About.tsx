@@ -1,8 +1,11 @@
+import { Link } from 'react-router'
 import { useTitle } from '../lib/title'
 import { useStatus } from '../api/hooks'
+import { LINKS } from '../../shared/links'
+import { pageMeta } from '../../shared/seo'
 
 export function About() {
-  useTitle('About & privacy')
+  useTitle(pageMeta({ kind: 'about' }).title)
   const s = useStatus()
   const st = s.data
   return (
@@ -16,7 +19,10 @@ export function About() {
         </p>
         <p className="muted">
           It is a community project, not affiliated with Landfall. Playing, queueing, betting, chatting and tournament signups still happen in the game and on the{' '}
-          <a href="https://discord.gg/4tsWadH6tc">Competitive Rounds Discord</a>.
+          <a href={LINKS.discord}>Competitive Rounds Discord</a>.
+        </p>
+        <p>
+          New to it? <Link to="/guide">How to install the mod and play ranked</Link>.
         </p>
       </div>
       <div className="card">
@@ -36,6 +42,8 @@ export function About() {
             Your Discord name appears only if you switched on <strong>Show Discord</strong> in the game.
           </li>
           <li>Deleting your data in the game removes it here within a minute.</li>
+          <li>The live stream player comes from Twitch or YouTube and only loads when you press play.</li>
+          <li>Search engines may keep an older copy of a public page for a while after data changes. Player profile pages ask search engines not to index them.</li>
         </ul>
       </div>
       <div className="card">
@@ -55,7 +63,7 @@ export function About() {
           <p className="faint">Loading status…</p>
         )}
         <p className="muted">
-          Get the mod: <a href="https://thunderstore.io/c/rounds/p/SidNDeed/SidsCompetitiveRounds/">Thunderstore</a> · <a href="https://github.com/SidNDeed/SidsCompetitiveRounds">GitHub</a>
+          Get the mod: <a href={LINKS.thunderstore}>Thunderstore</a> · <a href={LINKS.github}>GitHub</a>
         </p>
       </div>
     </>

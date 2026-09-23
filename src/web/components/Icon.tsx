@@ -62,6 +62,7 @@ const PATHS: Record<string, ReactNode> = {
     </>
   ),
   chevron: <path d="m6.5 9.5 5.5 5.5 5.5-5.5" />,
+  play: <path d="M8 5.5v13l10.5-6.5Z" />,
   check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
   trophy: (
     <>

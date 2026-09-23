@@ -1,6 +1,6 @@
 import { vi } from 'vitest'
 
-export type Responder = () => Response | Promise<Response>
+export type Responder = (url: URL) => Response | Promise<Response>
 export type RouteMap = Record<string, unknown | Responder>
 
 export interface Call {
@@ -25,7 +25,7 @@ export function fakeUpstream(map: RouteMap) {
     const key = url.pathname.replace(/^\/api\/v1/, '')
     if (!(key in map)) return json({ detail: `fake upstream: no route ${key}` }, 404)
     const hit = map[key]
-    if (typeof hit === 'function') return await (hit as Responder)()
+    if (typeof hit === 'function') return await (hit as Responder)(url)
     return json(hit)
   }) as unknown as typeof fetch
   return { fetchImpl, calls, map }

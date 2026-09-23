@@ -1,4 +1,5 @@
 import { afterEach, describe, it, expect } from 'vitest'
+import { readFileSync } from 'node:fs'
 import { hubGet, HubError } from '../../src/web/api/client'
 import { mockHub, env, jsonResponse } from './helpers/mockHub'
 
@@ -39,6 +40,16 @@ describe('hubGet', () => {
       ;(window as EarlyWindow).__scrEarly = { '/leaderboard/1v1': Promise.resolve(jsonResponse(env({ from: 'early' }))) }
       expect((await hubGet<{ data: { from: string } }>('/leaderboard/2v2')).data.from).toBe('network')
       expect(calls).toEqual(['/leaderboard/2v2'])
+    })
+
+    it("is started for the home page's live data and its stream", () => {
+      const html = readFileSync('src/web/index.html', 'utf8') // vitest runs from the repository root
+      const script = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]).find((js) => js.includes('__scrEarly'))!
+      const { calls } = mockHub({})
+      expect(location.pathname).toBe('/')
+      new Function(script.replace('%BASE_URL%', '/'))()
+      expect(calls).toEqual(['/home', '/stream'])
+      expect(Object.keys((window as EarlyWindow).__scrEarly!)).toEqual(['/home', '/stream'])
     })
 
     it('that failed to connect is retried on the network instead of failing the page', async () => {
