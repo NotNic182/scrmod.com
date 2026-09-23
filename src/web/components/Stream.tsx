@@ -7,7 +7,7 @@ const PLATFORM = { twitch: 'Twitch', youtube: 'YouTube' } as const
 
 /**
  * The community's live stream, when there is one. Nothing is requested from Twitch or YouTube until the visitor
- * presses play: the card is drawn in the site's own style, and the player replaces it on demand.
+ * presses play: until then the card is one compact row in the site's own style, and the player opens under it.
  */
 export function StreamCard() {
   const q = useStream()
@@ -16,6 +16,7 @@ export function StreamCard() {
   const live = q.data?.data.live
   if (!live) return null
   const platform = PLATFORM[live.platform]
+  const since = relTime(live.started_at)
   const src =
     live.embed.kind === 'twitch'
       ? `https://player.twitch.tv/?channel=${encodeURIComponent(live.embed.channel)}&parent=${encodeURIComponent(location.hostname)}&autoplay=true`
@@ -24,29 +25,35 @@ export function StreamCard() {
     <section className="card stream" aria-labelledby={id}>
       <div className="card-head">
         <h2 id={id}>Live on stream</h2>
-        <span className="muted">
-          {platform}
-          {live.viewers != null ? ` · ${num(live.viewers)} watching` : ''}
-        </span>
+      </div>
+      <div className="panel stream-row">
+        <div className="stream-info">
+          <div className="row">
+            <span className="chip live-pill">LIVE</span>
+            <span className="stream-title">{live.title}</span>
+          </div>
+          <span className="muted stream-meta">
+            {platform}
+            {live.viewers != null ? ` · ${num(live.viewers)} watching` : ''}
+            {since ? ` · started ${since}` : ''}
+          </span>
+        </div>
+        {/* The accessible name starts with the visible words, so a voice user can say what they see (WCAG 2.5.3). */}
+        {playing ? null : (
+          <button type="button" className="btn" onClick={() => setPlaying(true)} aria-label={`Watch here: ${live.title}`}>
+            <Icon name="play" size={18} /> Watch here
+          </button>
+        )}
       </div>
       {playing ? (
         <div className="stream-frame">
           <iframe src={src} title={`${live.title} on ${platform}`} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen />
         </div>
-      ) : (
-        <button type="button" className="stream-play" onClick={() => setPlaying(true)} aria-label={`Watch ${live.title} here`}>
-          <span className="chip live-pill">LIVE</span>
-          <span className="stream-title">{live.title}</span>
-          <span className="stream-cta">
-            <Icon name="play" size={20} /> Watch here
-          </span>
-        </button>
-      )}
+      ) : null}
       <p className="subline">
         <a href={live.url} rel="noopener">
           Open on {platform}
         </a>
-        {live.started_at ? <span className="faint"> · started {relTime(live.started_at)}</span> : null}
       </p>
     </section>
   )

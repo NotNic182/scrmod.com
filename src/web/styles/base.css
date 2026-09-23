@@ -1606,40 +1606,31 @@ ol.prose li + li {
   margin: var(--space-xs) 0;
 }
 
-/* The live stream: a play surface in the site's own style until the visitor asks for the player. */
-.stream-play {
+/* The live stream: one compact row (what is on, and a button) until the visitor asks for the player, so the
+   live data below stays in view. On a phone the button wraps under the title. */
+.stream-row {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-  gap: var(--space-xs);
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  padding: var(--space-md);
-  border-radius: var(--radius-sm);
-  background: var(--bg-elev);
-  text-align: left;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
 }
-@media (hover: hover) {
-  .stream-play:hover {
-    background: var(--bg-hover);
-  }
+.stream-info {
+  display: flex;
+  flex: 1 1 16rem;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  min-width: 0;
 }
 .stream-title {
   font-size: var(--text-title);
-  font-weight: 600;
+  font-weight: 800;
 }
-.stream-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
+.stream-meta {
   font-size: var(--text-meta);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--fg);
 }
+/* The player: 16:9 at the card's width, up to 800px on a wide screen. */
 .stream-frame {
+  max-width: 800px;
   aspect-ratio: 16 / 9;
 }
 .stream-frame iframe {
