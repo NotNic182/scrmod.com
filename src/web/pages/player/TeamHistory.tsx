@@ -1,6 +1,7 @@
 import { usePlayerSub } from '../../api/hooks'
 import { QueryState } from '../../components/QueryState'
 import { fmtDate, signed } from '../../lib/format'
+import { Names } from '../../components/Names'
 
 export function TeamHistoryTab({ steamId }: { steamId: string }) {
   const q = usePlayerSub(steamId, 'team-history')
@@ -8,7 +9,7 @@ export function TeamHistoryTab({ steamId }: { steamId: string }) {
   return (
     <div className="card">
       {stats.data ? (
-        <div className="muted" style={{ marginBottom: 8 }}>
+        <div className="muted intro">
           2v2 rating {Math.round(stats.data.data.rating)} · peak {Math.round(stats.data.data.peak_rating)} · series {stats.data.data.series_wins}-{stats.data.data.series_losses} · streak {signed(stats.data.data.current_streak)}
         </div>
       ) : null}
@@ -32,8 +33,12 @@ export function TeamHistoryTab({ steamId }: { steamId: string }) {
                     <td>
                       <strong className={s.won ? 'good' : 'bad'}>{s.won ? 'W' : 'L'}</strong> <span className="tnum">{s.score}</span>
                     </td>
-                    <td>{s.mate}</td>
-                    <td>{(s.opponents ?? []).join(' & ')}</td>
+                    <td>
+                      <bdi>{s.mate}</bdi>
+                    </td>
+                    <td>
+                      <Names names={s.opponents} sep=" & " />
+                    </td>
                     <td className={`num tnum ${s.rating_change >= 0 ? 'good' : 'bad'}`}>{signed(s.rating_change, 1)}</td>
                   </tr>
                 ))}

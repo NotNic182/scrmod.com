@@ -13,10 +13,10 @@ export function AchievementsTab({ steamId }: { steamId: string }) {
           const n = sorted.filter((a) => a.unlocked).length
           return (
             <>
-              <div className="muted" style={{ marginBottom: 8 }}>
+              <div className="muted intro">
                 {n} of {sorted.length} unlocked
               </div>
-              <div className="tiles">
+              <div className="tiles ach">
                 {sorted.map((a) => (
                   <div key={a.achievement_key} className={`tile ${a.unlocked ? 'earned' : 'locked'}`}>
                     <div className="value ach-name">

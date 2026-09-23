@@ -9,7 +9,7 @@ export function HeadToHead({ p, me }: { p: HubProfile; me: string }) {
   const vs = useVs(p.steam_id, me)
   return (
     <>
-      <div className="tiles" style={{ marginBottom: 14 }}>
+      <div className="tiles">
         <StatTile label="Ranked series" value={`${p.h2h_series_wins ?? 0}-${p.h2h_series_losses ?? 0}`} sub={`${p.display_name} vs you`} />
         <StatTile label="Ranked games" value={`${p.h2h_ranked_wins ?? 0}-${p.h2h_ranked_losses ?? 0}`} />
         <StatTile label="Casual games" value={`${p.h2h_casual_wins ?? 0}-${p.h2h_casual_losses ?? 0}`} />
@@ -20,7 +20,9 @@ export function HeadToHead({ p, me }: { p: HubProfile; me: string }) {
           {(d) => (
             <div className="grid-2">
               <div>
-                <h3>{p.display_name}</h3>
+                <h3>
+                  <bdi className="player-name">{p.display_name}</bdi>
+                </h3>
                 <CardRows rows={d.player_cards} />
               </div>
               <div>
@@ -35,18 +37,28 @@ export function HeadToHead({ p, me }: { p: HubProfile; me: string }) {
   )
 }
 
-function CardRows({ rows }: { rows: Array<{ card_name: string; picks: number; wins: number }> }) {
+function CardRows({ rows }: { rows: Array<{ card_name: string; picks: number; wins: number }> | undefined }) {
+  if (!rows?.length) return <div className="empty">No picks against each other yet.</div>
   return (
-    <table className="t">
-      <tbody>
-        {rows.map((r) => (
-          <tr key={r.card_name}>
-            <td>{r.card_name}</td>
-            <td className="num">{r.picks}×</td>
-            <td className="num">{pct(r.picks ? r.wins / r.picks : 0)}</td>
+    <div className="table-wrap inset">
+      <table className="t">
+        <thead>
+          <tr>
+            <th>Card</th>
+            <th className="num">Picks</th>
+            <th className="num">Win %</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.card_name}>
+              <td>{r.card_name}</td>
+              <td className="num">{r.picks}×</td>
+              <td className="num">{pct(r.picks ? r.wins / r.picks : 0)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }

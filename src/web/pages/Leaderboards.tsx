@@ -81,6 +81,31 @@ function colsFor(mode: string, tiers: Parameters<typeof RankChip>[0]['tiers']): 
   ]
 }
 
+/**
+ * Previous / page / next. At the first or last page the buttons stay focusable (aria-disabled, not disabled), so
+ * keyboard focus isn't thrown out of the pager; only the top pager announces the page, so it isn't read twice.
+ */
+function Pager({ at, pages, onPage, live }: { at: number; pages: number; onPage: (n: number) => void; live?: boolean }) {
+  return (
+    <span className="row">
+      <button className="btn icon-btn" aria-disabled={at === 0 || undefined} onClick={() => at > 0 && onPage(at - 1)} aria-label="Previous page">
+        <span className="rot-prev">
+          <Icon name="chevron" size={18} />
+        </span>
+      </button>
+      <span aria-live={live ? 'polite' : undefined}>
+        <span className="sr-only">Page </span>
+        {at + 1} / {pages}
+      </span>
+      <button className="btn icon-btn" aria-disabled={at >= pages - 1 || undefined} onClick={() => at < pages - 1 && onPage(at + 1)} aria-label="Next page">
+        <span className="rot-next">
+          <Icon name="chevron" size={18} />
+        </span>
+      </button>
+    </span>
+  )
+}
+
 export function Leaderboards() {
   const { mode = '1v1' } = useParams()
   const [inactive, setInactive] = useState(false)
@@ -92,7 +117,22 @@ export function Leaderboards() {
   useTitle(`${MODES.find((m) => m.id === mode)?.label ?? mode} leaderboard`)
   const cols = useMemo(() => colsFor(mode, meta.data?.data.rank_tiers), [mode, meta.data])
   const modes = useRef<HTMLElement>(null)
+  const boardCard = useRef<HTMLDivElement>(null)
   useKeepActiveInView(modes, '[aria-current="page"]', mode)
+
+  const board = q.data?.data as AnyBoard | undefined
+  const all = (board?.entries as Row[] | undefined) ?? []
+  const needle = filter.trim().toLowerCase()
+  const rows = needle ? all.filter((r) => (r.display_name ?? '').toLowerCase().includes(needle)) : all
+  const pages = Math.max(1, Math.ceil(rows.length / PAGE))
+  // A refresh can shrink the board under the current page; fall back to the last page that exists.
+  const at = Math.min(page, pages - 1)
+  const slice = rows.slice(at * PAGE, at * PAGE + PAGE)
+  // The pager under the table brings the new page's first row into view; the one on top already is.
+  const toPage = (n: number, fromBottom: boolean) => {
+    setPage(n)
+    if (fromBottom) boardCard.current?.scrollIntoView?.({ block: 'start' })
+  }
 
   return (
     <>
@@ -104,73 +144,59 @@ export function Leaderboards() {
           </NavLink>
         ))}
       </nav>
-      <div className="row" style={{ marginBottom: 10 }}>
-        <input className="input" type="search" role="searchbox" aria-label="Filter by name" placeholder="Filter by name" maxLength={64} value={filter} onChange={(e) => { setFilter(e.target.value); setPage(0) }} style={{ maxWidth: 320 }} />
-        <label className="row" style={{ gap: 6 }}>
-          <input type="checkbox" checked={inactive} onChange={(e) => { setInactive(e.target.checked); setPage(0) }} /> show inactive (90+ days)
-        </label>
-      </div>
-      <div className="card">
+      {/* Everything that acts on the board sits in one bar on the board: the name filter, inactive players, the count and the pages. */}
+      <div className="card board" ref={boardCard}>
+        <div className="toolbar">
+          <input className="input filter" type="search" role="searchbox" aria-label="Filter by name" placeholder="Filter by name" maxLength={64} value={filter} onChange={(e) => { setFilter(e.target.value); setPage(0) }} />
+          <label className="row check">
+            <input type="checkbox" checked={inactive} onChange={(e) => { setInactive(e.target.checked); setPage(0) }} /> show inactive (90+ days)
+          </label>
+          <span className="spacer" />
+          {board ? <span className="muted">{plural(board.total_players, 'player')} ranked</span> : null}
+          {pages > 1 ? <Pager at={at} pages={pages} onPage={(n) => toPage(n, false)} live /> : null}
+        </div>
         <QueryState q={q} label="leaderboard">
-          {(board: AnyBoard) => {
-            const all = (board.entries as Row[]) ?? []
-            const needle = filter.trim().toLowerCase()
-            const rows = needle ? all.filter((r) => r.display_name.toLowerCase().includes(needle)) : all
-            const pages = Math.max(1, Math.ceil(rows.length / PAGE))
-            // A refresh can shrink the board under the current page; fall back to the last page that exists.
-            const at = Math.min(page, pages - 1)
-            const slice = rows.slice(at * PAGE, at * PAGE + PAGE)
-            return (
-              <>
-                <div className="row muted" style={{ marginBottom: 6 }}>
-                  <span>{plural(board.total_players, 'player')} ranked</span>
-                  <span className="spacer" />
-                  {pages > 1 ? (
-                    <span className="row">
-                      <button className="btn icon-btn" disabled={at === 0} onClick={() => setPage(at - 1)} aria-label="Previous page"><span className="rot-prev"><Icon name="chevron" size={18} /></span></button>
-                      <span>
-                        <span className="sr-only">Page </span>
-                        {at + 1} / {pages}
-                      </span>
-                      <button className="btn icon-btn" disabled={at >= pages - 1} onClick={() => setPage(at + 1)} aria-label="Next page"><span className="rot-next"><Icon name="chevron" size={18} /></span></button>
-                    </span>
-                  ) : null}
-                </div>
-                {needle && rows.length === 0 ? <EmptyState title={`No player on this board matches “${filter.trim()}”.`} hint={inactive ? undefined : 'Players inactive for 90+ days are hidden; tick “show inactive” to include them.'} /> : null}
-                <div className="table-wrap" hidden={needle !== '' && rows.length === 0}>
-                  <table className="t">
-                    <thead>
-                      <tr>
-                        <th className="num stick-rank">#</th>
-                        <th className="stick-name">Player</th>
+          {() => (
+            <>
+              {needle && rows.length === 0 ? <EmptyState title={`No player on this board matches “${filter.trim()}”.`} hint={inactive ? undefined : 'Players inactive for 90+ days are hidden; tick “show inactive” to include them.'} /> : null}
+              <div className="table-wrap" hidden={needle !== '' && rows.length === 0}>
+                <table className="t">
+                  <thead>
+                    <tr>
+                      <th className="num stick-rank">#</th>
+                      <th className="stick-name">Player</th>
+                      {cols.map((c) => (
+                        <th key={c.key} className={c.num ? 'num' : undefined}>
+                          {c.label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {slice.map((r) => (
+                      <tr key={r.steam_id} className={id.me?.steam_id === r.steam_id ? 'me' : undefined}>
+                        <td className={`num tnum stick-rank${r.rank <= 3 ? ` medal-${r.rank}` : ''}`}>{r.rank}</td>
+                        <td className="stick-name">
+                          <PlayerLink steamId={r.steam_id} name={r.display_name} title={r.title} titleColor={r.title_color} online={r.is_online} me={id.me?.steam_id === r.steam_id} />
+                          {r.inactive ? <span className="chip faint">inactive</span> : null}
+                        </td>
                         {cols.map((c) => (
-                          <th key={c.key} className={c.num ? 'num' : undefined}>
-                            {c.label}
-                          </th>
+                          <td key={c.key} className={c.num ? 'num' : undefined}>
+                            {c.cell(r)}
+                          </td>
                         ))}
                       </tr>
-                    </thead>
-                    <tbody>
-                      {slice.map((r) => (
-                        <tr key={r.steam_id} className={id.me?.steam_id === r.steam_id ? 'me' : undefined}>
-                          <td className={`num tnum stick-rank${r.rank <= 3 ? ` medal-${r.rank}` : ''}`}>{r.rank}</td>
-                          <td className="stick-name">
-                            <PlayerLink steamId={r.steam_id} name={r.display_name} title={r.title} titleColor={r.title_color} online={r.is_online} me={id.me?.steam_id === r.steam_id} />
-                            {r.inactive ? <span className="chip faint">inactive</span> : null}
-                          </td>
-                          {cols.map((c) => (
-                            <td key={c.key} className={c.num ? 'num' : undefined}>
-                              {c.cell(r)}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {pages > 1 ? (
+                <div className="pager-bottom">
+                  <Pager at={at} pages={pages} onPage={(n) => toPage(n, true)} />
                 </div>
-              </>
-            )
-          }}
+              ) : null}
+            </>
+          )}
         </QueryState>
       </div>
     </>

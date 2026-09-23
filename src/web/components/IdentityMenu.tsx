@@ -66,7 +66,9 @@ export function IdentityMenu() {
           <div className="card identity-panel" id={panelId}>
             {id.source === 'discord' ? (
               <>
-                <p className="muted">Signed in as {id.discord?.global_name ?? id.discord?.username}.</p>
+                <p className="muted">
+                  Signed in as <bdi>{id.discord?.global_name ?? id.discord?.username}</bdi>.
+                </p>
                 <button
                   className="btn"
                   disabled={signingOut}
@@ -86,7 +88,7 @@ export function IdentityMenu() {
               </>
             ) : (
               <>
-                {id.discord && !id.me ? <p className="muted">Signed in as {id.discord.username}, but no player is linked. Link your Discord in-game (F5 → Settings) or pin yourself below.</p> : null}
+                {id.discord && !id.me ? <p className="muted">Signed in as <bdi>{id.discord.username}</bdi>, but no player is linked. Link your Discord in-game (F5 → Settings) or pin yourself below.</p> : null}
                 <SearchBox
                   autoFocus
                   placeholder="Pin yourself: type your name"
@@ -96,12 +98,12 @@ export function IdentityMenu() {
                   }}
                 />
                 {id.me ? (
-                  <button className="btn" style={{ marginTop: 8 }} onClick={() => { id.unpin(); close(true) }}>
-                    Unpin {id.me.display_name}
+                  <button className="btn trailing" onClick={() => { id.unpin(); close(true) }}>
+                    Unpin <bdi className="player-name">{id.me.display_name}</bdi>
                   </button>
                 ) : null}
                 {id.authEnabled && !id.discord ? (
-                  <a className="btn btn-accent" style={{ marginTop: 8 }} href={authUrl('/discord/login')}>
+                  <a className="btn btn-accent trailing" href={authUrl('/discord/login')}>
                     Sign in with Discord
                   </a>
                 ) : null}

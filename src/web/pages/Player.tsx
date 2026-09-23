@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { useMeta, usePlayer } from '../api/hooks'
 import type { HubProfile } from '../api/types'
@@ -7,8 +7,10 @@ import { QueryState } from '../components/QueryState'
 import { RankChip } from '../components/RankChip'
 import { TabPanel, Tabs } from '../components/Tabs'
 import { TitleTag } from '../components/TitleTag'
+import { FormStrip } from '../components/FormStrip'
+import { StatTile } from '../components/StatTile'
 import { useIdentity } from '../lib/identity'
-import { relTime } from '../lib/format'
+import { ratio, relTime, signed } from '../lib/format'
 import { useTitle } from '../lib/title'
 import { NotFound } from './NotFound'
 import { Overview } from './player/Overview'
@@ -48,6 +50,7 @@ export function Player() {
   const meta = useMeta()
   const valid = !!steamId && /^\d{17}$/.test(steamId)
   const q = usePlayer(valid ? steamId : undefined, id.me?.steam_id ?? null)
+  const nameId = useId()
   useTitle(valid ? (q.data?.data.display_name ?? 'Player') : 'Not found')
   if (!valid) return <NotFound />
 
@@ -57,12 +60,14 @@ export function Player() {
 
   return (
     <QueryState q={q} label="player">
-      {(p) => (
-        <>
-          <header className="card">
-            <div className="row" style={{ alignItems: 'flex-start' }}>
+      {(p) => {
+        const streak = p.current_ranked_series_streak ?? 0
+        return (
+          <>
+            {/* Who they are, then where they stand in ranked play: above the tabs, so it stays in view on every tab. */}
+            <section className="card profile-head" aria-labelledby={nameId}>
               <div>
-                <h1 className="player-name" style={{ marginBottom: 4 }}>
+                <h1 id={nameId} className="player-name">
                   <bdi>{p.display_name}</bdi>
                   {isMe ? <span className="faint you"> (you)</span> : null}
                 </h1>
@@ -71,25 +76,36 @@ export function Player() {
                   <TitleTag title={p.active_title} color={p.active_title_color} />
                   {p.show_discord && p.discord_display_name ? <span className="chip">Discord: {p.discord_display_name}</span> : null}
                 </div>
-                <div className="faint" style={{ marginTop: 6 }}>
+                <div className="faint subline">
                   {p.last_match ? `last match ${relTime(p.last_match)}` : 'no matches yet'}
                   {p.mod_version ? ` · mod v${p.mod_version}` : ''}
                 </div>
               </div>
-              <span className="spacer" />
               {!isMe ? (
                 <button className="btn" onClick={() => id.pin({ steam_id: p.steam_id, display_name: p.display_name })}>
                   This is me
                 </button>
               ) : null}
-            </div>
-          </header>
-          <Tabs tabs={tabs} value={tab} onChange={(t) => setParams(t === 'overview' ? {} : { tab: t }, { replace: true })} panelId="player-panel" label="Player sections" />
-          <TabPanel id="player-panel" value={tab}>
-            {(TabBody[tab] ?? (() => <EmptyState title="Coming soon" />))({ p, me: id.me?.steam_id ?? null })}
-          </TabPanel>
-        </>
-      )}
+              <div className="tiles">
+                <StatTile label="Rating" value={Math.round(p.rating)} sub={`peak ${Math.round(p.peak_rating)}`} />
+                <StatTile label="Standing" value={p.standing ? `#${p.standing}` : '–'} sub={p.standing_population ? `of ${p.standing_population}` : undefined} />
+                <StatTile label="Ranked series" value={`${p.ranked_series_wins}-${p.ranked_series_losses}`} sub={`${ratio(p.ranked_series_wins, p.ranked_series_wins + p.ranked_series_losses)} win rate`} />
+                <StatTile label="Streak" value={signed(streak)} sub="series" tone={streak > 0 ? 'good' : streak < 0 ? 'bad' : undefined} />
+              </div>
+              <div className="profile-form">
+                <span className="stat-label">
+                  Recent form <span className="faint">· newest first</span>
+                </span>
+                <FormStrip form={p.recent_form} />
+              </div>
+            </section>
+            <Tabs tabs={tabs} value={tab} onChange={(t) => setParams(t === 'overview' ? {} : { tab: t }, { replace: true })} panelId="player-panel" label="Player sections" />
+            <TabPanel id="player-panel" value={tab}>
+              {TabBody[tab]({ p, me: id.me?.steam_id ?? null })}
+            </TabPanel>
+          </>
+        )
+      }}
     </QueryState>
   )
 }

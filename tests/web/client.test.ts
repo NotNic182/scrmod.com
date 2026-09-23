@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { afterEach, describe, it, expect } from 'vitest'
 import { hubGet, HubError } from '../../src/web/api/client'
 import { mockHub, env, jsonResponse } from './helpers/mockHub'
 
@@ -19,5 +19,33 @@ describe('hubGet', () => {
     expect(err).toBeInstanceOf(HubError)
     expect(err.status).toBe(404)
     expect(err.body).toEqual({ error: 'not_found' })
+  })
+
+  describe('a response index.html started before the app loaded', () => {
+    type EarlyWindow = { __scrEarly?: Record<string, Promise<Response>> }
+    afterEach(() => delete (window as EarlyWindow).__scrEarly)
+
+    it('answers the first request for its path, once; later requests go to the network', async () => {
+      const { calls } = mockHub({ '/home': env({ from: 'network' }) })
+      ;(window as EarlyWindow).__scrEarly = { '/home': Promise.resolve(jsonResponse(env({ from: 'early' }))) }
+      expect((await hubGet<{ data: { from: string } }>('/home')).data.from).toBe('early')
+      expect(calls).toEqual([])
+      expect((await hubGet<{ data: { from: string } }>('/home')).data.from).toBe('network')
+      expect(calls).toEqual(['/home'])
+    })
+
+    it('is ignored for other paths', async () => {
+      const { calls } = mockHub({ '/leaderboard/2v2': env({ from: 'network' }) })
+      ;(window as EarlyWindow).__scrEarly = { '/leaderboard/1v1': Promise.resolve(jsonResponse(env({ from: 'early' }))) }
+      expect((await hubGet<{ data: { from: string } }>('/leaderboard/2v2')).data.from).toBe('network')
+      expect(calls).toEqual(['/leaderboard/2v2'])
+    })
+
+    it('that failed to connect is retried on the network instead of failing the page', async () => {
+      const { calls } = mockHub({ '/home': env({ from: 'network' }) })
+      ;(window as EarlyWindow).__scrEarly = { '/home': Promise.reject(new TypeError('Failed to fetch')) }
+      expect((await hubGet<{ data: { from: string } }>('/home')).data.from).toBe('network')
+      expect(calls).toEqual(['/home'])
+    })
   })
 })

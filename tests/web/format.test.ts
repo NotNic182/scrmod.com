@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { relTime, pct, signed, fmtDate, clock, num, goldText } from '../../src/web/lib/format'
+import { relTime, pct, signed, fmtDate, clock, num, goldText, untilOrAgo, localDateTime } from '../../src/web/lib/format'
 
 const NOW = Date.parse('2026-09-22T12:00:00Z')
 
@@ -36,5 +36,23 @@ describe('format', () => {
     expect(goldText(-1, false)).toBe('hidden')
     expect(goldText(5, true)).toBe('hidden')
     expect(goldText(undefined, false)).toBe('–')
+  })
+  it('untilOrAgo: scheduled times read forward, past times read back', () => {
+    expect(untilOrAgo('2026-09-22T12:00:03Z', NOW)).toBe('now')
+    expect(untilOrAgo('2026-09-22T12:13:00Z', NOW)).toBe('in 13m')
+    expect(untilOrAgo('2026-09-22T15:00:00Z', NOW)).toBe('in 3h')
+    expect(untilOrAgo('2026-09-25T12:00:00Z', NOW)).toBe('in 3d')
+    expect(untilOrAgo('2026-09-22T09:00:00Z', NOW)).toBe('3h ago')
+    expect(untilOrAgo(null, NOW)).toBe('')
+    expect(untilOrAgo('garbage', NOW)).toBe('')
+  })
+  it('localDateTime: the date and the time come from the same local clock', () => {
+    // A local time whose UTC date is a different day, wherever this runs (off UTC): 23:30 west of UTC, 00:30 east.
+    const west = new Date(2026, 8, 23).getTimezoneOffset() > 0
+    const local = new Date(2026, 8, 23, west ? 23 : 0, 30)
+    const s = localDateTime(local.toISOString(), NOW)
+    expect(s).toMatch(/^Sep 23\b/)
+    expect(s).toMatch(west ? /\b(11|23):30\b/ : /\b(12|00):30\b/)
+    expect(localDateTime(null, NOW)).toBe('–')
   })
 })

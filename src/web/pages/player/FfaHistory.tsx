@@ -1,6 +1,7 @@
 import { usePlayerSub } from '../../api/hooks'
 import { QueryState } from '../../components/QueryState'
 import { fmtDate, signed } from '../../lib/format'
+import { Names } from '../../components/Names'
 
 export function FfaHistoryTab({ steamId }: { steamId: string }) {
   const q = usePlayerSub(steamId, 'ffa-history')
@@ -33,7 +34,9 @@ export function FfaHistoryTab({ steamId }: { steamId: string }) {
                     <td className="num">{g.rounds_won}</td>
                     <td className="num">{g.points_total}</td>
                     <td className={`num tnum ${g.rating_change >= 0 ? 'good' : 'bad'}`}>{signed(g.rating_change, 1)}</td>
-                    <td className="faint">{(g.participants ?? []).join(', ')}</td>
+                    <td className="faint">
+                      <Names names={g.participants} sep=", " />
+                    </td>
                   </tr>
                 ))}
               </tbody>

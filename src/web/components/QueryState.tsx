@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
 import type { UseQueryResult } from '@tanstack/react-query'
 import { HubError } from '../api/client'
 import { DataAge } from './DataAge'
@@ -32,18 +32,23 @@ interface Props<T> {
   children: (data: T, meta: { fetched_at: string; stale: boolean; errors: string[] }) => ReactNode
 }
 
-/** Error banner with a way out: 404s and rate limits don't get a retry (retrying can't help or makes it worse). */
-function ErrorBanner({ q, label }: { q: UseQueryResult<unknown>; label: string }) {
-  const status = q.error instanceof HubError ? q.error.status : 0
+/**
+ * Error banner with a way out: 404s and rate limits don't get a retry (retrying can't help or makes it worse).
+ * While a retry runs the button stays in place and focusable (aria-disabled, not disabled), so a keyboard user
+ * pressing it isn't dropped back to the top of the page.
+ */
+function ErrorBanner({ q, error, label }: { q: UseQueryResult<unknown>; error: unknown; label: string }) {
+  const status = error instanceof HubError ? error.status : 0
   const retryable = status !== 404 && status !== 429
+  const busy = q.isFetching
   return (
     <div className="banner bad row" role="alert">
-      <span>{status === 404 ? `${label[0].toUpperCase()}${label.slice(1)} not found. The link may be old, or the data was deleted.` : errorText(q.error)}</span>
+      <span>{status === 404 ? `${label[0].toUpperCase()}${label.slice(1)} not found. The link may be old, or the data was deleted.` : errorText(error)}</span>
       {retryable ? (
         <>
           <span className="spacer" />
-          <button className="btn btn-sm" onClick={() => void q.refetch()} disabled={q.isFetching}>
-            {q.isFetching ? 'Retrying…' : 'Try again'}
+          <button className="btn btn-sm" aria-disabled={busy || undefined} onClick={() => (busy ? undefined : void q.refetch())}>
+            {busy ? 'Retrying…' : 'Try again'}
           </button>
         </>
       ) : null}
@@ -52,9 +57,16 @@ function ErrorBanner({ q, label }: { q: UseQueryResult<unknown>; label: string }
 }
 
 export function QueryState<T>({ q, label, empty, emptyHint, children }: Props<T>) {
+  // React Query clears the error when a retry starts on a query that has no data yet; keep showing it (and the
+  // button that was pressed) until the retry settles, instead of swapping in the loading placeholder.
+  const lastError = useRef<unknown>(null)
+  if (q.error) lastError.current = q.error
   // Opened while offline: React Query parks the request instead of failing it, so say so instead of shimmering forever.
   if (q.isPending && q.fetchStatus === 'paused') {
     return <EmptyState title={`Can't load ${label} while you're offline.`} hint="It will load by itself when your connection comes back." />
+  }
+  if (q.isPending && q.errorUpdateCount > 0 && lastError.current) {
+    return <ErrorBanner q={q} error={lastError.current} label={label} />
   }
   if (q.isPending) {
     return (
@@ -67,13 +79,13 @@ export function QueryState<T>({ q, label, empty, emptyHint, children }: Props<T>
     )
   }
   if (q.isError && !q.data) {
-    return <ErrorBanner q={q} label={label} />
+    return <ErrorBanner q={q} error={q.error} label={label} />
   }
   const body = q.data!
   if (empty && empty(body.data)) return <EmptyState title={`No ${label} right now.`} hint={emptyHint} />
   return (
     <>
-      {q.isError ? <ErrorBanner q={q} label={label} /> : null}
+      {q.isError ? <ErrorBanner q={q} error={q.error} label={label} /> : null}
       {children(body.data, { fetched_at: body.fetched_at, stale: body.stale, errors: body.errors ?? [] })}
       <DataAge fetchedAt={body.fetched_at} stale={body.stale} />
     </>

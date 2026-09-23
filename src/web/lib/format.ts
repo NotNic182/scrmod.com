@@ -12,6 +12,34 @@ export function relTime(iso: string | null | undefined, now = Date.now()): strin
   return `${Math.floor(h / 24)}d ago`
 }
 
+/**
+ * For scheduled moments (a tournament start, a vote closing): "in 13m" ahead, relTime behind. relTime alone
+ * reads every future time as "just now", which is right for server clock skew and wrong for a schedule.
+ */
+export function untilOrAgo(iso: string | null | undefined, now = Date.now()): string {
+  if (!iso) return ''
+  const t = Date.parse(iso)
+  if (!Number.isFinite(t)) return ''
+  if (t <= now) return relTime(iso, now)
+  const m = Math.floor((t - now) / 60_000)
+  if (m < 1) return 'now'
+  if (m < 60) return `in ${m}m`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `in ${h}h`
+  return `in ${Math.floor(h / 24)}d`
+}
+
+/** "Sep 23, 11:30 PM" on the viewer's own clock: the date and the time must come from the same time zone. */
+export function localDateTime(iso: string | null | undefined, now = Date.now()): string {
+  if (!iso) return '–'
+  const t = Date.parse(iso)
+  if (!Number.isFinite(t)) return '–'
+  const d = new Date(t)
+  const sameYear = d.getFullYear() === new Date(now).getFullYear()
+  const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', ...(sameYear ? {} : { year: 'numeric' }) })
+  return `${date}, ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+}
+
 /** Drops a leading minus from a toFixed() string that rounded to zero (toFixed keeps the sign of values in (-1, 0)). */
 function unsignZero(fixed: string): string {
   return Number(fixed) === 0 ? fixed.replace(/^-/, '') : fixed
@@ -20,6 +48,12 @@ function unsignZero(fixed: string): string {
 export function pct(fraction: number | null | undefined, digits = 0): string {
   if (fraction === null || fraction === undefined || !Number.isFinite(fraction)) return '–'
   return `${unsignZero((fraction * 100).toFixed(digits))}%`
+}
+
+/** a out of b as a percentage; '–' when either is missing or zero. */
+export function ratio(a: number | null | undefined, b: number | null | undefined): string {
+  if (!a || !b) return '–'
+  return pct(a / b)
 }
 
 export function signed(n: number | null | undefined, digits = 0): string {

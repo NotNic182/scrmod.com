@@ -1,10 +1,11 @@
-import { lazy, useEffect, type ComponentType } from 'react'
+import { createElement, lazy, useEffect, useState, type ComponentType } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { BASE } from './api/client'
 import { IdentityMenu } from './components/IdentityMenu'
 import { Layout } from './components/Layout'
 import { Home } from './pages/Home'
+import { shouldPrefetch } from './lib/network'
 
 const client = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: true, refetchIntervalInBackground: false } },
@@ -17,18 +18,25 @@ const RELOADED = 'scrhub.chunk-reload'
  * Route-level split: Home ships in the first download, every other page (and the chart library, which only the
  * player page uses) arrives as its own chunk. After a deploy, an open tab may ask for a chunk that no longer
  * exists; reload once to pick up the new build instead of showing an error.
+ *
+ * A page whose code is already here (the entry page, preloaded before the first render, or one fetched in the
+ * background) renders directly. Through React.lazy it would suspend for a moment anyway, and React keeps a
+ * suspended page on its loading placeholder for at least 300ms: on a fast connection, most of the wait.
  */
 function page<K extends string>(load: () => Promise<Record<K, ComponentType>>, name: K) {
-  const importer = () =>
+  let loaded: ComponentType | null = null
+  const settle = (m: Record<K, ComponentType>) => {
+    loaded = m[name]
+    try {
+      sessionStorage.removeItem(RELOADED)
+    } catch {
+      // storage unavailable
+    }
+    return m
+  }
+  const fetchModule = () =>
     load().then(
-      (m) => {
-        try {
-          sessionStorage.removeItem(RELOADED)
-        } catch {
-          // storage unavailable
-        }
-        return { default: m[name] }
-      },
+      settle,
       (err: unknown) => {
         let tried = true
         try {
@@ -41,7 +49,14 @@ function page<K extends string>(load: () => Promise<Record<K, ComponentType>>, n
         throw err
       },
     )
-  return { Component: lazy(importer), prefetch: load }
+  const Lazy = lazy<ComponentType>(() => fetchModule().then((m) => ({ default: m[name] })))
+  function Component() {
+    // Decided once per visit to the page: switching from Lazy to direct mid-visit would remount it and lose its state.
+    const [ready] = useState(() => loaded)
+    return ready ? createElement(ready) : createElement(Lazy)
+  }
+  // prefetch: a background download; if it fails, the real visit to the page deals with it (and may reload).
+  return { Component, preload: fetchModule, prefetch: () => load().then(settle) }
 }
 
 const Leaderboards = page(() => import('./pages/Leaderboards'), 'Leaderboards')
@@ -53,9 +68,31 @@ const About = page(() => import('./pages/About'), 'About')
 const NotFound = page(() => import('./pages/NotFound'), 'NotFound')
 const LAZY = [Leaderboards, Player, Results, Tournaments, Cards, About, NotFound]
 
+/** Which page's code a path needs (mirrors the <Routes> below). Home is in the main bundle. */
+const ROUTE_PAGES: Array<[RegExp, (typeof LAZY)[number]]> = [
+  [/^\/leaderboards(\/|$)/, Leaderboards],
+  [/^\/players\//, Player],
+  [/^\/results\/?$/, Results],
+  [/^\/tournaments(\/|$)/, Tournaments],
+  [/^\/cards\/?$/, Cards],
+  [/^\/about\/?$/, About],
+]
+
+/** Downloads the code for the page at `pathname`, so main.tsx can render the entry page in one go. Never rejects. */
+export async function preloadRoute(pathname: string): Promise<void> {
+  const path = (pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname) || '/'
+  if (path === '/') return
+  const target = ROUTE_PAGES.find(([re]) => re.test(path))?.[1] ?? NotFound
+  await target.preload().then(
+    () => undefined,
+    () => undefined,
+  )
+}
+
 /** Once the first page is up and the browser is idle, fetch the other pages so navigating never waits. */
 function usePrefetchPages() {
   useEffect(() => {
+    if (!shouldPrefetch(navigator as { connection?: { saveData?: boolean; effectiveType?: string } })) return
     const run = () => LAZY.forEach((p) => void p.prefetch().catch(() => undefined))
     if ('requestIdleCallback' in window) {
       const id = requestIdleCallback(run, { timeout: 4000 })

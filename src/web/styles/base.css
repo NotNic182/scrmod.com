@@ -43,7 +43,7 @@ button {
 h1,
 h2,
 h3 {
-  margin: 0 0 10px;
+  margin: 0 0 var(--space-xs);
   line-height: 1.2;
   text-transform: uppercase;
   text-wrap: balance;
@@ -53,7 +53,7 @@ h1 {
   font-weight: 300;
   line-height: 1.15;
   letter-spacing: 0.16em;
-  margin-bottom: 14px;
+  margin-bottom: var(--space-md);
 }
 h2 {
   font-size: var(--text-meta);
@@ -71,29 +71,36 @@ h3 {
 .page {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 16px var(--gutter) 40px;
+  /* At least a screen tall, below the top bar: the footer starts out of view, so data arriving never pushes it down
+     in sight (that jump was every page's whole layout shift, 0.13). */
+  min-height: calc(100vh - var(--nav-h));
+  min-height: calc(100svh - var(--nav-h) - env(safe-area-inset-top));
+  /* Landscape on a notched phone: content stays clear of the notch and the rounded corners. */
+  padding: var(--space-md) max(var(--gutter), env(safe-area-inset-right)) var(--space-2xl) max(var(--gutter), env(safe-area-inset-left));
 }
 .card {
   background: var(--bg-card);
   border-radius: var(--radius);
-  padding: 14px;
-  margin-bottom: 14px;
+  padding: var(--pad-card);
+  margin-bottom: var(--gap-group);
 }
 .card-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
 }
+/* minmax(0, …): a column never grows past its share to fit one long word; the content inside gives way instead. */
 .grid-2 {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap-group);
 }
 @media (min-width: 760px) {
   .grid-2 {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 .muted {
@@ -116,7 +123,7 @@ h3 {
 .row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
   flex-wrap: wrap;
 }
 .spacer {
@@ -126,9 +133,9 @@ h3 {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
   min-height: 40px;
-  padding: 0 16px;
+  padding: 0 var(--space-md);
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   background: var(--bg-elev);
@@ -137,8 +144,10 @@ h3 {
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.btn:hover {
-  background: var(--bg-hover);
+@media (hover: hover) {
+  .btn:hover {
+    background: var(--bg-hover);
+  }
 }
 .btn-accent {
   background: var(--band);
@@ -157,7 +166,7 @@ h3 {
 }
 .input {
   min-height: 40px;
-  padding: 0 12px;
+  padding: 0 var(--space-sm);
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   background: var(--bg-elev);
@@ -172,8 +181,8 @@ h3 {
 .table-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  margin: 0 -14px;
-  padding: 0 14px;
+  margin: 0 calc(-1 * var(--pad-card));
+  padding: 0 var(--pad-card);
 }
 table.t {
   width: 100%;
@@ -183,7 +192,7 @@ table.t {
 }
 table.t th,
 table.t td {
-  padding: 8px 8px;
+  padding: var(--space-xs);
   text-align: left;
   border-bottom: 1px solid var(--line);
   white-space: nowrap;
@@ -228,6 +237,7 @@ table.t tr.me > td {
 }
 .topbar .brand {
   display: flex;
+  align-self: stretch;
   align-items: center;
   margin-right: 14px;
   color: var(--brand);
@@ -255,9 +265,11 @@ table.t tr.me > td {
   color: var(--bar-muted);
   white-space: nowrap;
 }
-.topnav a.item:hover {
-  color: var(--bar-fg);
-  background: rgba(255, 255, 255, 0.05);
+@media (hover: hover) {
+  .topnav a.item:hover {
+    color: var(--bar-fg);
+    background: rgba(255, 255, 255, 0.05);
+  }
 }
 .topnav a.item.active {
   color: var(--band-fg);
@@ -270,8 +282,10 @@ table.t tr.me > td {
   border-color: rgba(255, 255, 255, 0.24);
   color: var(--bar-fg);
 }
-.topbar .btn:hover {
-  background: rgba(255, 255, 255, 0.08);
+@media (hover: hover) {
+  .topbar .btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
 }
 .icon {
   flex: none;
@@ -404,16 +418,16 @@ body {
   }
 }
 .footer {
-  padding: 24px var(--gutter);
+  padding: var(--space-lg) max(var(--gutter), env(safe-area-inset-right)) var(--space-lg) max(var(--gutter), env(safe-area-inset-left));
   text-align: center;
   font-size: var(--text-meta);
   color: var(--fg-faint);
 }
 
 .banner {
-  padding: 10px 14px;
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-sm);
-  margin-bottom: 12px;
+  margin-bottom: var(--space-sm);
   font-weight: 600;
 }
 .banner.warn {
@@ -427,7 +441,7 @@ body {
 .age {
   font-size: var(--text-meta);
   color: var(--fg-faint);
-  margin-top: 8px;
+  margin-top: var(--space-xs);
 }
 .skeleton {
   height: 14px;
@@ -446,7 +460,7 @@ body {
   }
 }
 .empty {
-  padding: 24px;
+  padding: var(--space-lg);
   text-align: center;
   color: var(--fg-muted);
 }
@@ -493,24 +507,31 @@ body {
   color: oklch(from var(--api-c, var(--fg-muted)) clamp(var(--api-lmin), l, var(--api-lmax)) c h);
 }
 /* Stat tiles are one strip with hairline seams, like the game's menu panels. */
+/* As many tiles across as fit (2 on a phone, 4 on a tablet), stretched to fill: a group of 3 is three thirds, not
+   three quarters and a gap. */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2px;
+  grid-template-columns: repeat(auto-fit, minmax(min(8.5rem, 100%), 1fr));
+  gap: var(--space-3xs);
+  margin-bottom: var(--gap-group);
 }
-@media (min-width: 560px) {
-  .tiles {
-    grid-template-columns: repeat(4, 1fr);
-  }
+.tiles.ach {
+  grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr));
 }
 .tile {
   background: var(--bg-card);
-  padding: 12px 14px;
+  padding: var(--space-sm) var(--space-md);
+}
+/* A tile caption can carry a player name ("Name vs you"): it breaks inside the tile, never widens the strip. Labels
+   and values are short and never break mid-word. */
+.tile .sub {
+  overflow-wrap: anywhere;
 }
 .card .tile {
   background: var(--bg-elev);
 }
-.tile .label {
+.tile .label,
+.stat-label {
   font-size: var(--text-label);
   text-transform: uppercase;
   letter-spacing: var(--track-menu);
@@ -530,11 +551,11 @@ body {
 .tabs {
   position: relative;
   display: flex;
-  gap: 4px;
+  gap: var(--space-2xs);
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scrollbar-width: thin;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-sm);
   border-bottom: 1px solid var(--line);
 }
 .tabs button,
@@ -564,7 +585,7 @@ body {
   place-items: center;
   width: 1.375rem;
   height: 1.375rem;
-  margin: 0 3px 3px 0;
+  margin: 0;
   border-radius: var(--radius-sm);
   font-size: var(--text-label);
   font-weight: 700;
@@ -587,8 +608,8 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  gap: 12px;
-  margin-top: 10px;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
   font-size: var(--text-title);
 }
 .versus .side {
@@ -626,7 +647,7 @@ body {
     left: 0;
     width: 2.75rem;
     min-width: 2.75rem;
-    box-shadow: -14px 0 0 var(--cell-bg, var(--bg-card-solid));
+    box-shadow: calc(-1 * var(--pad-card)) 0 0 var(--cell-bg, var(--bg-card-solid));
   }
   table.t .stick-name {
     left: 2.75rem;
@@ -655,7 +676,7 @@ body {
   }
   /* In tables the cell padding already counts toward the target: absorb it so rows stay 44px, not 60+. */
   table.t .plink {
-    margin-block: -8px;
+    margin-block: calc(-1 * var(--space-xs));
   }
 }
 
@@ -766,7 +787,7 @@ main:focus {
 
 .search-results {
   list-style: none;
-  margin: 6px 0 0;
+  margin: var(--space-xs) 0 0;
   padding: 0;
 }
 .search-results[hidden] {
@@ -778,8 +799,8 @@ main:focus {
   justify-content: space-between;
   gap: 12px;
   min-height: 40px;
-  margin-top: 4px;
-  padding: 0 14px;
+  margin-top: var(--space-2xs);
+  padding: 0 var(--space-sm);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   background: var(--bg-elev);
@@ -795,10 +816,10 @@ main:focus {
   color: var(--band-fg);
 }
 .search-status {
-  margin-top: 8px;
+  margin-top: var(--space-xs);
 }
 .details-link {
-  margin: 4px 0 6px;
+  margin: var(--space-2xs) 0 var(--space-xs);
 }
 /* The one explicit "go to profile" link in an expanded row: it has to look like a link, not a label. */
 .details-link .plink {
@@ -813,7 +834,9 @@ main:focus {
   }
 }
 
-.btn:disabled {
+/* aria-disabled buttons (a pager at its last page, a retry in flight) keep keyboard focus; they look the same. */
+.btn:disabled,
+.btn[aria-disabled='true'] {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -865,13 +888,13 @@ ul.prose {
   padding-left: 1.25rem;
 }
 ul.prose li + li {
-  margin-top: 4px;
+  margin-top: var(--space-2xs);
 }
 
 /* An item inside a card (a live game): an inset surface, not a second bordered card. */
 .panel {
-  padding: 12px 14px;
-  margin-bottom: 10px;
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-xs);
   border-radius: var(--radius-sm);
   background: var(--bg-elev);
 }
@@ -888,7 +911,7 @@ details.acc:first-of-type {
 }
 details.acc > summary {
   min-height: 48px;
-  padding: 4px 0;
+  padding: var(--space-2xs) 0;
   cursor: pointer;
   list-style: none;
 }
@@ -910,7 +933,7 @@ details.acc[open] > summary::before {
   transform: rotate(45deg);
 }
 details.acc[open] {
-  padding-bottom: 10px;
+  padding-bottom: var(--space-sm);
 }
 
 .toolbar {
@@ -918,8 +941,8 @@ details.acc[open] {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
 }
 .segmented {
   display: inline-flex;
@@ -939,8 +962,10 @@ details.acc[open] {
   text-transform: uppercase;
   color: var(--fg-muted);
 }
-.segmented button:hover {
-  color: var(--fg);
+@media (hover: hover) {
+  .segmented button:hover {
+    color: var(--fg);
+  }
 }
 .segmented button[aria-pressed="true"] {
   background: var(--band);
@@ -965,12 +990,14 @@ details.acc[open] {
 .disclosure[aria-expanded="true"] .icon {
   transform: none;
 }
-.disclosure:hover {
-  color: var(--accent-ink);
+@media (hover: hover) {
+  .disclosure:hover {
+    color: var(--accent-ink);
+  }
 }
 @media (pointer: coarse) {
   .segmented button {
-    min-height: 40px;
+    min-height: 44px;
   }
   .disclosure {
     min-height: 44px;
@@ -1030,8 +1057,8 @@ table.t tr.me .dot,
 }
 /* A list row that is you: the band runs the full width of its card, like the game's menu selection. */
 .me-row {
-  margin: 0 -14px;
-  padding: 0 14px;
+  margin: 0 calc(-1 * var(--pad-card));
+  padding: 0 var(--pad-card);
   background: var(--band);
   color: var(--band-fg);
 }
@@ -1055,4 +1082,508 @@ table.t tr.me .dot,
   .identity-name {
     padding: 0 10px;
   }
+}
+
+/* ---- Hardening: focus on colored surfaces, results feed, contrast themes ---- */
+/* The orange --accent-ink ring is 2:1 on the teal bars in Mist, and it vanishes on the orange band. The bars keep
+   their own ring in both themes; anything inside the band takes the band's ink. */
+.topbar :focus-visible,
+.tabbar :focus-visible,
+.skip-link:focus-visible {
+  outline-color: var(--bar-ring);
+}
+.topbar .identity-panel :focus-visible {
+  outline-color: var(--accent-ink);
+}
+/* Full-height bar entries draw the ring inside themselves: outside, it would spill off the bar. */
+.topnav a.item:focus-visible,
+.tabbar a:focus-visible {
+  outline-offset: -4px;
+}
+.topnav a.item.active:focus-visible,
+.tabbar a.active:focus-visible,
+table.t tr.me :focus-visible,
+.me-row :focus-visible {
+  outline-color: var(--band-fg);
+}
+/* A scrolling tab strip clips anything drawn outside its tabs. */
+.tabs :focus-visible {
+  outline-offset: -2px;
+}
+
+/* Steam names run to 32 characters with no break in them. In a row of player data a word that doesn't fit breaks,
+   rather than pushing the row (and the page) sideways; chips in the row (titles, lobby members, card names,
+   tournament labels) give way last, with an ellipsis. */
+.row {
+  overflow-wrap: anywhere;
+}
+:is(.row, .player, .card-head) > .chip {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The results feed names its columns for screen readers only: the header row takes no space. The cell anchors
+   its hidden label, which would otherwise escape the table's scroll box and widen the page. */
+table.t thead.sr-head th {
+  position: relative;
+  padding: 0;
+  border: 0;
+}
+.change {
+  margin-inline-start: var(--space-xs);
+}
+table.t td.score {
+  font-weight: 800;
+}
+.slot {
+  font-weight: 500;
+}
+.slot.won {
+  font-weight: 800;
+}
+/* A rolled pick: said in words, and set apart by an outline instead of a fade that took it under 4.5:1. */
+.chip.card-chip.rolled {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--fg-muted);
+}
+.rolled-tag {
+  color: var(--fg-faint);
+  font-weight: 500;
+}
+
+/* Windows contrast themes drop background colors, and with them the orange band. Every "you are here" state gets
+   the system's own selection colors instead, and tab underlines are drawn only under the selected tab. */
+@media (forced-colors: active) {
+  .topnav a.item.active,
+  .tabbar a.active,
+  .segmented button[aria-pressed='true'],
+  .search-option[aria-selected='true'],
+  table.t tr.me > td,
+  .me-row {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+  table.t tr.me > td *,
+  .me-row * {
+    color: HighlightText;
+  }
+  .tabs button,
+  .tabs a {
+    border-bottom-color: Canvas;
+  }
+  .tabs button[aria-selected='true'],
+  .tabs a[aria-current='page'] {
+    border-bottom-color: Highlight;
+  }
+  /* Online dots carry their state in color alone on screen (the label is for screen readers): keep the color. */
+  .dot {
+    forced-color-adjust: none;
+  }
+}
+
+/* ---- Adapt: phones, landscape, touch ---- */
+/* A table inside a grid column scrolls within the column rather than bleeding into the card's padding. */
+.table-wrap.inset {
+  margin: 0;
+  padding: 0;
+}
+
+/* Results feeds in a narrow card: each game takes two lines instead of a row wider than the screen, so the loser
+   and the time are visible without scrolling sideways.
+     [2v2]  Sid + Spirit +11.8          1–0
+            vs Nix + SlopsOn1 −20.5   5h ago                                                          */
+.feed-wrap {
+  container: feed / inline-size;
+}
+@container feed (max-width: 34rem) {
+  table.t.feed,
+  table.t.feed tbody {
+    display: block;
+  }
+  /* The ranked table's visible header row goes; the column names stay for screen readers. */
+  table.t.feed thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  table.t.feed tr {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: baseline;
+    column-gap: var(--space-sm);
+    row-gap: var(--space-3xs);
+    padding: var(--space-xs) 0;
+    border-bottom: 1px solid var(--line);
+  }
+  table.t.feed td {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  table.t.feed td.score,
+  table.t.feed td.when {
+    grid-column: 3;
+    text-align: right;
+    white-space: nowrap;
+  }
+  table.t.feed td.score {
+    grid-row: 1;
+  }
+  table.t.feed td.against,
+  table.t.feed td.when {
+    grid-row: 2;
+  }
+  table.t.feed td.against {
+    grid-column: 2;
+  }
+  table.t.feed td.when {
+    font-size: var(--text-meta);
+  }
+  table.t.feed td.against::before {
+    content: 'vs ';
+    content: 'vs ' / '';
+    color: var(--fg-faint);
+  }
+  @media (hover: hover) {
+    table.t.feed tbody tr:hover {
+      background: var(--bg-hover);
+    }
+    table.t.feed tbody tr:hover > td {
+      background: none;
+    }
+  }
+  /* Ranked series: no mode column, so winner and loser share the first column. Each row holds two player
+     links, one per line: they get 32px targets that meet edge to edge (44px would overlap, or force a gap
+     inside the row as wide as the gap between rows). */
+  table.t.feed-series tr {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: var(--space-xs);
+    padding: var(--space-xs) 0;
+  }
+  table.t.feed-series td.score,
+  table.t.feed-series td.when {
+    grid-column: 2;
+  }
+  table.t.feed-series td.against {
+    grid-column: 1;
+  }
+}
+@media (pointer: coarse) {
+  @container feed (max-width: 34rem) {
+    table.t.feed .plink {
+      min-height: 32px;
+      margin-block: -4px;
+    }
+  }
+}
+
+/* Landscape phones (tab bar showing, screen short): the top bar scrolls away with the page and the tab bar slims to
+   one line, so fixed chrome takes 44px of a ~375px-tall screen instead of 115px. */
+@media (max-width: 839px) and (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --tabbar-h: 44px;
+  }
+  .topbar {
+    position: relative;
+  }
+  .tabbar a {
+    flex-direction: row;
+    gap: 8px;
+    font-size: var(--text-label);
+  }
+}
+
+/* Touch: controls answer a press (the browser's own tap flash is turned off), and the small links that remained
+   get full-size targets without making their lines taller. */
+@media (hover: none) {
+  .btn:not(.btn-accent):active,
+  .segmented button:not([aria-pressed='true']):active,
+  .disclosure:active,
+  details.acc > summary:active,
+  .tabs :is(a, button):active {
+    background: var(--bg-hover);
+  }
+  .topbar .btn:active {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+@media (pointer: coarse) {
+  /* "all results →" and "← tournaments" in a card header. */
+  .card-head > a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-block: -10px;
+  }
+  .check {
+    min-height: 44px;
+  }
+  .check input {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  /* The only way to About & privacy on a phone. */
+  .footer a {
+    display: inline-block;
+    padding: 12px 6px;
+    margin: -12px -6px;
+  }
+}
+
+/* ---- Layout: rhythm and structure ---- */
+/* Inside a card the last block adds nothing to the card's own padding. */
+.card > :last-child {
+  margin-bottom: 0;
+}
+/* A heading in a card header row: the row sets the spacing (a flex row doesn't collapse margins, so the heading's
+   own margin was doubling it). */
+.card-head > :is(h2, h3) {
+  margin: 0;
+}
+/* A sub-section inside a card starts a group step below the one before, and sits close to its own content. */
+.card h3:not(:first-child) {
+  margin-top: var(--gap-group);
+}
+/* Paired cards: the grid owns the gap, so a pair stacked on a phone is one group step apart like any two cards. */
+.grid-2 {
+  margin-bottom: var(--gap-group);
+}
+.grid-2 > .card {
+  margin-bottom: 0;
+}
+/* Unequal neighbours (live games beside who's on) keep their own heights instead of stretching to match. */
+.grid-2.top {
+  align-items: start;
+}
+/* "as of …" belongs to the block above it: close under it, then a group step before whatever follows. */
+.grid-2:has(+ .age) {
+  margin-bottom: 0;
+}
+.grid-2 + .age {
+  margin-bottom: var(--gap-group);
+}
+
+/* Named spacing roles that replaced one-off inline styles. */
+.subline {
+  margin-top: var(--space-2xs);
+}
+.intro {
+  margin-bottom: var(--space-sm);
+}
+.trailing {
+  margin-top: var(--space-sm);
+}
+.list-row {
+  min-height: 2.25rem;
+}
+.row.tight {
+  gap: var(--space-2xs);
+}
+.chip-row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+}
+.chip.after {
+  margin-inline-start: var(--space-xs);
+}
+.chip.rank {
+  border: 1px solid currentColor;
+}
+.chip.title-tag {
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+.plink.strong {
+  font-weight: 800;
+}
+.nowrap {
+  white-space: nowrap;
+}
+.form-strip {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+}
+.game-row {
+  padding: var(--space-xs) 0;
+  border-top: 1px solid var(--line);
+}
+.round-group + .round-group {
+  margin-top: var(--space-sm);
+}
+.podium {
+  margin: var(--space-xs) 0;
+}
+.teams {
+  margin-top: var(--space-xs);
+}
+.teams .versus-score {
+  margin: var(--space-2xs) 0;
+}
+.members {
+  margin-top: var(--space-xs);
+}
+.rating-graph {
+  width: 100%;
+}
+.input.filter {
+  width: 20rem;
+  max-width: 100%;
+}
+.input.sort {
+  max-width: 14rem;
+}
+table.t td.pickers-cell {
+  background: var(--bg-elev);
+}
+
+/* Player header: who they are, then where they stand. The ranked summary lives above the tabs, so every tab keeps it
+   in view. */
+.profile-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-md) var(--space-sm);
+}
+.profile-head h1 {
+  margin-bottom: var(--space-2xs);
+}
+.profile-head > .tiles,
+.profile-head > .profile-form {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.profile-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-sm);
+}
+
+/* A series in match history: the same columns on every row, so kind, score, rating change and date line up down
+   the list. On a phone the change and date take a second line under the name. */
+details.acc > summary.series-row {
+  display: grid;
+  grid-template-columns: auto 5.5rem minmax(0, 1fr) auto 4.5rem 4.5rem;
+  grid-template-areas: 'chev kind who score change date';
+  align-items: center;
+  column-gap: var(--space-sm);
+}
+details.acc > summary.series-row::before {
+  grid-area: chev;
+}
+.series-row .series-kind {
+  grid-area: kind;
+  justify-self: start;
+}
+.series-row .series-who {
+  grid-area: who;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2xs) var(--space-xs);
+  min-width: 0;
+}
+.series-row .series-score {
+  grid-area: score;
+  text-align: right;
+}
+.series-row .series-change {
+  grid-area: change;
+  text-align: right;
+}
+.series-row .series-date {
+  grid-area: date;
+  text-align: right;
+}
+@media (max-width: 559px) {
+  details.acc > summary.series-row {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'chev kind who score'
+      '. . change date';
+    row-gap: var(--space-3xs);
+    padding-block: var(--space-xs);
+  }
+  .series-row .series-change {
+    text-align: left;
+  }
+}
+
+@media (max-width: 839px) {
+  /* Leaderboard on a phone: a player's title chip goes under the name, so the pinned name column stays narrow
+     enough for Rating to show beside it. */
+  table.t .stick-name .player {
+    flex-wrap: wrap;
+    row-gap: var(--space-3xs);
+    max-width: 11rem;
+    white-space: normal;
+  }
+  /* Cards table on a phone: the card name stays put while the numbers scroll under it. */
+  table.t .stick-lead {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--cell-bg, var(--bg-card-solid));
+    box-shadow:
+      calc(-1 * var(--pad-card)) 0 0 var(--cell-bg, var(--bg-card-solid)),
+      inset -1px 0 var(--line);
+  }
+}
+.plink {
+  font-weight: 600;
+}
+.pager-bottom {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-sm);
+}
+/* The pager under the board scrolls the board's top back into view, clear of the sticky top bar. */
+.card.board {
+  scroll-margin-top: calc(var(--nav-h) + env(safe-area-inset-top) + var(--space-xs));
+}
+@media (max-width: 559px) {
+  /* On a phone the four ranked numbers sit two by two in compact tiles, so the summary above every tab stays short
+     (a quarter-width tile is too narrow for "STANDING" on a 390px phone). */
+  .profile-head .tile {
+    padding: var(--space-xs) var(--space-sm);
+  }
+  .profile-head .tile .value {
+    font-size: var(--text-title);
+  }
+}
+
+/* The rating chart's key: which line is which, in the label voice with a swatch of each line. */
+.chart-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-md);
+  margin-top: var(--space-xs);
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: var(--track-menu);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.chart-key .key::before {
+  content: '';
+  display: inline-block;
+  width: 1rem;
+  height: 2px;
+  margin-inline-end: var(--space-xs);
+  vertical-align: middle;
+}
+.key-1v1::before {
+  background: var(--accent-ink);
+}
+.key-ffa::before {
+  background: var(--info);
 }

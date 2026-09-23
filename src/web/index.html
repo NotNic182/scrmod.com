@@ -16,6 +16,35 @@
         document.documentElement.dataset.theme = t
       } catch (e) {}
     </script>
+    <!-- Start the entry page's data now, alongside the app download, instead of after it. hubGet() (api/client.ts)
+         takes each response once. Paths mirror api/hooks.ts; a mismatch only costs the head start. -->
+    <script>
+      try {
+        var base = "%BASE_URL%".replace(/\/$/, "")
+        var p = location.pathname.slice(base.length).replace(/\/$/, "") || "/"
+        var want = []
+        var m
+        if (p === "/") want.push("/home")
+        else if ((m = /^\/leaderboards(?:\/([\w-]+))?$/.exec(p))) want.push("/leaderboard/" + (m[1] || "1v1"), "/meta")
+        else if ((m = /^\/players\/(\d{17})$/.exec(p))) {
+          // The profile request names the pinned viewer (for head-to-head), exactly as usePlayer() does on first render.
+          var me = null
+          try {
+            me = JSON.parse(localStorage.getItem("scrhub.me") || "null").steam_id
+          } catch (e) {}
+          want.push("/players/" + m[1] + (me && me !== m[1] ? "?me=" + me : ""), "/meta")
+        } else if ((m = /^\/tournaments(?:\/([0-9a-f-]{36}))?$/i.exec(p))) {
+          want.push("/tournaments", "/tournaments/history")
+          if (m[1]) want.push("/tournaments/" + m[1] + "/bracket")
+        }
+        var early = (window.__scrEarly = {})
+        want.forEach(function (w) {
+          var res = fetch(base + "/api" + w, { headers: { Accept: "application/json" }, credentials: "same-origin" })
+          res.catch(function () {}) // an unused failure stays quiet; the page's own request still sees it and retries
+          early[w] = res
+        })
+      } catch (e) {}
+    </script>
     <title>SCRmod</title>
     <meta name="description" content="Sid's Competitive Rounds from your browser: who is online, live games, leaderboards and stats." />
     <meta property="og:site_name" content="SCRmod" />

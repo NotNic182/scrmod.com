@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { renderApp } from './helpers/render'
 import { mockHub, env } from './helpers/mockHub'
 import { profile, matches, achievements } from './helpers/fixtures'
@@ -14,6 +14,11 @@ describe('Player tabs', () => {
   it('renders matches grouped by series with card chips', async () => {
     mockHub({ [`/players/${ME}`]: env(profile), [`/players/${ME}/matches?limit=100`]: env(matches), '/me': SIGNED_OUT })
     renderApp(<Player />, { route: `/players/${ME}?tab=matches`, path: '/players/:steamId' })
+    // Series rows list first; a row builds its games (and their card chips) when it is opened.
+    await waitFor(() => expect(document.querySelectorAll('details.acc').length).toBeGreaterThan(0))
+    const row = document.querySelector<HTMLDetailsElement>('details.acc')!
+    row.open = true
+    fireEvent(row, new Event('toggle'))
     await waitFor(() => expect(screen.getAllByText(/game \d/i).length).toBeGreaterThan(0))
     const first = matches[0] as { cards_picked: Array<{ card_name: string }> }
     if (first.cards_picked.length) expect(screen.getAllByText(first.cards_picked[0].card_name).length).toBeGreaterThan(0)
