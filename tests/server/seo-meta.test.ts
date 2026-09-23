@@ -53,6 +53,24 @@ describe('pageMeta', () => {
     expect(pageMeta({ kind: 'card', slug: 'big-bullet' }).title).toBe('Big Bullet: ROUNDS card win rate and stats · SCRmod')
   })
 
+  it('falls back to the no-facts card description when a number or the rarity is missing', () => {
+    const plain = pageMeta({ kind: 'card', slug: 'big-bullet' }).description
+    const full = { name: 'Big Bullet', rarity: 'Common', win_rate: 0.5, times_picked: 10, pass_rate: 0.3 }
+    for (const card of [
+      { ...full, win_rate: null },
+      { ...full, times_picked: undefined },
+      { ...full, pass_rate: Number.NaN },
+      { ...full, win_rate: Number.POSITIVE_INFINITY },
+      { ...full, rarity: undefined },
+      { ...full, rarity: '' },
+    ]) {
+      const m = pageMeta({ kind: 'card', slug: 'big-bullet' }, { card: card as never })
+      expect(m.description).toBe(plain)
+      expect(m.description).not.toMatch(/NaN|undefined|null|Infinity/)
+      expect(m.title).toBe('Big Bullet: ROUNDS card win rate and stats · SCRmod')
+    }
+  })
+
   it('keeps player pages out of the index and summarises them for link previews', () => {
     const m = pageMeta({ kind: 'player', id: '76561199311926326' }, { player: { display_name: 'NotNic', rating: 1101.8, rank_name: 'Beginner I', standing: 189, standing_population: 198, ranked_series_wins: 45, ranked_series_losses: 95 } })
     expect(m.title).toBe('NotNic: ROUNDS ranked stats · SCRmod')

@@ -44,9 +44,13 @@ export function article(site: string, a: { headline: string; description: string
     '@type': 'Article',
     headline: a.headline,
     description: a.description,
+    // The guide has no separate first-publication date; the last check stands in for both.
+    datePublished: a.dateModified,
     dateModified: a.dateModified,
     mainEntityOfPage: url(site, a.path),
+    image: `${site}/og.png`,
     about: { '@id': `${site}/#mod` },
+    author: { '@type': 'Organization', name: 'SCRmod', url: `${site}/` },
     publisher: { '@type': 'Organization', name: 'SCRmod', url: `${site}/` },
   }
 }

@@ -20,7 +20,15 @@ describe('structured data', () => {
     const b = breadcrumbs(SITE, [{ name: 'Home', path: '/' }, { name: 'Cards', path: '/cards' }]) as Record<string, any>
     expect(b.itemListElement[1]).toEqual({ '@type': 'ListItem', position: 2, name: 'Cards', item: 'https://scrmod.com/cards' })
     const a = article(SITE, { headline: 'H', description: 'D', path: '/guide', dateModified: '2026-09-23' }) as Record<string, any>
-    expect(a).toMatchObject({ '@type': 'Article', headline: 'H', dateModified: '2026-09-23', mainEntityOfPage: 'https://scrmod.com/guide' })
+    expect(a).toMatchObject({
+      '@type': 'Article',
+      headline: 'H',
+      datePublished: '2026-09-23',
+      dateModified: '2026-09-23',
+      mainEntityOfPage: 'https://scrmod.com/guide',
+      author: { '@type': 'Organization', name: 'SCRmod', url: 'https://scrmod.com/' },
+      image: 'https://scrmod.com/og.png',
+    })
     const l = itemList(SITE, [{ name: 'Big Bullet', path: '/cards/big-bullet' }]) as Record<string, any>
     expect(l.itemListElement[0]).toEqual({ '@type': 'ListItem', position: 1, name: 'Big Bullet', url: 'https://scrmod.com/cards/big-bullet' })
   })

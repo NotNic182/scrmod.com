@@ -213,9 +213,11 @@ export function pageMeta(m: RouteMatch, facts: MetaFacts = {}): PageMeta {
     case 'card': {
       const c = facts.card
       const name = c?.name ?? slugToName(m.slug)
+      // Upstream rows can lack a number or the rarity: those would print "NaN%" or "(undefined)", so use the plain line.
+      const described = c && c.rarity && [c.win_rate, c.times_picked, c.pass_rate].every(Number.isFinite)
       return {
         title: titled(`${name}: ROUNDS card win rate and stats`),
-        description: c
+        description: described
           ? `${c.name} (${c.rarity}) in ROUNDS: ${percent(c.win_rate)} win rate, picked ${count(c.times_picked)} times and passed ${percent(c.pass_rate)} of the time in Sid's Competitive Rounds ranked and casual games.`
           : `Win rate, pick rate and the players who win most with ${name}, a ROUNDS card, across ranked and casual games of Sid's Competitive Rounds.`,
         path: `/cards/${c ? cardSlug(c.name) : cardSlug(m.slug)}`,
