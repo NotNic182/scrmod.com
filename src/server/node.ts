@@ -7,8 +7,8 @@ import { registerStatic } from './static'
 
 const env = parseEnv(process.env)
 const fetchImpl = env.fixtures ? createFixtureFetch(env.fixturesDir) : undefined
-const { app, version } = createApp({ env, fetchImpl, store: new MemoryCacheStore() })
-registerStatic(app, { root: env.webRoot, basePath: env.basePath })
+const { app, version, deps } = createApp({ env, fetchImpl, store: new MemoryCacheStore() })
+registerStatic(app, { root: env.webRoot, basePath: env.basePath, deps })
 
 // Discover the mod version before the first visitor does, so nobody waits on it.
 if (!env.fixtures) version.refresh().catch(() => {})

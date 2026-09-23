@@ -1,9 +1,11 @@
 import type { Hono } from 'hono'
-import type { Stats } from 'node:fs'
 import { readFile, stat } from 'node:fs/promises'
 import path from 'node:path'
 import { promisify } from 'node:util'
 import { brotliCompress, constants as zlib, gzip } from 'node:zlib'
+import type { RouteDeps } from './routes/common'
+import { resolvePage } from './seo/page'
+import { fillTemplate } from './seo/html'
 
 const brotli = promisify(brotliCompress)
 const gz = promisify(gzip)
@@ -74,7 +76,7 @@ const PLACEHOLDER =
   '<p>SCRmod server is running. The frontend is not built yet: run <code>npm run build:web</code>.</p>'
 
 /** Serves the built SPA from `root` (Node only). Register after all API routes. */
-export function registerStatic(app: Hono, opts: { root: string; basePath: string }) {
+export function registerStatic(app: Hono, opts: { root: string; basePath: string; deps?: RouteDeps }) {
   const root = path.resolve(opts.root)
   const prefix = opts.basePath === '/' ? '' : opts.basePath
 
@@ -119,18 +121,31 @@ export function registerStatic(app: Hono, opts: { root: string; basePath: string
         }
       }
     }
+    let template: string
     try {
-      const file = path.join(root, 'index.html')
-      const [s, html]: [Stats, Bytes] = await Promise.all([stat(file), readFile(file)])
-      c.header('Cache-Control', 'no-cache')
-      c.header('Content-Type', TYPES['.html'])
-      c.header('Vary', 'Accept-Encoding')
-      const enc = html.length >= MIN_COMPRESS ? pickEncoding(c.req.header('Accept-Encoding')) : null
-      if (!enc) return c.body(html)
-      c.header('Content-Encoding', enc)
-      return c.body(await compressedCopy(file, s.mtimeMs, html, enc))
+      template = await readFile(path.join(root, 'index.html'), 'utf8')
     } catch {
       return c.html(PLACEHOLDER)
     }
+    c.header('Cache-Control', 'no-cache')
+    c.header('Content-Type', TYPES['.html'])
+    c.header('Vary', 'Accept-Encoding')
+    let status: 200 | 404 = 200
+    let html = template
+    if (opts.deps) {
+      const page = await resolvePage(opts.deps, p, c.req.url)
+      if ('redirect' in page) return c.redirect(page.redirect, 301)
+      status = page.status
+      if (!page.index) c.header('X-Robots-Tag', 'noindex, follow')
+      html = fillTemplate(template, page.head, page.body)
+    }
+    let body: Bytes = new TextEncoder().encode(html) as Bytes
+    const enc = body.length >= MIN_COMPRESS ? pickEncoding(c.req.header('Accept-Encoding')) : null
+    if (enc) {
+      // Every page is different now, so compress per request at fast settings (brotli 5 / gzip 6).
+      body = (await (enc === 'br' ? brotli(body, { params: { [zlib.BROTLI_PARAM_QUALITY]: 5 } }) : gz(body, { level: 6 }))) as Bytes
+      c.header('Content-Encoding', enc)
+    }
+    return c.body(body, status)
   })
 }
