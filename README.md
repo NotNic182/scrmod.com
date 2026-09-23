@@ -60,11 +60,13 @@ every visitor against one shared bucket.
 
 ## API (served to the frontend)
 
-`/api/home`, `/api/leaderboard/:mode`, `/api/results`, `/api/results/1v1`, `/api/players/search?q=`, `/api/players/:id`, `/api/players/:id/{matches,matches-summary,rating-history,team-history,ffa-history,ovt-history,team-stats,achievements,tournaments}`, `/api/players/:id/vs/:opp`, `/api/tournaments`, `/api/tournaments/history`, `/api/tournaments/:id/bracket`, `/api/cards`, `/api/cards/leaders`, `/api/cards/:name/pickers`, `/api/chat/recent` (feature `chat`), `/api/meta`, `/api/me`, `/api/_status`.
+`/api/home`, `/api/leaderboard/:mode`, `/api/results`, `/api/results/1v1`, `/api/players/search?q=`, `/api/players/:id`, `/api/players/:id/{matches,matches-summary,rating-history,team-history,ffa-history,ovt-history,team-stats,achievements,tournaments}`, `/api/players/:id/vs/:opp`, `/api/tournaments`, `/api/tournaments/history`, `/api/tournaments/:id/bracket`, `/api/cards`, `/api/cards/leaders`, `/api/cards/:name/pickers`, `/api/card/:slug`, `/api/stream`, `/api/chat/recent` (feature `chat`), `/api/meta`, `/api/me`, `/api/_status`. For crawlers: `/robots.txt` and `/sitemap.xml`.
 
 Data routes answer with `{ data, fetched_at, stale }`. The aggregates (`/api/home`, `/api/meta`,
 `/api/tournaments`, `/api/tournaments/history`) add `errors[]`, naming the upstream items that
 failed with nothing cached. `/api/me` and `/api/_status` have their own shapes.
+
+Under `BASE_PATH`, robots.txt is served at `{BASE_PATH}/robots.txt`, where crawlers don't look: they read it only at the domain root.
 
 ## Deploy
 
