@@ -2,10 +2,6 @@
 
 A browser companion for Sid's Competitive Rounds: who is online, live games, leaderboards, player stats, results, tournaments and card stats, from any device, without launching the game. Live at **[scrmod.com](https://scrmod.com)**.
 
-(Formerly "SCR Hub". Browser storage keys and cookies keep their `scrhub` prefix so visitors' pins, themes and sign-ins survive the rename.)
-
-One codebase, two deployment modes (see `docs/superpowers/specs/2026-09-22-scr-hub-design.md`):
-
 - **Community mode** – runs on any host, needs nothing from Sid, read-only.
 - **Hosted mode** – the same build next to Sid's API with a server-side internal key.
 
