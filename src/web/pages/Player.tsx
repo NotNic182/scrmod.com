@@ -1,5 +1,6 @@
 import { useId, type ReactNode } from 'react'
 import { useParams, useSearchParams } from 'react-router'
+import { HubError } from '../api/client'
 import { useMeta, usePlayer } from '../api/hooks'
 import type { HubProfile } from '../api/types'
 import { EmptyState } from '../components/EmptyState'
@@ -52,7 +53,9 @@ export function Player() {
   const valid = !!steamId && /^\d{17}$/.test(steamId)
   const q = usePlayer(valid ? steamId : undefined, id.me?.steam_id ?? null)
   const nameId = useId()
-  useTitle(valid ? pageMeta({ kind: 'player', id: steamId! }, { player: q.data ? { display_name: q.data.data.display_name } : undefined }).title : pageMeta({ kind: 'not-found' }).title)
+  // A malformed id or a player that does not exist is the server's 404 page, so it takes that title.
+  const missing = !valid || (q.error instanceof HubError && q.error.status === 404)
+  useTitle(missing ? pageMeta({ kind: 'not-found' }).title : pageMeta({ kind: 'player', id: steamId! }, { player: q.data ? { display_name: q.data.data.display_name } : undefined }).title)
   if (!valid) return <NotFound />
 
   const isMe = id.me?.steam_id === steamId

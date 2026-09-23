@@ -57,7 +57,8 @@ export type RouteMatch =
   | { kind: 'not-found' }
 
 const STEAM_ID = /^\d{17}$/
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+/** A tournament id as the server's routes accept it. */
+export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const NOT_FOUND: RouteMatch = { kind: 'not-found' }
 
 function decode(segment: string): string | null {

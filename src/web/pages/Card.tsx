@@ -2,6 +2,7 @@ import { useId } from 'react'
 import { Link, useParams } from 'react-router'
 import type { CardStat } from '../../shared/api-types'
 import { pageMeta } from '../../shared/seo'
+import { HubError } from '../api/client'
 import { useCard } from '../api/hooks'
 import { QueryState } from '../components/QueryState'
 import { StatTile } from '../components/StatTile'
@@ -31,8 +32,12 @@ export function Card() {
   const { slug } = useParams()
   const q = useCard(slug)
   const d = q.data?.data
+  // A card that does not exist is the server's 404 page, so it takes that title.
+  const missing = q.error instanceof HubError && q.error.status === 404
   useTitle(
-    pageMeta({ kind: 'card', slug: slug ?? '' }, d ? { card: { name: d.card.card_name, rarity: d.card.card_rarity, win_rate: d.card.win_rate, times_picked: d.card.times_picked, pass_rate: d.card.pass_rate } } : {}).title,
+    missing
+      ? pageMeta({ kind: 'not-found' }).title
+      : pageMeta({ kind: 'card', slug: slug ?? '' }, d ? { card: { name: d.card.card_name, rarity: d.card.card_rarity, win_rate: d.card.win_rate, times_picked: d.card.times_picked, pass_rate: d.card.pass_rate } } : {}).title,
   )
   return (
     <QueryState q={q} label="card">

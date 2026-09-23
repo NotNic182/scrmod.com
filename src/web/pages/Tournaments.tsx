@@ -6,18 +6,20 @@ import { StreamCard } from '../components/Stream'
 import { Bracket } from './tournaments/Bracket'
 import { CurrentCard } from './tournaments/CurrentCard'
 import { History } from './tournaments/History'
-import { INTROS, pageMeta } from '../../shared/seo'
+import { INTROS, pageMeta, UUID } from '../../shared/seo'
 
 export function Tournaments() {
-  useTitle(pageMeta({ kind: 'tournaments' }).title)
   const { id } = useParams()
+  // A well-formed id is a game-details page, titled as the server titles it; anything else keeps the list's title.
+  const bracketId = id && UUID.test(id) ? id : undefined
+  useTitle(pageMeta(bracketId ? { kind: 'tournament', id: bracketId } : { kind: 'tournaments' }).title)
   const q = useTournaments()
   return (
     <>
       <h1>Tournaments</h1>
       <p className="page-intro">{INTROS.tournaments} Sign up, vote and play from the game (F5 → Tournaments).</p>
       <StreamCard />
-      {id && /^[0-9a-f-]{36}$/i.test(id) ? <Bracket id={id} /> : null}
+      {bracketId ? <Bracket id={bracketId} /> : null}
       <QueryState q={q} label="tournaments">
         {(d, meta) => (
           <>
