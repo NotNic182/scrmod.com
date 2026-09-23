@@ -94,4 +94,35 @@ describe('/api/stream', () => {
     expect(res.live).toBeNull()
     expect(res.recent).toEqual([])
   })
+
+  it('a stale Twitch live result does not outlive an outage', async () => {
+    let n = 0
+    const s = await stream(TWITCH_ENV, {
+      ...feed,
+      ...token,
+      'api.twitch.tv/helix/streams': () =>
+        n++ === 0
+          ? new Response(JSON.stringify({ data: [{ type: 'live', title: 'Ranked night', viewer_count: 42, started_at: '2026-09-23T18:00:00Z' }] }))
+          : new Response('', { status: 500 }),
+    })
+    expect((await s.get()).live?.platform).toBe('twitch')
+    s.nowRef.now += 61_000
+    expect((await s.get()).live).toBeNull()
+  })
+
+  it('a stale YouTube live result does not outlive a quota error; recent stays populated', async () => {
+    let n = 0
+    const s = await stream({ YOUTUBE_API_KEY: 'k' }, {
+      ...feed,
+      'www.googleapis.com/youtube/v3/videos': () =>
+        n++ === 0
+          ? new Response(JSON.stringify({ items: [{ id: 'vid2', snippet: { title: 'Live now' }, liveStreamingDetails: { actualStartTime: '2026-09-23T18:00:00Z', concurrentViewers: '12' } }] }))
+          : new Response('{"error":{"code":403}}', { status: 403 }),
+    })
+    expect((await s.get()).live?.platform).toBe('youtube')
+    s.nowRef.now += 61_000
+    const res = await s.get()
+    expect(res.live).toBeNull()
+    expect(res.recent).toHaveLength(4)
+  })
 })

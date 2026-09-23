@@ -113,11 +113,16 @@ export function registerStreamRoutes(app: Hono, d: RouteDeps, fetchImpl: typeof 
       twitch ? d.cache.get('stream:twitch', LIVE_TTL, () => twitch.live(s.twitchLogin)) : Promise.resolve(null),
     ])
     const recent = feedR.status === 'fulfilled' ? feedR.value.value : []
-    let live: StreamLive | null = twitchR.status === 'fulfilled' && twitchR.value ? twitchR.value.value : null
+    // LIVE_TTL has no stale window, so `stale: true` here only means the cache's error
+    // fallback fired (spec 6.3): the live check itself failed and this is an old answer.
+    // A stream that failed to confirm as live must report offline, not repeat a broadcast
+    // that may already be over.
+    let live: StreamLive | null = twitchR.status === 'fulfilled' && twitchR.value && !twitchR.value.stale ? twitchR.value.value : null
     if (!live && s.youtubeApiKey && recent.length) {
       try {
         const key = s.youtubeApiKey
-        live = (await d.cache.get('stream:yt-live', LIVE_TTL, () => youtubeLive(recent.slice(0, 5).map((v) => v.videoId), key, fetchImpl))).value
+        const r = await d.cache.get('stream:yt-live', LIVE_TTL, () => youtubeLive(recent.slice(0, 5).map((v) => v.videoId), key, fetchImpl))
+        live = r.stale ? null : r.value
       } catch {
         live = null
       }
