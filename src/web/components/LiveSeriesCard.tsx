@@ -25,9 +25,9 @@ export function LiveSeries1v1({ s }: { s: ActiveSeries }) {
           <span className="muted tnum">{s.p2_rating}</span>
         </div>
       </div>
-      <div className="faint" style={{ marginTop: 4 }}>
-        Best of 3 · current game {s.live_p1_points}–{s.live_p2_points}
-        {s.bets_locked ? ' · bets locked' : ` · odds ${s.p1_odds}× / ${s.p2_odds}×`}
+      <div className="faint subline">
+        Best of 3 · current game {s.live_p1_points ?? 0}–{s.live_p2_points ?? 0}
+        {s.bets_locked ? ' · bets locked' : Number.isFinite(s.p1_odds) && Number.isFinite(s.p2_odds) ? ` · odds ${s.p1_odds}× / ${s.p2_odds}×` : ''}
       </div>
     </div>
   )
@@ -35,7 +35,7 @@ export function LiveSeries1v1({ s }: { s: ActiveSeries }) {
 
 export function LiveSeries2v2({ s }: { s: ActiveTeamSeries }) {
   const team = (a: [string, string], b: [string, string], color: string) => (
-    <span className="row" style={{ gap: 6 }}>
+    <span className="row tight">
       <span className="dot on" style={{ background: color || 'var(--fg-faint)', boxShadow: 'none' }} />
       <PlayerLink steamId={a[0]} name={a[1]} />
       <span className="faint">&amp;</span>
@@ -49,14 +49,14 @@ export function LiveSeries2v2({ s }: { s: ActiveTeamSeries }) {
         <span className="spacer" />
         <span className="faint">{relTime(s.started_at)}</span>
       </div>
-      <div style={{ marginTop: 8 }}>
+      <div className="teams">
         {team([s.t1a_steam, s.t1a_name], [s.t1b_steam, s.t1b_name], s.t1_color_hex)}
-        <div className="versus-score" style={{ margin: '4px 0' }}>
+        <div className="versus-score">
           {s.t1_wins} – {s.t2_wins}
         </div>
         {team([s.t2a_steam, s.t2a_name], [s.t2b_steam, s.t2b_name], s.t2_color_hex)}
       </div>
-      <div className="faint" style={{ marginTop: 4 }}>
+      <div className="faint subline">
         Team ratings {s.t1_rating} vs {s.t2_rating} · current game {s.live_t1_points ?? 0}–{s.live_t2_points ?? 0}
       </div>
     </div>
@@ -76,10 +76,10 @@ export function FfaLobbyCard({ l }: { l: FfaLobby }) {
         </span>
         {l.has_password ? <span className="chip">locked</span> : null}
         <span className="spacer" />
-        <span className="faint">open {relTime(new Date(Date.now() - l.age_seconds * 1000).toISOString())}</span>
+        {Number.isFinite(l.age_seconds) ? <span className="faint">open {relTime(new Date(Date.now() - l.age_seconds * 1000).toISOString())}</span> : null}
       </div>
-      <div className="row" style={{ marginTop: 6 }}>
-        {l.members.map((m, i) => (
+      <div className="row members">
+        {(l.members ?? []).map((m, i) => (
           <span key={i} className="chip">
             <bdi>{m.name}</bdi> <span className="muted">{m.rating}</span>
           </span>
@@ -93,13 +93,13 @@ export function SpectateCard({ g }: { g: SpectateGame }) {
   return (
     <div className="panel">
       <div className="row">
-        <span className="chip">{g.mode.toUpperCase()}</span>
+        {g.mode ? <span className="chip">{g.mode.toUpperCase()}</span> : null}
         <strong>
           <bdi>{g.names}</bdi>
         </strong>
         <span className="spacer" />
         <span className="faint">
-          {g.spectatable ? `${g.spectator_count}/${g.spectator_cap} watching` : 'not spectatable'}
+          {g.spectatable ? `${g.spectator_count ?? 0}/${g.spectator_cap ?? '–'} watching` : 'not spectatable'}
         </span>
       </div>
       <div className="faint">Watch from the game: F5 → Leaderboard → WATCH</div>

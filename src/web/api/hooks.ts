@@ -110,12 +110,13 @@ export function useVs(steamId: string | undefined, opp: string | null | undefine
   })
 }
 
-export function useResults(limit = 60) {
-  return useQuery({ queryKey: ['results', limit], queryFn: () => hubGet<ResultsResponse>(`/results${qs({ limit })}`), ...results })
+/** `enabled`: false while the feed isn't on screen, so it neither loads nor polls in the background of another tab. */
+export function useResults(limit = 60, enabled = true) {
+  return useQuery({ queryKey: ['results', limit], queryFn: () => hubGet<ResultsResponse>(`/results${qs({ limit })}`), enabled, ...results })
 }
 
-export function useResults1v1(limit = 50) {
-  return useQuery({ queryKey: ['results-1v1', limit], queryFn: () => hubGet<Results1v1Response>(`/results/1v1${qs({ limit })}`), ...results })
+export function useResults1v1(limit = 50, enabled = true) {
+  return useQuery({ queryKey: ['results-1v1', limit], queryFn: () => hubGet<Results1v1Response>(`/results/1v1${qs({ limit })}`), enabled, ...results })
 }
 
 export function useTournaments() {

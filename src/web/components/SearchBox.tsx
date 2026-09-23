@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type KeyboardEvent } from 'react'
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { useSearch } from '../api/hooks'
 import { plural } from '../lib/format'
 import type { PlayerSearchResult } from '../../shared/api-types'
@@ -11,6 +11,7 @@ export function SearchBox({ onSelect, placeholder = 'Search players…', autoFoc
   const [text, setText] = useState('')
   const [debounced, setDebounced] = useState('')
   const [active, setActive] = useState(-1)
+  const input = useRef<HTMLInputElement>(null)
   const listId = useId()
   useEffect(() => {
     const id = setTimeout(() => setDebounced(text.trim()), 200)
@@ -57,6 +58,7 @@ export function SearchBox({ onSelect, placeholder = 'Search players…', autoFoc
   return (
     <div className="searchbox">
       <input
+        ref={input}
         className="input"
         type="search"
         role="combobox"
@@ -96,8 +98,15 @@ export function SearchBox({ onSelect, placeholder = 'Search players…', autoFoc
         {status}
       </div>
       {q.isError && debounced ? (
-        <button className="btn btn-sm" style={{ marginTop: 6 }} onClick={() => void q.refetch()} disabled={q.isFetching}>
-          {q.isFetching ? 'Retrying…' : 'Try again'}
+        // The button goes away as soon as the retry starts; focus returns to the field the user was typing in.
+        <button
+          className="btn btn-sm trailing"
+          onClick={() => {
+            input.current?.focus()
+            void q.refetch()
+          }}
+        >
+          Try again
         </button>
       ) : null}
     </div>

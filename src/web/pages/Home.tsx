@@ -1,44 +1,35 @@
+import { useId } from 'react'
 import { useTitle } from '../lib/title'
 import { Link } from 'react-router'
 import { useHome } from '../api/hooks'
 import { QueryState } from '../components/QueryState'
 import { PlayerLink } from '../components/PlayerLink'
 import { FfaLobbyCard, LiveSeries1v1, LiveSeries2v2, SpectateCard } from '../components/LiveSeriesCard'
+import { ResultTable } from '../components/ResultTable'
 import { useIdentity } from '../lib/identity'
-import { relTime, signed, agoFromMinutes } from '../lib/format'
-import type { MultimodeEntry } from '../../shared/api-types'
+import { agoFromMinutes } from '../lib/format'
+import { useFirst } from '../components/ShowMore'
+import type { PresenceEntry } from '../../shared/api-types'
 
-const MODE_LABEL: Record<string, string> = { '1v1': '1v1', '2v2': '2v2', ffa: 'FFA', ovt: '1v2' }
-
-export function ResultRow({ e }: { e: MultimodeEntry }) {
+/** Players seen lately but not online now: the five most recent, the rest on request. */
+function RecentlyOnline({ players, me }: { players: PresenceEntry[]; me: string | undefined }) {
+  const heading = useId()
+  const list = useId()
+  const { items, button } = useFirst(players, 5, list)
   return (
-    <tr>
-      <td>
-        <span className="chip">{MODE_LABEL[e.mode] ?? e.mode}</span>
-      </td>
-      <td>
-        <strong>
-          <bdi>{e.left_label}</bdi>
-        </strong>
-        {e.left_rating_change !== null && e.left_rating_change !== undefined ? (
-          <span className={`tnum ${e.left_rating_change >= 0 ? 'good' : 'bad'}`} style={{ marginLeft: 6 }}>
-            {signed(e.left_rating_change, 1)}
-          </span>
-        ) : null}
-      </td>
-      <td className="tnum" style={{ fontWeight: 800 }}>
-        {e.score}
-      </td>
-      <td>
-        <bdi>{e.right_label}</bdi>
-        {e.right_rating_change !== null && e.right_rating_change !== undefined ? (
-          <span className={`tnum ${e.right_rating_change >= 0 ? 'good' : 'bad'}`} style={{ marginLeft: 6 }}>
-            {signed(e.right_rating_change, 1)}
-          </span>
-        ) : null}
-      </td>
-      <td className="faint">{relTime(e.ended_at)}</td>
-    </tr>
+    <>
+      <h3 id={heading}>Recently online</h3>
+      <ul className="plain-list" id={list} aria-labelledby={heading}>
+        {items.map((p) => (
+          <li key={p.steam_id} className={`row list-row${me === p.steam_id ? ' me-row' : ''}`}>
+            <PlayerLink steamId={p.steam_id} name={p.display_name} title={p.title} titleColor={p.title_color} me={me === p.steam_id} />
+            <span className="spacer" />
+            <span className="faint">{agoFromMinutes(p.minutes_ago)}</span>
+          </li>
+        ))}
+      </ul>
+      {button}
+    </>
   )
 }
 
@@ -62,7 +53,7 @@ export function Home() {
               ))}
               {meta.errors.length ? <div className="banner bad">Some sections could not be loaded: {meta.errors.join(', ')}.</div> : null}
 
-              <div className="tiles" style={{ marginBottom: 14 }}>
+              <div className="tiles">
                 <div className="tile">
                   <div className="label">Online now</div>
                   <div className="value">{d.presence.online_count}</div>
@@ -85,7 +76,8 @@ export function Home() {
                 </div>
               </div>
 
-              <div className="grid-2">
+              {/* Not equals: each column keeps its own height rather than stretching to the taller one. */}
+              <div className="grid-2 top">
                 <section className="card">
                   <div className="card-head">
                     <h2>Live games</h2>
@@ -113,27 +105,14 @@ export function Home() {
                   {d.presence.online.length === 0 ? <div className="empty">Nobody online at the moment.</div> : null}
                   <ul className="plain-list">
                     {d.presence.online.map((p) => (
-                      <li key={p.steam_id} className={`row${id.me?.steam_id === p.steam_id ? ' me-row' : ''}`} style={{ minHeight: 36 }}>
+                      <li key={p.steam_id} className={`row list-row${id.me?.steam_id === p.steam_id ? ' me-row' : ''}`}>
                         <PlayerLink steamId={p.steam_id} name={p.display_name} title={p.title} titleColor={p.title_color} online me={id.me?.steam_id === p.steam_id} />
                         <span className="spacer" />
                         <span className="tnum muted">{p.rating}</span>
                       </li>
                     ))}
                   </ul>
-                  {d.presence.recent.length ? (
-                    <>
-                      <h3 style={{ marginTop: 12 }}>Recently online</h3>
-                      <ul className="plain-list">
-                        {d.presence.recent.map((p) => (
-                          <li key={p.steam_id} className={`row${id.me?.steam_id === p.steam_id ? ' me-row' : ''}`} style={{ minHeight: 32 }}>
-                            <PlayerLink steamId={p.steam_id} name={p.display_name} title={p.title} titleColor={p.title_color} me={id.me?.steam_id === p.steam_id} />
-                            <span className="spacer" />
-                            <span className="faint">{agoFromMinutes(p.minutes_ago)}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  ) : null}
+                  {d.presence.recent.length ? <RecentlyOnline players={d.presence.recent} me={id.me?.steam_id} /> : null}
                 </section>
               </div>
 
@@ -145,17 +124,7 @@ export function Home() {
                   </Link>
                 </div>
                 {d.results.length === 0 ? <div className="empty">No recent results.</div> : null}
-                {d.results.length ? (
-                  <div className="table-wrap">
-                    <table className="t">
-                      <tbody>
-                        {d.results.slice(0, 12).map((e) => (
-                          <ResultRow key={`${e.mode}-${e.id}`} e={e} />
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : null}
+                {d.results.length ? <ResultTable rows={d.results.slice(0, 12)} /> : null}
               </section>
             </>
           )

@@ -15,7 +15,7 @@ export function PlayerLink({ steamId, name, title, titleColor, online, me, bold 
   return (
     <span className="player">
       {online !== undefined ? <span className={`dot${online ? ' on' : ''}`} role="img" aria-label={online ? 'online' : 'offline'} title={online ? 'Online' : 'Offline'} /> : null}
-      <Link to={`/players/${steamId}`} className="plink" style={{ fontWeight: bold || me ? 800 : 600 }}>
+      <Link to={`/players/${steamId}`} className={bold || me ? 'plink strong' : 'plink'}>
         {/* bdi: a right-to-left name (Arabic, Hebrew) must not reorder the "(you)" or numbers around it. */}
         <bdi>{name || 'Unnamed player'}</bdi>
         {me ? <span className="faint"> (you)</span> : null}

@@ -37,6 +37,8 @@
   --bar-fg: #eef6f7;
   --bar-muted: #b6cdd2;
   --bar-line: rgba(255, 255, 255, 0.08);
+  /* Focus ring on the bars. The bars never change theme, so neither does their ring (7:1 on --bar). */
+  --bar-ring: #f7a64d;
 
   /* Orange: --accent fills, --band is the selection bar, --accent-ink is orange as text/lines on a surface. */
   --brand: #f08c17;
@@ -59,6 +61,19 @@
   /* Colors that come from the game (rank tiers, titles) keep their hue but are held to this lightness band. */
   --api-lmin: 0.74;
   --api-lmax: 1;
+
+  /* Spacing: a 4px base with the in-between steps the UI uses. Inside a group the steps stay small (2-12); between
+     groups the step is always larger (24+), so proximity alone shows what belongs together. */
+  --space-3xs: 2px; /* the hairline seam between tiles */
+  --space-2xs: 4px; /* a secondary line under its primary line; chips in a row */
+  --space-xs: 8px; /* siblings in a row; a heading to its content */
+  --space-sm: 12px; /* controls to the data they act on; inside panels and tiles */
+  --space-md: 16px; /* card padding, page gutter */
+  --space-lg: 24px; /* between groups: card to card, one section to the next */
+  --space-xl: 32px;
+  --space-2xl: 48px; /* the end of the page */
+  --pad-card: var(--space-md);
+  --gap-group: var(--space-lg);
 
   --radius: 2px;
   --radius-sm: 2px;

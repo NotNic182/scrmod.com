@@ -1,6 +1,7 @@
 import { usePlayerSub } from '../../api/hooks'
 import { QueryState } from '../../components/QueryState'
 import { fmtDate } from '../../lib/format'
+import { Names } from '../../components/Names'
 
 export function OvtHistoryTab({ steamId }: { steamId: string }) {
   const q = usePlayerSub(steamId, 'ovt-history')
@@ -28,8 +29,12 @@ export function OvtHistoryTab({ steamId }: { steamId: string }) {
                     <td>
                       <strong className={g.won ? 'good' : 'bad'}>{g.won ? 'W' : 'L'}</strong> <span className="tnum">{g.score}</span>
                     </td>
-                    <td>{g.solo}</td>
-                    <td>{(g.duo ?? []).join(' & ')}</td>
+                    <td>
+                      <bdi>{g.solo}</bdi>
+                    </td>
+                    <td>
+                      <Names names={g.duo} sep=" & " />
+                    </td>
                     <td className="num">+{g.gold_gained}g</td>
                   </tr>
                 ))}

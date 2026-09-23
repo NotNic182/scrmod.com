@@ -18,7 +18,7 @@ export function RankChip({ name, color, rating, tiers }: Props) {
   }
   if (!label) return null
   return (
-    <span className="chip api-color" style={{ '--api-c': c || undefined, border: '1px solid currentColor' } as CSSProperties}>
+    <span className="chip api-color rank" style={{ '--api-c': c || undefined } as CSSProperties}>
       {label}
     </span>
   )

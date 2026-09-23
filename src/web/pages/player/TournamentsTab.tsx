@@ -16,7 +16,7 @@ export function TournamentsTab({ steamId }: { steamId: string }) {
               <StatTile label="Third" value={d.third_place_count} />
               <StatTile label="Played" value={d.participant_count} />
             </div>
-            <p className="muted" style={{ marginTop: 10 }}>
+            <p className="muted">
               Upcoming and past brackets are on the <Link to="/tournaments">Tournaments</Link> page.
             </p>
           </>
