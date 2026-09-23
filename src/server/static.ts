@@ -133,11 +133,16 @@ export function registerStatic(app: Hono, opts: { root: string; basePath: string
     let status: 200 | 404 = 200
     let html = template
     if (opts.deps) {
-      const page = await resolvePage(opts.deps, p, c.req.url)
-      if ('redirect' in page) return c.redirect(page.redirect, 301)
-      status = page.status
-      if (!page.index) c.header('X-Robots-Tag', 'noindex, follow')
-      html = fillTemplate(template, page.head, page.body)
+      try {
+        const page = await resolvePage(opts.deps, p, c.req.url)
+        if ('redirect' in page) return c.redirect(page.redirect, 301)
+        status = page.status
+        if (!page.index) c.header('X-Robots-Tag', 'noindex, follow')
+        html = fillTemplate(template, page.head, page.body)
+      } catch (err) {
+        // Never an error page: a page-render failure falls back to the plain template, status 200.
+        console.error('[hub] page render failed', err)
+      }
     }
     let body: Bytes = new TextEncoder().encode(html) as Bytes
     const enc = body.length >= MIN_COMPRESS ? pickEncoding(c.req.header('Accept-Encoding')) : null

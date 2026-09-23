@@ -101,4 +101,26 @@ describe('server-rendered pages', () => {
     expect(br.headers.get('content-encoding')).toBe('br')
     expect(brotliDecompressSync(Buffer.from(await br.arrayBuffer())).toString()).toContain('How to play ranked ROUNDS')
   })
+
+  it('a null response from upstream renders the generic page rather than an error', async () => {
+    const res = await site({ '/series/recent-multimode': null }).request('/results')
+    expect(res.status).toBe(200)
+    expect(await res.text()).toContain('<h1>Results</h1>')
+  })
+
+  it('a well-formed tournament id 404s when upstream has none, and renders when found', async () => {
+    const id = '11111111-1111-1111-1111-111111111111'
+    const gone = site({ [`/tournaments/${id}/bracket-detail`]: () => json({ detail: 'not found' }, 404) })
+    expect((await gone.request(`/tournaments/${id}`)).status).toBe(404)
+    const found = site({ [`/tournaments/${id}/bracket-detail`]: { matches: [] } })
+    expect((await found.request(`/tournaments/${id}`)).status).toBe(200)
+  })
+
+  it('redirects /leaderboards under a base path with the base path kept in the location', async () => {
+    const built = makeApp({}, { BASE_PATH: '/hub', PUBLIC_BASE_URL: 'https://example.org/hub' })
+    registerStatic(built.app, { root, basePath: '/hub', deps: built.deps })
+    const res = await built.app.request('https://example.org/hub/leaderboards')
+    expect(res.status).toBe(301)
+    expect(res.headers.get('location')).toBe('/hub/leaderboards/1v1')
+  })
 })

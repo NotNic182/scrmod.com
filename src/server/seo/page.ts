@@ -50,23 +50,30 @@ export async function resolvePage(d: RouteDeps, path: string, requestUrl: string
 
   switch (match.kind) {
     case 'home': {
-      const r = await settle(loadHome(d))
-      shell = { kind: 'home', home: r.ok ? scrubPrivate(r.value.data) : undefined }
+      // Shaping happens inside the settled promise, so a malformed upstream value (or a bad field
+      // access on it) is just another failed load, not a throw that reaches the caller.
+      const r = await settle(loadHome(d).then((h) => scrubPrivate(h.data)))
+      shell = { kind: 'home', home: r.ok ? r.value : undefined }
       break
     }
     case 'leaderboard': {
-      const r = await settle(loadBoard(d, match.mode))
-      shell = { kind: 'leaderboard', mode: match.mode, board: r.ok && r.value ? scrubPrivate(r.value.value) : undefined }
+      const r = await settle(loadBoard(d, match.mode).then((b) => (b ? scrubPrivate(b.value) : undefined)))
+      shell = { kind: 'leaderboard', mode: match.mode, board: r.ok ? r.value : undefined }
       break
     }
     case 'results': {
-      const r = await settle(loadResults(d, 100))
-      shell = { kind: 'results', results: r.ok ? scrubPrivate(r.value.value.entries ?? []) : undefined }
+      const r = await settle(loadResults(d, 100).then((res) => scrubPrivate(res.value.entries ?? [])))
+      shell = { kind: 'results', results: r.ok ? r.value : undefined }
       break
     }
     case 'tournaments': {
-      const r = await settle(Promise.all([loadTournaments(d), loadTournamentHistory(d)]))
-      shell = r.ok ? { kind: 'tournaments', current: scrubPrivate(r.value[0].data), history: scrubPrivate(r.value[1].data.rows) } : { kind: 'tournaments' }
+      const r = await settle(
+        Promise.all([loadTournaments(d), loadTournamentHistory(d)]).then(([t, h]) => ({
+          current: scrubPrivate(t.data),
+          history: scrubPrivate(h.data.rows),
+        })),
+      )
+      shell = r.ok ? { kind: 'tournaments', current: r.value.current, history: r.value.history } : { kind: 'tournaments' }
       break
     }
     case 'tournament': {
@@ -76,12 +83,18 @@ export async function resolvePage(d: RouteDeps, path: string, requestUrl: string
       break
     }
     case 'cards': {
-      const r = await settle(loadCards(d, 'all'))
-      const cards = r.ok ? r.value.value : undefined
-      shell = { kind: 'cards', cards }
-      if (cards) {
-        facts.cardCount = cards.length
-        jsonLd.push(itemList(site, cards.map((c) => ({ name: c.card_name, path: `/cards/${cardSlug(c.card_name)}` }))))
+      // cardSlug() can throw on a malformed row (no card_name); build the itemList and count
+      // inside the settled promise too, so that also becomes an ordinary failed load.
+      const r = await settle(
+        loadCards(d, 'all').then((res) => {
+          const cards = scrubPrivate(res.value)
+          return { cards, listing: itemList(site, cards.map((c) => ({ name: c.card_name, path: `/cards/${cardSlug(c.card_name)}` }))) }
+        }),
+      )
+      shell = { kind: 'cards', cards: r.ok ? r.value.cards : undefined }
+      if (r.ok) {
+        facts.cardCount = r.value.cards.length
+        jsonLd.push(r.value.listing)
       }
       break
     }
@@ -92,7 +105,7 @@ export async function resolvePage(d: RouteDeps, path: string, requestUrl: string
         match = { kind: 'not-found' }
         break
       }
-      const page = r.ok && r.value.kind === 'found' ? r.value.result.value : undefined
+      const page = r.ok && r.value.kind === 'found' ? scrubPrivate(r.value.result.value) : undefined
       shell = { kind: 'card', slug: match.slug, page }
       if (page) facts.card = { name: page.card.card_name, rarity: page.card.card_rarity, win_rate: page.card.win_rate, times_picked: page.card.times_picked, pass_rate: page.card.pass_rate }
       const name = page?.card.card_name ?? slugToName(match.slug)
@@ -110,14 +123,10 @@ export async function resolvePage(d: RouteDeps, path: string, requestUrl: string
       shell = { kind: 'about' }
       break
     case 'player': {
-      const r = await settle(loadProfile(d, match.id))
-      if (!r.ok && r.notFound) {
-        match = { kind: 'not-found' }
-        break
-      }
-      const p = r.ok ? (r.value.value as Record<string, unknown>) : undefined
-      const player: PlayerFacts | undefined = p
-        ? {
+      const r = await settle(
+        loadProfile(d, match.id).then((res): PlayerFacts => {
+          const p = res.value as Record<string, unknown>
+          return {
             display_name: String(p.display_name ?? ''),
             rating: typeof p.rating === 'number' ? p.rating : null,
             rank_name: typeof p.rank_name === 'string' ? p.rank_name : null,
@@ -126,7 +135,13 @@ export async function resolvePage(d: RouteDeps, path: string, requestUrl: string
             ranked_series_wins: typeof p.ranked_series_wins === 'number' ? p.ranked_series_wins : null,
             ranked_series_losses: typeof p.ranked_series_losses === 'number' ? p.ranked_series_losses : null,
           }
-        : undefined
+        }),
+      )
+      if (!r.ok && r.notFound) {
+        match = { kind: 'not-found' }
+        break
+      }
+      const player = r.ok ? r.value : undefined
       facts.player = player
       shell = { kind: 'player', id: match.id, player }
       break
