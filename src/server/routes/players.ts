@@ -1,5 +1,5 @@
 import type { Context, Hono } from 'hono'
-import { KEEP_FOR_PROFILE_MASK, maskProfile, scrubPrivate, slimMatch } from '../../shared/privacy'
+import { KEEP_FOR_PROFILE_MASK, isRankedMatch, maskProfile, rankedSummary, scrubPrivate, slimMatch } from '../../shared/privacy'
 import { TTL, type CachedResult, type TtlSpec } from '../cache'
 import type { Query } from '../upstream'
 import { errorResponse, intParam, isSteamId, loaderFor, ok, type RouteDeps } from './common'
@@ -27,9 +27,15 @@ const SUB: Record<string, SubSpec> = {
       offset: intParam(c, 'offset', 0, 0, MAX_MATCH_OFFSET),
     }),
     spec: TTL.PLAYER,
-    transform: (v) => (Array.isArray(v) ? v.map((m) => slimMatch(m as Record<string, unknown>)) : []),
+    // Ranked games only: casual games stay off profiles.
+    transform: (v) =>
+      Array.isArray(v) ? v.filter((m) => isRankedMatch(m as object)).map((m) => slimMatch(m as Record<string, unknown>)) : [],
   },
-  'matches-summary': { path: (id) => `/players/${id}/matches/summary`, spec: TTL.PLAYER },
+  'matches-summary': {
+    path: (id) => `/players/${id}/matches/summary`,
+    spec: TTL.PLAYER,
+    transform: (v) => (v && typeof v === 'object' && !Array.isArray(v) ? rankedSummary(v) : v),
+  },
   'rating-history': { path: (id) => `/players/${id}/rating-history`, spec: TTL.PLAYER },
   'team-history': { path: (id) => `/players/${id}/team-history`, spec: TTL.PLAYER },
   'ffa-history': { path: (id) => `/players/${id}/ffa-history`, spec: TTL.PLAYER },

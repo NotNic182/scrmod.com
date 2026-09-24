@@ -19,7 +19,42 @@ const PROFILE = {
   show_discord: false, gold_earned: 31818, gold_spent: 31445, hide_gold: true, appear_offline: true,
   h2h_ranked_wins: 0, h2h_ranked_losses: 8, recent_form: [], top_cards: [],
 }
-const MATCH = { match_id: 'm', opponent_name: 'TechTara', won: true, point_timeline: '1:0', player_fps_timeline: '300', player_end_stats: '1|2', cards_picked: [] }
+const MATCH = { match_id: 'm', opponent_name: 'TechTara', won: true, is_ranked: true, point_timeline: '1:0', player_fps_timeline: '300', player_end_stats: '1|2', cards_picked: [] }
+
+describe('casual games stay off profiles', () => {
+  it('the profile carries no casual record and only ranked form entries', async () => {
+    const { app } = makeApp({
+      [`/players/${ME}`]: {
+        ...PROFILE,
+        casual_wins: 12,
+        casual_losses: 9,
+        casual_matches: 21,
+        best_casual_streak: 4,
+        h2h_casual_wins: 2,
+        h2h_casual_losses: 1,
+        recent_form: [
+          { result: 'W', ranked: true, opponent: 'Sid', score: '3-1', date: '2026-09-23' },
+          { result: 'L', ranked: false, opponent: 'Stan', score: '0-3', date: '2026-09-23' },
+        ],
+      },
+    })
+    const body = await (await app.request(`/api/players/${ME}?me=${SID}`)).json()
+    expect(JSON.stringify(body)).not.toMatch(/casual/)
+    expect(body.data.recent_form.map((f: { opponent: string }) => f.opponent)).toEqual(['Sid'])
+  })
+
+  it('match history lists ranked games only', async () => {
+    const { app } = makeApp({ [`/players/${ME}/matches`]: [MATCH, { ...MATCH, match_id: 'c', is_ranked: false }, { ...MATCH, match_id: 'u', is_ranked: undefined }] })
+    const body = await (await app.request(`/api/players/${ME}/matches`)).json()
+    expect(body.data.map((m: { match_id: string }) => m.match_id)).toEqual(['m'])
+  })
+
+  it('the match summary counts ranked games only', async () => {
+    const { app } = makeApp({ [`/players/${ME}/matches/summary`]: { total: 100, ranked_matches: 69, casual_matches: 31, ranked_groups: 30 } })
+    const body = await (await app.request(`/api/players/${ME}/matches-summary`)).json()
+    expect(body.data).toEqual({ total: 69, ranked_matches: 69, ranked_groups: 30 })
+  })
+})
 
 describe('GET /api/players/:id', () => {
   it('returns the masked profile and forwards the viewer', async () => {
@@ -84,7 +119,7 @@ describe('GET /api/players/:id/:sub', () => {
   it('slims match rows and bounds limit/offset', async () => {
     const { app, fake } = makeApp({ [`/players/${ME}/matches`]: [MATCH] })
     const body = await (await app.request(`/api/players/${ME}/matches?limit=5000&offset=-3`)).json()
-    expect(body.data[0]).toEqual({ match_id: 'm', opponent_name: 'TechTara', won: true, cards_picked: [] })
+    expect(body.data[0]).toEqual({ match_id: 'm', opponent_name: 'TechTara', won: true, is_ranked: true, cards_picked: [] })
     expect(Object.fromEntries(fake.calls[0].url.searchParams)).toEqual({ limit: '200', offset: '0' })
   })
 
@@ -93,7 +128,7 @@ describe('GET /api/players/:id/:sub', () => {
     const { app } = makeApp({ [`/players/${ME}/matches`]: [MATCH] }, {}, undefined, store)
     await app.request(`/api/players/${ME}/matches`)
     const cached = store.sets.find((s) => s.key.includes(':matches:'))!
-    expect(cached.value).toEqual([{ match_id: 'm', opponent_name: 'TechTara', won: true, cards_picked: [] }])
+    expect(cached.value).toEqual([{ match_id: 'm', opponent_name: 'TechTara', won: true, is_ranked: true, cards_picked: [] }])
     expect(JSON.stringify(cached.value)).not.toContain('point_timeline')
   })
 

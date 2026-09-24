@@ -12,7 +12,6 @@ export function HeadToHead({ p, me }: { p: HubProfile; me: string }) {
       <div className="tiles">
         <StatTile label="Ranked series" value={`${p.h2h_series_wins ?? 0}-${p.h2h_series_losses ?? 0}`} sub={`${p.display_name} vs you`} />
         <StatTile label="Ranked games" value={`${p.h2h_ranked_wins ?? 0}-${p.h2h_ranked_losses ?? 0}`} />
-        <StatTile label="Casual games" value={`${p.h2h_casual_wins ?? 0}-${p.h2h_casual_losses ?? 0}`} />
       </div>
       <div className="card">
         <h2>Most picked against each other</h2>

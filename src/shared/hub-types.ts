@@ -53,7 +53,17 @@ export interface MetaEnvelope extends HubEnvelope<MetaData> {
 /** PlayerProfile after privacy masking (spec 6.4). */
 export type HubProfile = Omit<
   PlayerProfile,
-  'discord_id' | 'discord_username' | 'appear_offline' | 'hide_gold'
+  | 'discord_id'
+  | 'discord_username'
+  | 'appear_offline'
+  | 'hide_gold'
+  // Casual games stay off profiles (maskProfile drops them).
+  | 'casual_wins'
+  | 'casual_losses'
+  | 'casual_matches'
+  | 'best_casual_streak'
+  | 'h2h_casual_wins'
+  | 'h2h_casual_losses'
 > & { gold_hidden: boolean }
 
 export interface MeData {
