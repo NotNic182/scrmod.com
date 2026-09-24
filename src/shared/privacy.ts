@@ -5,6 +5,11 @@ type Obj = Record<string, unknown>
 
 const PROFILE_ALWAYS_DROP = ['discord_id', 'discord_username', 'appear_offline', 'hide_gold'] as const
 const PROFILE_GOLD_FIELDS = ['gold_earned', 'gold_spent', 'bet_gold_net'] as const
+/**
+ * Casual games stay off profiles (Sid's call). Every profile field about them has "casual" as a word in its name
+ * (casual_wins, best_casual_streak, h2h_casual_losses, casual_dc_count, ...), including ones the upstream adds later.
+ */
+const CASUAL_FIELD = /(^|_)casual(_|$)/
 
 /** Keys no hub response may carry, in whatever shape they turn up. */
 export const PRIVATE_KEYS: ReadonlySet<string> = new Set([
@@ -44,9 +49,24 @@ export function maskProfile<T extends object>(p: T): Obj {
   const hideGold = src.hide_gold === true
   const showDiscord = src.show_discord === true
   for (const k of PROFILE_ALWAYS_DROP) delete out[k]
+  for (const k of Object.keys(out)) if (CASUAL_FIELD.test(k)) delete out[k]
+  if (Array.isArray(src.recent_form)) out.recent_form = src.recent_form.filter((f) => (f as Obj | null)?.ranked === true)
   if (!showDiscord) delete out.discord_display_name
   if (hideGold) for (const k of PROFILE_GOLD_FIELDS) delete out[k]
   out.gold_hidden = hideGold
+  return out
+}
+
+/** Match history lists ranked games only; a row the API doesn't mark as ranked counts as casual. */
+export function isRankedMatch(m: object): boolean {
+  return (m as Obj).is_ranked === true
+}
+
+/** The match summary without its casual count: the total becomes the ranked total. */
+export function rankedSummary<T extends object>(s: T): Obj {
+  const out: Obj = { ...(s as Obj) }
+  delete out.casual_matches
+  if (typeof out.ranked_matches === 'number') out.total = out.ranked_matches
   return out
 }
 

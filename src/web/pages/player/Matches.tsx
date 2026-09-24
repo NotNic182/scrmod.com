@@ -1,20 +1,13 @@
-import { useId, useState } from 'react'
+import { useId } from 'react'
 import type { CardPick, PlayerMatch } from '../../../shared/api-types'
 import { usePlayerSub } from '../../api/hooks'
 import { PlayerLink } from '../../components/PlayerLink'
 import { Disclosure } from '../../components/Disclosure'
-import { Segmented } from '../../components/Segmented'
 import { TitleTag } from '../../components/TitleTag'
 import { QueryState } from '../../components/QueryState'
 import { fmtDate, pct, signed } from '../../lib/format'
 import { groupSeries, type SeriesGroup } from '../../lib/series'
 import { useFirst } from '../../components/ShowMore'
-
-const GAME_FILTERS = [
-  { id: 'all' as const, label: 'All' },
-  { id: 'ranked' as const, label: 'Ranked' },
-  { id: 'casual' as const, label: 'Casual' },
-]
 
 function Cards({ cards }: { cards: CardPick[] | undefined }) {
   if (!cards?.length) return <span className="faint">no picks</span>
@@ -65,19 +58,12 @@ function Game({ g, n }: { g: PlayerMatch; n: number }) {
 }
 
 export function Matches({ steamId }: { steamId: string }) {
-  const [filter, setFilter] = useState<'all' | 'ranked' | 'casual'>('all')
+  // The server sends ranked games only: casual games stay off profiles.
   const q = usePlayerSub(steamId, 'matches', { limit: 100 })
   return (
     <div className="card">
-      <div className="toolbar">
-        <Segmented options={GAME_FILTERS} value={filter} onChange={setFilter} label="Games shown" />
-      </div>
-      <QueryState q={q} label="matches" empty={(d) => d.length === 0} emptyHint="Matches appear once the mod reports them.">
-        {(rows) => {
-          const groups = groupSeries(rows).filter((g) => filter === 'all' || (filter === 'ranked') === g.ranked)
-          if (!groups.length) return <div className="empty">No {filter} matches in the last 100 games.</div>
-          return <SeriesList groups={groups} />
-        }}
+      <QueryState q={q} label="ranked matches" empty={(d) => d.length === 0} emptyHint="Ranked matches appear once the mod reports them.">
+        {(rows) => <SeriesList groups={groupSeries(rows)} />}
       </QueryState>
     </div>
   )
@@ -95,7 +81,6 @@ function SeriesList({ groups }: { groups: SeriesGroup[] }) {
               key={g.key}
               summary={
                 <summary className="series-row">
-                  <span className={`chip series-kind ${g.ranked ? 'tone-info' : ''}`}>{g.ranked ? 'RANKED' : 'CASUAL'}</span>
                   {/* A summary can't hold a link (nested controls): the name is text here, the profile link sits inside. */}
                   <span className="series-who">
                     <strong>

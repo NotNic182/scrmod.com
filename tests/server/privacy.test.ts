@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import {
   KEEP_FOR_PROFILE_MASK,
+  isRankedMatch,
   maskProfile,
+  rankedSummary,
   maskRecentSeries,
   maskChatMessage,
   scrubPrivate,
@@ -53,6 +55,48 @@ describe('maskProfile', () => {
     const copy = { ...base }
     maskProfile(copy)
     expect(copy).toEqual(base)
+  })
+
+  it('removes casual games: the record, count, streak, head-to-head record and form entries', () => {
+    const form = [
+      { result: 'W', ranked: true, opponent: 'Sid', score: '3-1', date: '2026-09-23' },
+      { result: 'L', ranked: false, opponent: 'Stan', score: '0-3', date: '2026-09-23' },
+      { result: 'L', opponent: 'Nix', score: '2-3', date: '2026-09-22' },
+    ]
+    const m = maskProfile({
+      ...base,
+      casual_wins: 12,
+      casual_losses: 9,
+      casual_matches: 21,
+      best_casual_streak: 4,
+      h2h_casual_wins: 2,
+      h2h_casual_losses: 1,
+      // Fields the upstream sends that the hub's types don't name: any casual_* key goes.
+      casual_dc_count: 9,
+      casual_opponent_dc_count: 9,
+      casual_own_dc_count: 0,
+      casual_rage_quit_pct: 0.03,
+      h2h_ranked_wins: 3,
+      ranked_series_wins: 45,
+      recent_form: form,
+    })
+    expect(Object.keys(m).filter((k) => /casual/.test(k))).toEqual([])
+    expect(m.recent_form).toEqual([form[0]])
+    expect(m.h2h_ranked_wins).toBe(3)
+    expect(m.ranked_series_wins).toBe(45)
+  })
+})
+
+describe('isRankedMatch / rankedSummary', () => {
+  it('keeps only matches the API marks as ranked', () => {
+    expect(isRankedMatch({ is_ranked: true })).toBe(true)
+    expect(isRankedMatch({ is_ranked: false })).toBe(false)
+    expect(isRankedMatch({})).toBe(false)
+  })
+
+  it('drops the casual count and totals ranked matches only', () => {
+    expect(rankedSummary({ total: 100, ranked_matches: 69, casual_matches: 31, ranked_groups: 30 })).toEqual({ total: 69, ranked_matches: 69, ranked_groups: 30 })
+    expect(rankedSummary({ total: 5 })).toEqual({ total: 5 })
   })
 })
 

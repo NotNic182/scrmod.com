@@ -1489,21 +1489,17 @@ table.t td.pickers-cell {
   gap: var(--space-xs) var(--space-sm);
 }
 
-/* A series in match history: the same columns on every row, so kind, score, rating change and date line up down
-   the list. On a phone the change and date take a second line under the name. */
+/* A series in match history: the same columns on every row, so score, rating change and date line up down the
+   list. On a phone the change and date take a second line under the name. */
 details.acc > summary.series-row {
   display: grid;
-  grid-template-columns: auto 5.5rem minmax(0, 1fr) auto 4.5rem 4.5rem;
-  grid-template-areas: 'chev kind who score change date';
+  grid-template-columns: auto minmax(0, 1fr) auto 4.5rem 4.5rem;
+  grid-template-areas: 'chev who score change date';
   align-items: center;
   column-gap: var(--space-sm);
 }
 details.acc > summary.series-row::before {
   grid-area: chev;
-}
-.series-row .series-kind {
-  grid-area: kind;
-  justify-self: start;
 }
 .series-row .series-who {
   grid-area: who;
@@ -1527,10 +1523,10 @@ details.acc > summary.series-row::before {
 }
 @media (max-width: 559px) {
   details.acc > summary.series-row {
-    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
-      'chev kind who score'
-      '. . change date';
+      'chev who score'
+      '. change date';
     row-gap: var(--space-3xs);
     padding-block: var(--space-xs);
   }

@@ -19,6 +19,8 @@ function StatGroup({ title, children }: { title: string; children: ReactNode }) 
 export function Overview({ p }: { p: HubProfile }) {
   const gold = p.gold_hidden ? undefined : (p.gold_earned ?? 0) - (p.gold_spent ?? 0)
   const ovtPlayed = p.ovt_solo_wins + p.ovt_solo_losses + p.ovt_duo_wins + p.ovt_duo_losses > 0
+  // Casual games stay off profiles, so this group only shows modes the player has played.
+  const otherModes = !!p.team_completed_series || !!p.ffa_games || ovtPlayed
   return (
     <>
       <div className="card">
@@ -28,12 +30,13 @@ export function Overview({ p }: { p: HubProfile }) {
         <RatingGraph history={p.recent_rating_history} ffa={p.ffa_rating_history} />
       </div>
 
-      <StatGroup title="Other modes">
-        <StatTile label="Casual" value={`${p.casual_wins ?? 0}-${p.casual_losses ?? 0}`} sub="games" />
-        {p.team_completed_series ? <StatTile label="2v2 rating" value={Math.round(p.team_rating)} sub={plural(p.team_completed_series, 'series', 'series')} /> : null}
-        {p.ffa_games ? <StatTile label="FFA" value={p.ffa_rating ? Math.round(p.ffa_rating) : plural(p.ffa_wins, 'win')} sub={`avg place ${p.ffa_avg_placement?.toFixed(2) ?? '–'} · ${plural(p.ffa_games, 'game')}`} /> : null}
-        {ovtPlayed ? <StatTile label="1v2" value={`${p.ovt_solo_wins + p.ovt_duo_wins}-${p.ovt_solo_losses + p.ovt_duo_losses}`} sub={`solo ${p.ovt_solo_wins}-${p.ovt_solo_losses} · duo ${p.ovt_duo_wins}-${p.ovt_duo_losses}`} /> : null}
-      </StatGroup>
+      {otherModes ? (
+        <StatGroup title="Other modes">
+          {p.team_completed_series ? <StatTile label="2v2 rating" value={Math.round(p.team_rating)} sub={plural(p.team_completed_series, 'series', 'series')} /> : null}
+          {p.ffa_games ? <StatTile label="FFA" value={p.ffa_rating ? Math.round(p.ffa_rating) : plural(p.ffa_wins, 'win')} sub={`avg place ${p.ffa_avg_placement?.toFixed(2) ?? '–'} · ${plural(p.ffa_games, 'game')}`} /> : null}
+          {ovtPlayed ? <StatTile label="1v2" value={`${p.ovt_solo_wins + p.ovt_duo_wins}-${p.ovt_solo_losses + p.ovt_duo_losses}`} sub={`solo ${p.ovt_solo_wins}-${p.ovt_solo_losses} · duo ${p.ovt_duo_wins}-${p.ovt_duo_losses}`} /> : null}
+        </StatGroup>
+      ) : null}
 
       <StatGroup title="Career">
         <StatTile label="Level" value={p.level} sub={`${num(p.xp_into_level)} / ${num(p.xp_for_next_level)} xp`} />
