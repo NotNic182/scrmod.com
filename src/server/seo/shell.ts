@@ -61,7 +61,7 @@ export function renderShell(data: ShellData, base: string): string {
         : []
       const results = (h?.results ?? []).slice(0, 8).map(resultLine)
       main =
-        `<h1>Right now</h1><p class="page-intro">${a('/guide', 'New to ranked ROUNDS? Start here →')}</p>` +
+        `<h1>Right now</h1><p class="page-intro">${esc(INTROS.home)} ${a('/guide', 'New to ranked ROUNDS? Start here →')}</p>` +
         (h
           ? `<ul class="plain-list"><li>Online now: ${num(h.presence.online_count)}</li><li>Ranked queue: ${num(h.queue.ranked_searching)} searching</li><li>2v2 queue: ${num(h.queue.team_searching)} searching</li><li>Live games: ${num(h.live.series_1v1.length + h.live.series_2v2.length + h.live.ffa_lobbies.length)}</li></ul>`
           : '') +

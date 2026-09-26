@@ -39,14 +39,20 @@ describe('matchRoute', () => {
 
 describe('pageMeta', () => {
   it('writes the planned titles', () => {
-    expect(pageMeta({ kind: 'home' }).title).toBe('SCRmod: ROUNDS ranked stats, live games and leaderboards')
+    expect(pageMeta({ kind: 'home' }).title).toBe("SCRmod: Sid's Competitive Rounds, the ranked mod for ROUNDS")
     expect(pageMeta({ kind: 'leaderboard', mode: '2v2' }).title).toBe('ROUNDS 2v2 ranked leaderboard: top players by rating · SCRmod')
     expect(pageMeta({ kind: 'leaderboard', mode: '1v2-solo' }).title).toBe('ROUNDS 1v2 solo leaderboard: top players · SCRmod')
-    expect(pageMeta({ kind: 'cards' }).title).toBe('ROUNDS card win rates: the best cards in ranked play · SCRmod')
+    expect(pageMeta({ kind: 'cards' }).title).toBe("ROUNDS card win rates in Sid's Competitive Rounds ranked games · SCRmod")
     expect(pageMeta({ kind: 'guide' }).title).toBe("How to play ranked ROUNDS: install Sid's Competitive Rounds · SCRmod")
     expect(pageMeta({ kind: 'watch' }).title).toBe('ROUNDS live stream: ranked games and tournaments · SCRmod')
     expect(pageMeta({ kind: 'leaderboards-root' }).path).toBe('/leaderboards/1v1')
     expect(pageMeta({ kind: 'leaderboard', mode: 'zzz' }).index).toBe(false)
+  })
+
+  it('describes the home page as the ranked mod, not its card stats', () => {
+    const { description } = pageMeta({ kind: 'home' })
+    expect(description).toContain("Sid's Competitive Rounds, the ranked matchmaking mod for ROUNDS")
+    expect(description).not.toMatch(/card/i)
   })
 
   it('builds a card page from its facts, canonical slug included', () => {

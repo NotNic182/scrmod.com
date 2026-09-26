@@ -27,7 +27,7 @@ describe('page titles and intros', () => {
   it('cards: title and intro', async () => {
     mockHub({ '/cards?filter=all&sort=times_picked&order=desc': env(cards), '/cards/leaders': env({ sweepers: [], winners: [] }), '/me': SIGNED_OUT })
     renderApp(<Cards />)
-    await waitFor(() => expect(document.title).toBe('ROUNDS card win rates: the best cards in ranked play · SCRmod'))
+    await waitFor(() => expect(document.title).toBe("ROUNDS card win rates in Sid's Competitive Rounds ranked games · SCRmod"))
     expect(screen.getByText('Win, pick and pass rates for every ROUNDS card across ranked and casual games.')).toBeInTheDocument()
   })
 

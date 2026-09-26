@@ -7,7 +7,7 @@ const SITE = 'https://scrmod.com'
 describe('renderHead', () => {
   it('writes title, description, canonical, robots and link-preview tags', () => {
     const html = renderHead({ meta: pageMeta({ kind: 'cards' }), site: SITE, jsonLd: [{ '@type': 'WebSite' }] })
-    expect(html).toContain('<title>ROUNDS card win rates: the best cards in ranked play · SCRmod</title>')
+    expect(html).toContain('<title>ROUNDS card win rates in Sid&#39;s Competitive Rounds ranked games · SCRmod</title>')
     expect(html).toContain('<link rel="canonical" href="https://scrmod.com/cards" />')
     expect(html).toContain('<meta name="robots" content="index, follow" />')
     expect(html).toContain('<meta property="og:url" content="https://scrmod.com/cards" />')

@@ -8,7 +8,8 @@ describe('structured data', () => {
     const g = siteGraph(SITE) as Record<string, any>
     expect(g['@type']).toBe('WebSite')
     expect(g.url).toBe('https://scrmod.com/')
-    expect(g.alternateName).toContain("Sid's Competitive Rounds stats")
+    expect(g.alternateName).toContain("Sid's Competitive Rounds ranked stats")
+    expect(g.description).toContain('the ranked matchmaking mod for ROUNDS')
     const [game, mod] = g.about
     expect(game).toMatchObject({ '@type': 'VideoGame', name: 'ROUNDS', sameAs: ['https://store.steampowered.com/app/1557740/ROUNDS/'] })
     expect(mod['@type']).toBe('SoftwareApplication')
