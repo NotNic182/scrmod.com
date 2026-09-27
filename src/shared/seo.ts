@@ -16,6 +16,7 @@ export const BOARD_MODES: ReadonlyArray<{ id: string; label: string; ranked: boo
 
 /** The one-line intros under page headings. */
 export const INTROS = {
+  home: "Sid's Competitive Rounds is the ranked mod for ROUNDS: rated 1v1 and 2v2 ladders, 25 rank tiers, free-for-all and weekly tournaments. Here is what is happening in it now.",
   leaderboards: "Ranked ROUNDS players in Sid's Competitive Rounds, ordered by rating.",
   leaderboards1v2: 'One player against a duo: the unranked 1v2 beta mode.',
   results: 'The latest finished ranked and casual games, newest first.',
@@ -136,6 +137,10 @@ export interface MetaFacts {
   cardCount?: number
 }
 
+/** What the site is, in one line: the home page's description and the site-wide structured data both use it. */
+export const HOME_DESCRIPTION =
+  "Sid's Competitive Rounds, the ranked matchmaking mod for ROUNDS, live: ratings and rank tiers, leaderboards, live games, tournaments and how to install it."
+
 const titled = (t: string) => `${t} · ${SITE_NAME}`
 const percent = (f: number) => `${Math.round(f * 100)}%`
 const count = (n: number) => n.toLocaleString('en-US')
@@ -155,8 +160,8 @@ export function pageMeta(m: RouteMatch, facts: MetaFacts = {}): PageMeta {
   switch (m.kind) {
     case 'home':
       return {
-        title: `${SITE_NAME}: ROUNDS ranked stats, live games and leaderboards`,
-        description: "Who's online in ROUNDS right now, live ranked games, leaderboards, player stats and card win rates for Sid's Competitive Rounds, the ranked ROUNDS mod.",
+        title: `${SITE_NAME}: Sid's Competitive Rounds, the ranked mod for ROUNDS`,
+        description: HOME_DESCRIPTION,
         path: '/',
         index: true,
         ogType: 'website',
@@ -209,8 +214,8 @@ export function pageMeta(m: RouteMatch, facts: MetaFacts = {}): PageMeta {
       }
     case 'cards':
       return {
-        title: titled('ROUNDS card win rates: the best cards in ranked play'),
-        description: `Win, pick and pass rates for ${facts.cardCount ? `all ${facts.cardCount} ROUNDS cards` : 'every ROUNDS card'} across ranked and casual games of Sid's Competitive Rounds. See which cards win most.`,
+        title: titled("ROUNDS card win rates in Sid's Competitive Rounds ranked games"),
+        description: `Card stats from Sid's Competitive Rounds, the ranked ROUNDS mod: win, pick and pass rates for ${facts.cardCount ? `all ${facts.cardCount} cards` : 'every card'} across its ranked and casual games.`,
         path: '/cards',
         index: true,
         ogType: 'website',

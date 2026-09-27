@@ -10,7 +10,7 @@ import { StreamCard } from '../components/Stream'
 import { useIdentity } from '../lib/identity'
 import { agoFromMinutes } from '../lib/format'
 import { useFirst } from '../components/ShowMore'
-import { pageMeta } from '../../shared/seo'
+import { INTROS, pageMeta } from '../../shared/seo'
 import type { PresenceEntry } from '../../shared/api-types'
 
 /** Players seen lately but not online now: the five most recent, the rest on request. */
@@ -43,7 +43,7 @@ export function Home() {
     <>
       <h1>Right now</h1>
       <p className="page-intro">
-        <Link to="/guide">New to ranked ROUNDS? Start here →</Link>
+        {INTROS.home} <Link to="/guide">New to ranked ROUNDS? Start here →</Link>
       </p>
       <StreamCard watchLink />
       <QueryState q={q} label="live data">

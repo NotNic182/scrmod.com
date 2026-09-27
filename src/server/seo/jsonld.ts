@@ -1,4 +1,5 @@
 import { LINKS } from '../../shared/links'
+import { HOME_DESCRIPTION } from '../../shared/seo'
 
 const url = (site: string, path: string) => (path === '/' ? `${site}/` : `${site}${path}`)
 
@@ -12,7 +13,8 @@ export function siteGraph(site: string): object {
     '@type': 'WebSite',
     '@id': `${site}/#site`,
     name: 'SCRmod',
-    alternateName: ['SCR mod', "Sid's Competitive Rounds stats"],
+    alternateName: ['SCR mod', "Sid's Competitive Rounds ranked stats"],
+    description: HOME_DESCRIPTION,
     url: `${site}/`,
     inLanguage: 'en',
     about: [
