@@ -22,4 +22,14 @@ describe('Layout', () => {
     expect(screen.getByText('page body')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /theme/i })).toBeInTheDocument()
   })
+
+  it.each(['/leaderboards/2v2', '/leaderboards/ffa', '/leaderboards/1v2-solo'])('marks Boards current in both navigation layouts on %s', (route) => {
+    renderApp(<Layout />, { route })
+    expect(screen.getAllByRole('link', { name: 'Boards' })).toHaveLength(2)
+    for (const link of screen.getAllByRole('link', { name: 'Boards' })) {
+      expect(link).toHaveAttribute('aria-current', 'page')
+      expect(link).toHaveClass('active')
+    }
+    for (const link of screen.getAllByRole('link', { name: 'Home' })) expect(link).not.toHaveAttribute('aria-current')
+  })
 })

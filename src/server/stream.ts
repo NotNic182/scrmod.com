@@ -155,21 +155,52 @@ export function registerStreamRoutes(app: Hono, d: RouteDeps, fetchImpl: typeof 
       twitch ? d.cache.get('stream:twitch', LIVE_TTL, () => watch('Twitch', () => twitch.live(s.twitchLogin))) : Promise.resolve(null),
     ])
     const recent = feedR.status === 'fulfilled' ? feedR.value.value : []
+    const errors: string[] = []
+    const fetched: number[] = []
+    let stale = false
+    let liveCheckFailed = false
+    if (feedR.status === 'fulfilled') {
+      fetched.push(feedR.value.fetched_at)
+      stale ||= feedR.value.stale
+    } else {
+      errors.push('recent broadcasts')
+    }
+    if (twitch) {
+      if (twitchR.status === 'fulfilled' && twitchR.value) {
+        fetched.push(twitchR.value.fetched_at)
+        liveCheckFailed = twitchR.value.stale
+      } else {
+        liveCheckFailed = true
+      }
+      if (liveCheckFailed) errors.push('Twitch')
+    }
     // LIVE_TTL has no stale window, so `stale: true` here only means the cache's error
     // fallback fired (spec 6.3): the live check itself failed and this is an old answer.
-    // A stream that failed to confirm as live must report offline, not repeat a broadcast
+    // A stream that failed to confirm as live must report unknown, not repeat a broadcast
     // that may already be over.
     let live: StreamLive | null = twitchR.status === 'fulfilled' && twitchR.value && !twitchR.value.stale ? twitchR.value.value : null
     if (!live && s.youtubeApiKey && recent.length) {
       try {
         const key = s.youtubeApiKey
         const r = await d.cache.get('stream:yt-live', LIVE_TTL, () => watch('YouTube live check', () => youtubeLive(recent.slice(0, 5).map((v) => v.videoId), key, fetchImpl)))
+        fetched.push(r.fetched_at)
+        if (r.stale) {
+          errors.push('YouTube')
+          liveCheckFailed = true
+        }
         live = r.stale ? null : r.value
       } catch {
         live = null
+        errors.push('YouTube')
+        liveCheckFailed = true
       }
+    } else if (!live && s.youtubeApiKey && feedR.status === 'rejected') {
+      // Without a current feed we cannot select videos for the YouTube live check.
+      errors.push('YouTube')
+      liveCheckFailed = true
     }
-    const data: StreamData = { live, recent: recent.slice(0, 4), links }
-    return c.json({ data, fetched_at: new Date(d.now()).toISOString(), stale: false })
+    const live_status = live ? 'live' : !twitch && !s.youtubeApiKey ? 'unavailable' : liveCheckFailed ? 'unknown' : 'offline'
+    const data: StreamData = { live, live_status, recent: recent.slice(0, 4), links }
+    return c.json({ data, fetched_at: new Date(fetched.length ? Math.min(...fetched) : d.now()).toISOString(), stale: stale || errors.length > 0, errors })
   })
 }

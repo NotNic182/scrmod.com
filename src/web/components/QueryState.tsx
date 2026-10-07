@@ -56,7 +56,13 @@ function ErrorBanner({ q, error, label }: { q: UseQueryResult<unknown>; error: u
   )
 }
 
-export function QueryState<T>({ q, label, empty, emptyHint, children }: Props<T>) {
+/** Shared request feedback also works for responses (such as server status) without an envelope. */
+export function QueryFeedback<T>({ q, label, children, pending }: {
+  q: UseQueryResult<T>
+  label: string
+  children: (data: T) => ReactNode
+  pending?: ReactNode
+}) {
   // React Query clears the error when a retry starts on a query that has no data yet; keep showing it (and the
   // button that was pressed) until the retry settles, instead of swapping in the loading placeholder.
   const lastError = useRef<unknown>(null)
@@ -69,6 +75,7 @@ export function QueryState<T>({ q, label, empty, emptyHint, children }: Props<T>
     return <ErrorBanner q={q} error={lastError.current} label={label} />
   }
   if (q.isPending) {
+    if (pending !== undefined) return pending
     return (
       <div aria-busy="true">
         <span className="faint">Loading {label}…</span>
@@ -81,13 +88,23 @@ export function QueryState<T>({ q, label, empty, emptyHint, children }: Props<T>
   if (q.isError && !q.data) {
     return <ErrorBanner q={q} error={q.error} label={label} />
   }
-  const body = q.data!
-  if (empty && empty(body.data)) return <EmptyState title={`No ${label} right now.`} hint={emptyHint} />
   return (
     <>
       {q.isError ? <ErrorBanner q={q} error={q.error} label={label} /> : null}
-      {children(body.data, { fetched_at: body.fetched_at, stale: body.stale, errors: body.errors ?? [] })}
-      <DataAge fetchedAt={body.fetched_at} stale={body.stale} />
+      {children(q.data!)}
     </>
+  )
+}
+
+export function QueryState<T>({ q, label, empty, emptyHint, children }: Props<T>) {
+  return (
+    <QueryFeedback q={q} label={label}>
+      {(body) => empty && empty(body.data) ? <EmptyState title={`No ${label} right now.`} hint={emptyHint} /> : (
+        <>
+          {children(body.data, { fetched_at: body.fetched_at, stale: body.stale, errors: body.errors ?? [] })}
+          <DataAge fetchedAt={body.fetched_at} stale={body.stale} />
+        </>
+      )}
+    </QueryFeedback>
   )
 }

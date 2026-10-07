@@ -156,7 +156,7 @@ h3 {
   text-transform: uppercase;
 }
 @media (hover: hover) {
-  .btn:hover {
+  .btn:not(.btn-accent):hover {
     background: var(--bg-hover);
   }
 }
@@ -227,7 +227,7 @@ table.t tr.me > td {
   color: var(--band-fg);
 }
 @media (hover: hover) {
-  table.t tbody tr:hover > td {
+  table.t tbody tr:not(.me):hover > td {
     --cell-bg: var(--bg-hover);
     background: var(--cell-bg);
   }
@@ -288,13 +288,17 @@ table.t tr.me > td {
   font-weight: 600;
 }
 /* Controls that live on the teal bar keep light ink in both themes. */
-.topbar .btn {
+.topbar > .btn,
+.topbar .identity > .btn,
+.topbar .identity-pinned > .btn {
   background: transparent;
   border-color: rgba(255, 255, 255, 0.24);
   color: var(--bar-fg);
 }
 @media (hover: hover) {
-  .topbar .btn:hover {
+  .topbar > .btn:hover,
+  .topbar .identity > .btn:hover,
+  .topbar .identity-pinned > .btn:hover {
     background: rgba(255, 255, 255, 0.08);
   }
 }
@@ -886,6 +890,17 @@ code {
 .chip.card-chip {
   font-weight: 500;
 }
+.chip.card-pick {
+  display: inline-flex;
+  flex-direction: column;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.card-pick-meta {
+  color: var(--fg-muted);
+  font-weight: 400;
+}
 .tile .value.ach-name {
   font-size: var(--text-body);
   line-height: 1.3;
@@ -1432,6 +1447,45 @@ table.t td.score {
   display: inline-flex;
   flex-wrap: wrap;
   gap: var(--space-2xs);
+}
+.form-overview {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+  gap: var(--space-xs) var(--space-sm);
+}
+.form-details {
+  font-size: var(--text-meta);
+}
+.form-details[open] {
+  flex-basis: 100%;
+}
+.form-details > summary {
+  cursor: pointer;
+  min-height: 32px;
+  align-content: center;
+  color: var(--fg-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-menu);
+}
+.form-details li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid var(--line);
+}
+.form-details bdi {
+  overflow-wrap: anywhere;
+}
+@media (pointer: coarse) {
+  .form-details > summary {
+    min-height: 44px;
+  }
 }
 .game-row {
   padding: var(--space-xs) 0;

@@ -6,6 +6,7 @@ import { IdentityMenu } from './components/IdentityMenu'
 import { Layout } from './components/Layout'
 import { Home } from './pages/Home'
 import { shouldPrefetch } from './lib/network'
+import { PageLoadError, reloadPage } from './lib/pageLoadError'
 
 const client = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: true, refetchIntervalInBackground: false } },
@@ -25,18 +26,21 @@ const RELOADED = 'scrhub.chunk-reload'
  */
 function page<K extends string>(load: () => Promise<Record<K, ComponentType>>, name: K) {
   let loaded: ComponentType | null = null
-  const settle = (m: Record<K, ComponentType>) => {
+  const settle = (m: Record<K, ComponentType>, visited = false) => {
     loaded = m[name]
-    try {
-      sessionStorage.removeItem(RELOADED)
-    } catch {
-      // storage unavailable
+    // An unrelated background prefetch must not clear the failed entry page's reload guard.
+    if (visited) {
+      try {
+        sessionStorage.removeItem(RELOADED)
+      } catch {
+        // storage unavailable
+      }
     }
     return m
   }
   const fetchModule = () =>
     load().then(
-      settle,
+      (m) => settle(m, true),
       (err: unknown) => {
         let tried = true
         try {
@@ -45,8 +49,8 @@ function page<K extends string>(load: () => Promise<Record<K, ComponentType>>, n
         } catch {
           // storage unavailable: don't risk a reload loop
         }
-        if (!tried) location.reload()
-        throw err
+        if (!tried) reloadPage()
+        throw new PageLoadError(err)
       },
     )
   const Lazy = lazy<ComponentType>(() => fetchModule().then((m) => ({ default: m[name] })))

@@ -10,8 +10,11 @@ export interface Pinned {
 
 const KEY = 'scrhub.me'
 const EVENT = 'scrhub:me'
+// A visit-only value also overrides readable storage that rejects writes (for example, at quota).
+let visitPin: Pinned | null | undefined
 
 export function readPinned(): Pinned | null {
+  if (visitPin !== undefined) return visitPin
   try {
     const raw = localStorage.getItem(KEY)
     if (!raw) return null
@@ -26,8 +29,9 @@ export function writePinned(p: Pinned | null): void {
   try {
     if (p) localStorage.setItem(KEY, JSON.stringify(p))
     else localStorage.removeItem(KEY)
+    visitPin = undefined
   } catch {
-    // storage unavailable: the pin lives for this render only
+    visitPin = p
   }
   window.dispatchEvent(new Event(EVENT))
 }
@@ -38,7 +42,19 @@ export function useIdentity() {
   const [pinned, setPinned] = useState<Pinned | null>(readPinned)
 
   useEffect(() => {
-    const sync = () => setPinned(readPinned())
+    const sync = (event: Event) => {
+      if (event.type === 'storage') {
+        const changed = event as StorageEvent
+        if (changed.key !== null && changed.key !== KEY) return
+        try {
+          if (changed.storageArea && changed.storageArea !== localStorage) return
+        } catch {
+          return
+        }
+        visitPin = undefined
+      }
+      setPinned(readPinned())
+    }
     window.addEventListener(EVENT, sync)
     window.addEventListener('storage', sync)
     return () => {

@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { HubError } from '../api/client'
 import { useMeta, usePlayer } from '../api/hooks'
@@ -56,9 +56,16 @@ export function Player() {
   // A malformed id or a player that does not exist is the server's 404 page, so it takes that title.
   const missing = !valid || (q.error instanceof HubError && q.error.status === 404)
   useTitle(missing ? pageMeta({ kind: 'not-found' }).title : pageMeta({ kind: 'player', id: steamId! }, { player: q.data ? { display_name: q.data.data.display_name } : undefined }).title)
-  if (!valid) return <NotFound />
-
   const isMe = id.me?.steam_id === steamId
+  const heading = useRef<HTMLHeadingElement>(null)
+  const focusAfterPin = useRef(false)
+  useEffect(() => {
+    if (isMe && focusAfterPin.current && heading.current) {
+      focusAfterPin.current = false
+      heading.current?.focus()
+    }
+  }, [isMe, q.data])
+  if (!valid) return <NotFound />
   const tabs = isMe || !id.me ? PLAYER_TABS : [...PLAYER_TABS, { id: 'h2h', label: `vs ${id.me.display_name}` }]
   const tab = tabs.some((t) => t.id === params.get('tab')) ? params.get('tab')! : 'overview'
 
@@ -71,7 +78,7 @@ export function Player() {
             {/* Who they are, then where they stand in ranked play: above the tabs, so it stays in view on every tab. */}
             <section className="card profile-head" aria-labelledby={nameId}>
               <div>
-                <h1 id={nameId} className="player-name">
+                <h1 id={nameId} className="player-name" ref={heading} tabIndex={-1}>
                   <bdi>{p.display_name}</bdi>
                   {isMe ? <span className="faint you"> (you)</span> : null}
                 </h1>
@@ -86,7 +93,10 @@ export function Player() {
                 </div>
               </div>
               {!isMe ? (
-                <button className="btn" onClick={() => id.pin({ steam_id: p.steam_id, display_name: p.display_name })}>
+                <button className="btn" onClick={() => {
+                  focusAfterPin.current = true
+                  id.pin({ steam_id: p.steam_id, display_name: p.display_name })
+                }}>
                   This is me
                 </button>
               ) : null}

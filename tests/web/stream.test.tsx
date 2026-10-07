@@ -28,6 +28,12 @@ describe('stream', () => {
     expect(frame).toHaveAttribute('title', 'Ranked night on Twitch')
     expect(screen.queryByRole('button', { name: /watch here/i })).toBeNull()
     expect(screen.getByText('Ranked night')).toBeInTheDocument()
+    const close = screen.getByRole('button', { name: 'Close player: Ranked night' })
+    expect(close).toHaveFocus()
+    expect(close).toHaveAttribute('aria-expanded', 'true')
+    await userEvent.click(close)
+    expect(document.querySelector('iframe')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Watch here: Ranked night' })).toHaveFocus()
   })
 
   it('uses YouTube privacy-enhanced mode', async () => {
