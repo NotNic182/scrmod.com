@@ -10,8 +10,21 @@ export function useKeepActiveInView(ref: RefObject<HTMLElement | null>, selector
   useEffect(() => {
     const strip = ref.current
     const el = strip?.querySelector<HTMLElement>(selector)
-    if (!strip || !el || strip.scrollWidth <= strip.clientWidth) return
-    strip.scrollTo({ left: el.offsetLeft - (strip.clientWidth - el.offsetWidth) / 2 })
+    if (!strip || !el) return
+    const keepVisible = () => {
+      if (strip.scrollWidth <= strip.clientWidth) return
+      strip.scrollTo({ left: el.offsetLeft - (strip.clientWidth - el.offsetWidth) / 2 })
+    }
+    keepVisible()
+    // Rotation, window resizing, and larger browser text can move the selected tab past the edge.
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(keepVisible)
+    observer?.observe(strip)
+    observer?.observe(el)
+    window.addEventListener('resize', keepVisible)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', keepVisible)
+    }
   }, [ref, selector, dep])
 }
 

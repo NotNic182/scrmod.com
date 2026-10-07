@@ -7,6 +7,8 @@ html {
   accent-color: var(--accent);
   caret-color: var(--accent-ink);
   scrollbar-color: color-mix(in srgb, var(--fg-faint) 55%, transparent) transparent;
+  scroll-padding-top: calc(var(--nav-h) + env(safe-area-inset-top) + var(--space-xs));
+  scroll-padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--space-xs));
 }
 ::selection {
   background: color-mix(in srgb, var(--accent) 38%, transparent);
@@ -58,6 +60,7 @@ h3 {
   line-height: 1.2;
   text-transform: uppercase;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 h1 {
   font-size: var(--text-display);
@@ -109,7 +112,7 @@ h3 {
   grid-template-columns: minmax(0, 1fr);
   gap: var(--gap-group);
 }
-@media (min-width: 760px) {
+@media (min-width: 47.5rem) {
   .grid-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -146,6 +149,9 @@ h3 {
   align-items: center;
   gap: var(--space-xs);
   min-height: 40px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   padding: 0 var(--space-md);
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
@@ -190,6 +196,7 @@ h3 {
 
 /* Responsive table: horizontal scroll inside the card, never the page. */
 .table-wrap {
+  container-type: inline-size;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin: 0 calc(-1 * var(--pad-card));
@@ -248,6 +255,7 @@ table.t tr.me > td {
 }
 .topbar .brand {
   display: flex;
+  flex: none;
   align-self: stretch;
   align-items: center;
   margin-right: 14px;
@@ -307,6 +315,7 @@ table.t tr.me > td {
   display: block;
 }
 .icon-btn {
+  flex: none;
   justify-content: center;
   width: 40px;
   padding: 0;
@@ -337,7 +346,8 @@ table.t tr.me > td {
   justify-content: center;
   gap: 3px;
   min-width: 0;
-  height: var(--tabbar-h);
+  height: var(--tabbar-row-h);
+  padding: var(--space-2xs);
   font-size: var(--text-tab);
   font-weight: 500;
   letter-spacing: 0.08em;
@@ -346,22 +356,24 @@ table.t tr.me > td {
 }
 .tabbar a span {
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 .tabbar a.active {
   color: var(--band-fg);
   background: var(--band);
   font-weight: 700;
 }
-.tabbar a:active {
+.tabbar a:not(.active):active {
   background: rgba(255, 255, 255, 0.08);
 }
 body {
   padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
 }
-@media (min-width: 840px) {
+/* The six tracked labels plus a pinned profile need about 1100px. A rem breakpoint also accounts for
+   the visitor's default text size, instead of forcing enlarged labels into the desktop bar. */
+@media (min-width: 72rem) {
   .topnav {
     display: flex;
   }
@@ -370,6 +382,9 @@ body {
   }
   body {
     padding-bottom: 0;
+  }
+  html {
+    scroll-padding-bottom: var(--space-xs);
   }
 }
 
@@ -385,9 +400,11 @@ body {
   min-width: 0;
 }
 .identity-name {
+  flex: 1 1 auto;
   min-width: 0;
 }
 .identity-label {
+  min-width: 0;
   max-width: 8.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -405,7 +422,7 @@ body {
   top: calc(var(--nav-h) + env(safe-area-inset-top) + 8px);
   left: max(var(--gutter), env(safe-area-inset-left));
   right: max(var(--gutter), env(safe-area-inset-right));
-  max-height: calc(100dvh - var(--nav-h) - env(safe-area-inset-top) - 24px);
+  max-height: min(var(--identity-space, 100dvh), calc(100dvh - var(--nav-h) - env(safe-area-inset-top) - 24px));
   overflow-y: auto;
   overscroll-behavior: contain;
   margin: 0;
@@ -416,7 +433,7 @@ body {
 .identity-panel > p:first-child {
   margin-top: 0;
 }
-@media (min-width: 840px) {
+@media (min-width: 52.5rem) and (hover: hover) and (pointer: fine) {
   .identity-label {
     max-width: 10rem;
   }
@@ -428,8 +445,8 @@ body {
     top: calc(100% + 8px);
     left: auto;
     right: 0;
-    width: 320px;
-    max-height: min(70vh, 480px);
+    width: min(24rem, calc(100vw - 2 * var(--gutter)));
+    max-height: min(var(--identity-space, 70dvh), 70dvh, 480px);
   }
 }
 .footer {
@@ -650,7 +667,7 @@ body {
 }
 
 /* Wide tables on narrow screens: rank and name stay put while the stats scroll under them. */
-@media (max-width: 839px) {
+@media (max-width: 52.499rem) {
   table.t .stick-rank,
   table.t .stick-name {
     position: sticky;
@@ -792,10 +809,11 @@ main:focus {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-@media (max-width: 839px) {
+@media (max-width: 52.499rem) {
   table.t .stick-name .plink bdi {
     display: inline-block;
-    max-width: 10rem;
+    max-width: min(10rem, 40vw);
+    max-width: min(10rem, 40cqi);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -973,8 +991,14 @@ details.acc[open] {
   gap: var(--space-sm);
   margin-bottom: var(--space-sm);
 }
+.toolbar > * {
+  min-width: 0;
+  max-width: 100%;
+}
 .segmented {
   display: inline-flex;
+  flex-wrap: wrap;
+  max-width: 100%;
   padding: 3px;
   gap: 2px;
   border: 1px solid var(--line);
@@ -982,8 +1006,12 @@ details.acc[open] {
   background: var(--bg-elev);
 }
 .segmented button {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
   min-height: 34px;
-  padding: 0 16px;
+  padding: var(--space-2xs) var(--space-md);
+  overflow-wrap: anywhere;
   border-radius: var(--radius-sm);
   font-size: var(--text-meta);
   font-weight: 500;
@@ -1048,6 +1076,8 @@ details.acc[open] {
 /* Controls in a toolbar size to their content (the base .input is full-width for forms). */
 .toolbar .input {
   width: auto;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* ---- ROUNDS skin: backdrop and the "you are here" band ---- */
@@ -1108,7 +1138,7 @@ table.t tr.me .dot,
   text-transform: none;
   letter-spacing: 0.01em;
 }
-@media (max-width: 479px) {
+@media (max-width: 29.999rem) {
   .wordmark {
     height: 22px;
   }
@@ -1117,6 +1147,20 @@ table.t tr.me .dot,
   }
   .identity-name {
     padding: 0 10px;
+  }
+  .identity > .btn {
+    padding-inline: var(--space-xs);
+    gap: var(--space-2xs);
+  }
+}
+
+/* Very narrow windows and enlarged text: two rows keep all six destinations named and reachable. */
+@media (max-width: 21.999rem) {
+  :root {
+    --tabbar-h: calc(2 * var(--tabbar-row-h));
+  }
+  .tabbar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -1323,17 +1367,24 @@ table.t td.score {
 
 /* Landscape phones (tab bar showing, screen short): the top bar scrolls away with the page and the tab bar slims to
    one line, so fixed chrome takes 44px of a ~375px-tall screen instead of 115px. */
-@media (max-width: 839px) and (max-height: 500px) and (orientation: landscape) {
+@media (max-width: 71.999rem) and (max-height: 500px) and (orientation: landscape) {
   :root {
-    --tabbar-h: 44px;
+    --tabbar-row-h: max(44px, 2.75rem);
+    --tabbar-h: var(--tabbar-row-h);
   }
   .topbar {
     position: relative;
+  }
+  html {
+    scroll-padding-top: var(--space-xs);
   }
   .tabbar a {
     flex-direction: row;
     gap: 8px;
     font-size: var(--text-label);
+  }
+  .tabbar {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
 
@@ -1347,7 +1398,9 @@ table.t td.score {
   .tabs :is(a, button):active {
     background: var(--bg-hover);
   }
-  .topbar .btn:active {
+  .topbar > .btn:active,
+  .topbar .identity > .btn:active,
+  .topbar .identity-pinned > .btn:active {
     background: rgba(255, 255, 255, 0.08);
   }
 }
@@ -1536,6 +1589,14 @@ table.t td.pickers-cell {
   grid-column: 1 / -1;
   margin: 0;
 }
+@media (max-width: 34.999rem) {
+  .profile-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .profile-head > .btn {
+    justify-self: start;
+  }
+}
 .profile-form {
   display: flex;
   flex-wrap: wrap;
@@ -1575,7 +1636,7 @@ details.acc > summary.series-row::before {
   grid-area: date;
   text-align: right;
 }
-@media (max-width: 559px) {
+@media (max-width: 34.999rem) {
   details.acc > summary.series-row {
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
@@ -1589,13 +1650,14 @@ details.acc > summary.series-row::before {
   }
 }
 
-@media (max-width: 839px) {
+@media (max-width: 52.499rem) {
   /* Leaderboard on a phone: a player's title chip goes under the name, so the pinned name column stays narrow
      enough for Rating to show beside it. */
   table.t .stick-name .player {
     flex-wrap: wrap;
     row-gap: var(--space-3xs);
-    max-width: 11rem;
+    max-width: min(11rem, 40vw);
+    max-width: min(11rem, 40cqi);
     white-space: normal;
   }
   /* Cards table on a phone: the card name stays put while the numbers scroll under it. */
@@ -1607,6 +1669,12 @@ details.acc > summary.series-row::before {
     box-shadow:
       calc(-1 * var(--pad-card)) 0 0 var(--cell-bg, var(--bg-card-solid)),
       inset -1px 0 var(--line);
+  }
+  table.t .stick-lead .card-link {
+    max-width: min(12rem, 45vw);
+    max-width: min(12rem, 45cqi);
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }
 .plink {

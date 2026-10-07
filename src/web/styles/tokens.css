@@ -91,8 +91,9 @@
   --text-label: 0.75rem; /* 12: uppercase labels and chips */
   --text-tab: 0.6875rem; /* 11: under-icon tab bar labels only */
   --track-menu: 0.14em; /* the game menu's wide uppercase tracking */
-  --nav-h: 56px;
-  --tabbar-h: 58px;
+  --nav-h: max(56px, 3.5rem);
+  --tabbar-row-h: max(64px, 4rem);
+  --tabbar-h: var(--tabbar-row-h);
   --gutter: 16px;
   --maxw: 1100px;
   color-scheme: dark;

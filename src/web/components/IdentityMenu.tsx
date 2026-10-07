@@ -11,6 +11,7 @@ export function IdentityMenu() {
   const [signingOut, setSigningOut] = useState(false)
   const [signOutFailed, setSignOutFailed] = useState(false)
   const root = useRef<HTMLDivElement>(null)
+  const panel = useRef<HTMLDivElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
   const panelId = useId()
   const { pathname } = useLocation()
@@ -37,6 +38,28 @@ export function IdentityMenu() {
     return () => {
       document.removeEventListener('keydown', onKey)
       document.removeEventListener('pointerdown', onPointer)
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    // On iOS the keyboard shrinks the visual viewport without necessarily changing 100dvh.
+    // Leave the focused search and its results in a scrollable sheet above the keyboard.
+    const viewport = window.visualViewport
+    const fitPanel = () => {
+      if (!panel.current) return
+      const bottom = viewport ? viewport.offsetTop + viewport.height : window.innerHeight
+      const space = Math.max(0, bottom - panel.current.getBoundingClientRect().top - 16)
+      panel.current.style.setProperty('--identity-space', `${space}px`)
+    }
+    fitPanel()
+    viewport?.addEventListener('resize', fitPanel)
+    viewport?.addEventListener('scroll', fitPanel)
+    window.addEventListener('resize', fitPanel)
+    return () => {
+      viewport?.removeEventListener('resize', fitPanel)
+      viewport?.removeEventListener('scroll', fitPanel)
+      window.removeEventListener('resize', fitPanel)
     }
   }, [open])
 
@@ -70,7 +93,7 @@ export function IdentityMenu() {
       {open ? (
         <>
           <div className="identity-scrim" onClick={() => close(false)} />
-          <div className="card identity-panel" id={panelId} role="region" aria-label="Profile options">
+          <div className="card identity-panel" id={panelId} ref={panel} role="region" aria-label="Profile options">
             {id.discord ? (
               <p className="muted">
                 Signed in as <bdi>{id.discord.global_name ?? id.discord.username}</bdi>.
