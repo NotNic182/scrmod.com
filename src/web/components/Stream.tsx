@@ -58,11 +58,9 @@ export function LiveStream({ live, watchLink = false }: { live: StreamLive; watc
           <Icon name={playing ? 'close' : 'play'} size={18} /> {playing ? 'Close player' : 'Watch here'}
         </button>
       </div>
-      {playing ? (
-        <div className="stream-frame" id={frameId}>
-          <iframe src={src} title={`${live.title} on ${platform}`} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen />
-        </div>
-      ) : null}
+      <div className="stream-frame" id={frameId} hidden={!playing}>
+        {playing ? <iframe src={src} title={`${live.title} on ${platform}`} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen /> : null}
+      </div>
       <p className="subline">
         <a href={live.url} rel="noopener">
           Open on {platform}
@@ -100,14 +98,13 @@ export function BroadcastList({ data: d, whileLive = false }: { data: StreamData
           YouTube →
         </a>
       </div>
-      <ul className="plain-list">
+      <ul className="plain-list broadcast-list">
         {d.recent.map((v) => (
-          <li key={v.videoId} className="row list-row">
+          <li key={v.videoId}>
             <a href={v.url} rel="noopener">
               {v.title}
             </a>
-            <span className="spacer" />
-            <span className="faint">{relTime(v.published_at)}</span>
+            <time className="faint" dateTime={v.published_at}>{relTime(v.published_at)}</time>
           </li>
         ))}
       </ul>

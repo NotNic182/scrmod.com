@@ -1,8 +1,8 @@
 export function EmptyState({ title, hint }: { title: string; hint?: string }) {
   return (
     <div className="empty">
-      <div>{title}</div>
-      {hint ? <div className="faint">{hint}</div> : null}
+      <div className="empty-title">{title}</div>
+      {hint ? <div className="faint empty-hint">{hint}</div> : null}
     </div>
   )
 }

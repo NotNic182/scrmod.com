@@ -20,8 +20,8 @@ export function FormStrip({ form, max = 20 }: { form: FormEntry[] | undefined; m
             <li key={i}>
               <strong className={f.result === 'W' ? 'good' : 'bad'}>{f.result === 'W' ? 'Won' : 'Lost'}</strong>
               <span className="tnum">{f.score}</span>
-              <span>vs <bdi>{f.opponent}</bdi></span>
-              <span className="muted">{f.ranked ? 'ranked' : 'casual'}</span>
+              <span className="form-opponent">vs <bdi>{f.opponent}</bdi></span>
+              <span className="muted form-mode">{f.ranked ? 'ranked' : 'casual'}</span>
             </li>
           ))}
         </ol>

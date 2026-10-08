@@ -260,6 +260,7 @@ Each signal color has one meaning, and each has a darker Mist twin (listed in th
 - **Section** (500, 0.8125rem, tracked 0.14em, uppercase): section headings inside cards, in Sea-Glass Ink; the same size at 400 for the top menu entries.
 - **Menu** (600, 0.8125rem, tracked 0.1em, uppercase): buttons, tabs and filters.
 - **Meta** (400, 0.8125rem): timestamps, subtitles, the footer, "as of" lines.
+- Broadcast dates use Meta beside a wrapping title; empty states use a body-size title at 600 with a Meta hint beneath it.
 - **Label** (500, 0.75rem, tracked 0.14em, uppercase): tile labels, table headers, sub-section headings; chips use the same size at 700.
 - **Tab bar** (500, 0.6875rem, tracked 0.08em, uppercase): under-icon labels in the phone tab bar only.
 
@@ -282,6 +283,7 @@ Spacing follows one scale (2, 4, 8, 12, 16, 24, 32, 48px). Inside a group the st
 - **Identity:** a sheet above the keyboard on touch screens, with its scrolling height fitted to the visual viewport; a dropdown from 52.5rem on devices with a fine pointer and hover.
 - **Tables** scroll sideways inside their card, never the page. Below 52.5rem the rank and name columns (or the card name) stay pinned while the numbers scroll under them, and a player's title chip moves under the name to keep the pinned column narrow.
 - **Controls:** filter groups wrap within the available width, profile actions move below names under 35rem, and selected scrolling tabs stay visible after resizing or rotation.
+- **Recent form:** match details use the same rotating chevron as other disclosures. Result, score, opponent and mode align in columns; below 24rem of available space the opponent moves onto its own line.
 - **The results feed** stacks each game onto two lines when its card is under 34rem wide.
 - **Long lists** open with their first few (5 recently-online players, 20 cards, 20 series) and a "Show all" that also folds them away again.
 - **Touch:** every control reaches 44px on coarse pointers, including player names in lists and tables.
