@@ -1,5 +1,6 @@
 import { Suspense, useEffect, useRef, type ReactNode } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router'
+import { Link, NavLink, Outlet, useLocation } from 'react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import { useOnline } from '../lib/online'
 import { useTheme } from '../lib/theme'
 import { FOOTER_NOTE, NAV_LINKS } from '../../shared/brand'
@@ -20,8 +21,9 @@ const NAV_DETAILS: Record<string, { icon: IconName; end?: boolean; match?: strin
 const NAV = NAV_LINKS.map((n) => ({ ...n, ...NAV_DETAILS[n.to] }))
 
 /** Boards links to 1v1 but stays lit on every mode. */
-function isActive(n: (typeof NAV)[number], pathname: string, active: boolean) {
-  return n.match ? pathname.startsWith(n.match) : active
+function isActive(n: (typeof NAV)[number], pathname: string) {
+  const section = n.match ?? n.to
+  return pathname === section || (!n.end && pathname.startsWith(`${section}/`))
 }
 
 function PageLoading() {
@@ -38,6 +40,7 @@ export function Layout({ identity }: { identity?: ReactNode }) {
   const { theme, toggle } = useTheme()
   const { pathname } = useLocation()
   const online = useOnline()
+  const queries = useQueryClient()
   const main = useRef<HTMLElement>(null)
   const first = useRef(true)
 
@@ -65,9 +68,9 @@ export function Layout({ identity }: { identity?: ReactNode }) {
         {/* Wide screens: links live in the top bar. Narrow screens: the bottom tab bar below. */}
         <nav className="topnav" aria-label="Primary">
           {NAV.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive: a }) => `item${isActive(n, pathname, a) ? ' active' : ''}`}>
+            <Link key={n.to} to={n.to} aria-current={isActive(n, pathname) ? 'page' : undefined} className={`item${isActive(n, pathname) ? ' active' : ''}`}>
               {n.label}
-            </NavLink>
+            </Link>
           ))}
         </nav>
         <span className="spacer" />
@@ -83,7 +86,11 @@ export function Layout({ identity }: { identity?: ReactNode }) {
             You're offline. Showing the last data this page loaded; it will refresh when you reconnect.
           </div>
         ) : null}
-        <ErrorBoundary resetKey={pathname}>
+        <ErrorBoundary resetKey={pathname} onRetry={() => {
+          // The crashed page's observers are unmounted: reset their cache before rendering it again.
+          void queries.resetQueries({ type: 'inactive' })
+          main.current?.focus({ preventScroll: true })
+        }}>
           {/* Pages load as separate chunks: the nav stays put while one arrives. */}
           <Suspense fallback={<PageLoading />}>
             <Outlet />
@@ -102,10 +109,10 @@ export function Layout({ identity }: { identity?: ReactNode }) {
       </footer>
       <nav className="tabbar" aria-label="Primary">
         {NAV.map((n) => (
-          <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive: a }) => (isActive(n, pathname, a) ? 'active' : undefined)}>
+          <Link key={n.to} to={n.to} aria-current={isActive(n, pathname) ? 'page' : undefined} className={isActive(n, pathname) ? 'active' : undefined}>
             <Icon name={n.icon} size={22} />
             <span>{n.label}</span>
-          </NavLink>
+          </Link>
         ))}
       </nav>
     </>

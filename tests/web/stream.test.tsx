@@ -22,12 +22,23 @@ describe('stream', () => {
     expect(row).toHaveTextContent('Ranked night')
     expect(screen.getByText('Twitch · 42 watching · started 25m ago')).toBeInTheDocument()
     expect(document.querySelector('iframe')).toBeNull()
+    const controlled = document.getElementById(play.getAttribute('aria-controls')!)!
+    expect(controlled).toBeInTheDocument()
+    expect(controlled).not.toBeVisible()
     await userEvent.click(play)
+    expect(controlled).toBeVisible()
     const frame = document.querySelector('iframe')!
     expect(frame.src).toContain('https://player.twitch.tv/?channel=sidscompetitiverounds&parent=localhost')
     expect(frame).toHaveAttribute('title', 'Ranked night on Twitch')
     expect(screen.queryByRole('button', { name: /watch here/i })).toBeNull()
     expect(screen.getByText('Ranked night')).toBeInTheDocument()
+    const close = screen.getByRole('button', { name: 'Close player: Ranked night' })
+    expect(close).toHaveFocus()
+    expect(close).toHaveAttribute('aria-expanded', 'true')
+    await userEvent.click(close)
+    expect(document.querySelector('iframe')).toBeNull()
+    expect(controlled).not.toBeVisible()
+    expect(screen.getByRole('button', { name: 'Watch here: Ranked night' })).toHaveFocus()
   })
 
   it('uses YouTube privacy-enhanced mode', async () => {
@@ -47,6 +58,7 @@ describe('stream', () => {
       </>,
     )
     expect(await screen.findByRole('link', { name: 'Spirit vs galaxy ice' })).toHaveAttribute('href', 'https://www.youtube.com/watch?v=v1')
+    expect(document.querySelector('.broadcast-list time')).toHaveAttribute('datetime', recent[0].published_at)
     expect(screen.queryByText(/live on stream/i)).toBeNull()
   })
 

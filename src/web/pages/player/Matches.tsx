@@ -15,9 +15,11 @@ function Cards({ cards }: { cards: CardPick[] | undefined }) {
     <span className="chip-row">
       {cards.map((c, i) => (
         // "rolled" is the game's own word for these picks; it's said in text (legible, and readable aloud), not by fading.
-        <span key={i} className={`chip card-chip${c.rolled ? ' rolled' : ''}`} title={`${c.card_rarity} · pick ${c.pick_order}, round ${c.round_number}`}>
-          {c.card_name}
-          {c.rolled ? <span className="rolled-tag"> rolled</span> : null}
+        <span key={i} className={`chip card-chip card-pick${c.rolled ? ' rolled' : ''}`}>
+          <span><span>{c.card_name}</span>{c.rolled ? <span className="rolled-tag"> rolled</span> : null}</span>
+          <span className="card-pick-meta">
+            {[c.card_rarity, c.pick_order != null ? `pick ${c.pick_order}` : null, c.round_number != null ? `round ${c.round_number}` : null].filter(Boolean).join(' · ')}
+          </span>
         </span>
       ))}
     </span>

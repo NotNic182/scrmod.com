@@ -11,6 +11,7 @@ export function IdentityMenu() {
   const [signingOut, setSigningOut] = useState(false)
   const [signOutFailed, setSignOutFailed] = useState(false)
   const root = useRef<HTMLDivElement>(null)
+  const panel = useRef<HTMLDivElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
   const panelId = useId()
   const { pathname } = useLocation()
@@ -40,10 +41,39 @@ export function IdentityMenu() {
     }
   }, [open])
 
+  useEffect(() => {
+    if (!open) return
+    // On iOS the keyboard shrinks the visual viewport without necessarily changing 100dvh.
+    // Leave the focused search and its results in a scrollable sheet above the keyboard.
+    const viewport = window.visualViewport
+    const fitPanel = () => {
+      if (!panel.current) return
+      const bottom = viewport ? viewport.offsetTop + viewport.height : window.innerHeight
+      const space = Math.max(0, bottom - panel.current.getBoundingClientRect().top - 16)
+      panel.current.style.setProperty('--identity-space', `${space}px`)
+    }
+    fitPanel()
+    viewport?.addEventListener('resize', fitPanel)
+    viewport?.addEventListener('scroll', fitPanel)
+    window.addEventListener('resize', fitPanel)
+    return () => {
+      viewport?.removeEventListener('resize', fitPanel)
+      viewport?.removeEventListener('scroll', fitPanel)
+      window.removeEventListener('resize', fitPanel)
+    }
+  }, [open])
+
   const toggleProps = { ref: trigger, 'aria-expanded': open, 'aria-controls': panelId, onClick: () => setOpen((o) => !o) }
 
   return (
-    <div className="identity" ref={root}>
+    <div
+      className="identity"
+      ref={root}
+      onBlur={(e) => {
+        // Tab may leave this nonmodal popup, but the sheet must then stop covering the page.
+        if (open && e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) close(false)
+      }}
+    >
       {id.me ? (
         <span className="identity-pinned">
           <Link to={`/players/${id.me.steam_id}`} className="btn identity-name" title={id.source === 'discord' ? 'Linked through Discord' : 'Pinned in this browser'}>
@@ -63,32 +93,15 @@ export function IdentityMenu() {
       {open ? (
         <>
           <div className="identity-scrim" onClick={() => close(false)} />
-          <div className="card identity-panel" id={panelId}>
-            {id.source === 'discord' ? (
+          <div className="card identity-panel" id={panelId} ref={panel} role="region" aria-label="Profile options">
+            {id.discord ? (
+              <p className="muted">
+                Signed in as <bdi>{id.discord.global_name ?? id.discord.username}</bdi>.
+                {id.source !== 'discord' ? ' No player is linked. Link your Discord in-game (F5 → Settings) or pin yourself below.' : null}
+              </p>
+            ) : null}
+            {id.source !== 'discord' ? (
               <>
-                <p className="muted">
-                  Signed in as <bdi>{id.discord?.global_name ?? id.discord?.username}</bdi>.
-                </p>
-                <button
-                  className="btn"
-                  disabled={signingOut}
-                  onClick={async () => {
-                    setSigningOut(true)
-                    setSignOutFailed(!(await id.signOut()))
-                    setSigningOut(false)
-                  }}
-                >
-                  {signingOut ? 'Signing out…' : 'Sign out'}
-                </button>
-                {signOutFailed ? (
-                  <p className="bad" role="alert">
-                    Couldn't reach SCRmod to sign you out. Check your connection and try again.
-                  </p>
-                ) : null}
-              </>
-            ) : (
-              <>
-                {id.discord && !id.me ? <p className="muted">Signed in as <bdi>{id.discord.username}</bdi>, but no player is linked. Link your Discord in-game (F5 → Settings) or pin yourself below.</p> : null}
                 <SearchBox
                   autoFocus
                   placeholder="Pin yourself: type your name"
@@ -102,13 +115,32 @@ export function IdentityMenu() {
                     Unpin <bdi className="player-name">{id.me.display_name}</bdi>
                   </button>
                 ) : null}
-                {id.authEnabled && !id.discord ? (
-                  <a className="btn btn-accent trailing" href={authUrl('/discord/login')}>
-                    Sign in with Discord
-                  </a>
-                ) : null}
               </>
-            )}
+            ) : null}
+            {id.discord ? (
+              <button
+                className="btn trailing"
+                autoFocus={id.source === 'discord'}
+                aria-disabled={signingOut || undefined}
+                onClick={async () => {
+                  if (signingOut) return
+                  setSigningOut(true)
+                  setSignOutFailed(!(await id.signOut()))
+                  setSigningOut(false)
+                }}
+              >
+                {signingOut ? 'Signing out…' : 'Sign out'}
+              </button>
+            ) : id.authEnabled ? (
+              <a className="btn btn-accent trailing" href={authUrl('/discord/login')}>
+                Sign in with Discord
+              </a>
+            ) : null}
+            {signOutFailed ? (
+              <p className="bad" role="alert">
+                Couldn't reach SCRmod to sign you out. Check your connection and try again.
+              </p>
+            ) : null}
           </div>
         </>
       ) : null}

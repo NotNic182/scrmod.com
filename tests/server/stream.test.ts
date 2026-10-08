@@ -52,6 +52,7 @@ describe('/api/stream', () => {
     const s = await stream({}, feed)
     const d = await s.get()
     expect(d.live).toBeNull()
+    expect(d.live_status).toBe('unavailable')
     expect(d.recent.map((v: { videoId: string }) => v.videoId)).toEqual(['vid1', 'vid2', 'vid3', 'vid4'])
     expect(d.links).toEqual({ twitch: 'https://www.twitch.tv/sidscompetitiverounds', youtube: 'https://www.youtube.com/@SidsCompetitiveRounds' })
     expect(s.calls.some((c) => c.includes('twitch'))).toBe(false)
@@ -101,13 +102,17 @@ describe('/api/stream', () => {
     expect(q.recent).toHaveLength(4)
   })
 
-  it('outages degrade to offline with no broadcasts, never an error', async () => {
+  it('outages keep the response usable but explicitly mark availability unknown', async () => {
     const out = captureConsole()
     const s = await stream(TWITCH_ENV, { 'id.twitch.tv/oauth2/token': () => new Response('', { status: 500 }) })
     const res = await s.get()
     expect(res.live).toBeNull()
+    expect(res.live_status).toBe('unknown')
     expect(res.recent).toEqual([])
     expect(out.streamWarnings()).toEqual([['[stream] YouTube feed failed (404)'], ['[stream] Twitch failed (500)']])
+    const response = await (await s.raw()).json()
+    expect(response.stale).toBe(true)
+    expect(response.errors).toEqual(['recent broadcasts', 'Twitch'])
   })
 
   it('sends the YouTube key as a header, never in the URL', async () => {
@@ -120,6 +125,7 @@ describe('/api/stream', () => {
       },
     })
     expect((await s.get()).live).toBeNull()
+    expect((await s.get()).live_status).toBe('offline')
     expect(seen).toHaveLength(1)
     expect(seen[0].key).toBe('yt-key')
     expect(seen[0].url.search).not.toContain('yt-key')
@@ -167,6 +173,7 @@ describe('/api/stream', () => {
     expect((await s.get()).live?.platform).toBe('twitch')
     s.nowRef.now += 61_000
     expect((await s.get()).live).toBeNull()
+    expect((await s.get()).live_status).toBe('unknown')
   })
 
   it('a stale YouTube live result does not outlive a quota error; recent stays populated', async () => {
@@ -183,6 +190,28 @@ describe('/api/stream', () => {
     s.nowRef.now += 61_000
     const res = await s.get()
     expect(res.live).toBeNull()
+    expect(res.live_status).toBe('unknown')
     expect(res.recent).toHaveLength(4)
+  })
+
+  it('keeps a confirmed live YouTube stream available when Twitch fails', async () => {
+    captureConsole()
+    const s = await stream({ ...TWITCH_ENV, YOUTUBE_API_KEY: 'k' }, {
+      ...feed,
+      'id.twitch.tv/oauth2/token': () => new Response('', { status: 500 }),
+      'www.googleapis.com/youtube/v3/videos': ok({ items: [{ id: 'vid2', snippet: { title: 'Live now' }, liveStreamingDetails: { actualStartTime: '2026-09-23T18:00:00Z' } }] }),
+    })
+    const response = await (await s.raw()).json()
+    expect(response.data.live_status).toBe('live')
+    expect(response.data.live.platform).toBe('youtube')
+    expect(response.errors).toEqual(['Twitch'])
+  })
+
+  it('only calls a stream offline after a successful configured check', async () => {
+    const s = await stream(TWITCH_ENV, { ...feed, ...token, 'api.twitch.tv/helix/streams': ok({ data: [] }) })
+    const response = await (await s.raw()).json()
+    expect(response.data.live_status).toBe('offline')
+    expect(response.stale).toBe(false)
+    expect(response.errors).toEqual([])
   })
 })

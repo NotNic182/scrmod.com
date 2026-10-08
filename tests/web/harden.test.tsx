@@ -125,6 +125,8 @@ describe('harden: meaning that was carried only by opacity or a tooltip', () => 
     const chip = (await screen.findAllByText('Defender')).find((el) => el.closest('.card-chip'))!.closest('.card-chip') as HTMLElement
     expect(chip).toHaveTextContent(/rolled/i)
     expect(chip.style.opacity).toBe('')
+    expect(chip).toHaveTextContent('Uncommon · pick 1 · round 1')
+    expect(chip.querySelector('.card-pick-meta')).toBeVisible()
   })
 
   it('a decided bracket match names its winner in text, not just in bold', () => {

@@ -260,6 +260,7 @@ Each signal color has one meaning, and each has a darker Mist twin (listed in th
 - **Section** (500, 0.8125rem, tracked 0.14em, uppercase): section headings inside cards, in Sea-Glass Ink; the same size at 400 for the top menu entries.
 - **Menu** (600, 0.8125rem, tracked 0.1em, uppercase): buttons, tabs and filters.
 - **Meta** (400, 0.8125rem): timestamps, subtitles, the footer, "as of" lines.
+- Broadcast dates use Meta beside a wrapping title; empty states use a body-size title at 600 with a Meta hint beneath it.
 - **Label** (500, 0.75rem, tracked 0.14em, uppercase): tile labels, table headers, sub-section headings; chips use the same size at 700.
 - **Tab bar** (500, 0.6875rem, tracked 0.08em, uppercase): under-icon labels in the phone tab bar only.
 
@@ -276,10 +277,13 @@ A single centered column (max 1100px) with a 16px gutter that grows into the saf
 
 Spacing follows one scale (2, 4, 8, 12, 16, 24, 32, 48px). Inside a group the steps stay small: 2px tile seams, 4px under a primary line, 8px between siblings and from a heading to its content, 12px from controls to the data they act on. Between groups the step is 24px: card to card, tile strip to the next section, a sub-section heading to what came before it. Cards pad 16px; the page ends with 48px.
 
-- **Pairs:** equivalent cards (sync and async tournaments, top and worst cards) sit side by side from 760px and stretch to equal heights; unequal neighbors (live games beside who's on) keep their own heights.
+- **Pairs:** equivalent cards (sync and async tournaments, top and worst cards) sit side by side from 47.5rem and stretch to equal heights; unequal neighbors (live games beside who's on) keep their own heights. Breakpoints use rem so enlarged browser text gets the same breathing room.
 - **Tiles:** as many across as fit (at least 8.5rem each; 11rem for achievements), stretched to fill, so three tiles are thirds rather than three quarters and a gap.
-- **Navigation:** from 840px the menu lives in the top bar; below it, a six-entry tab bar sits at the bottom within thumb reach. On a short landscape phone the top bar scrolls away and the tab bar slims to one 44px line.
-- **Tables** scroll sideways inside their card, never the page. Below 840px the rank and name columns (or the card name) stay pinned while the numbers scroll under them, and a player's title chip moves under the name to keep the pinned column narrow.
+- **Navigation:** from 72rem (1152px at the default text size) the menu lives in the top bar, leaving room for all six labels and a pinned profile; below it, a six-entry tab bar sits at the bottom within thumb reach. Labels wrap rather than disappear. Below 22rem the destinations form two rows of three. On a short landscape phone the top bar scrolls away and the tab bar slims to one line with targets at least 44px high. Bar heights grow with browser text size, and the page reserves the bottom bar's full height.
+- **Identity:** a sheet above the keyboard on touch screens, with its scrolling height fitted to the visual viewport; a dropdown from 52.5rem on devices with a fine pointer and hover.
+- **Tables** scroll sideways inside their card, never the page. Below 52.5rem the rank and name columns (or the card name) stay pinned while the numbers scroll under them, and a player's title chip moves under the name to keep the pinned column narrow.
+- **Controls:** filter groups wrap within the available width, profile actions move below names under 35rem, and selected scrolling tabs stay visible after resizing or rotation.
+- **Recent form:** match details use the same rotating chevron as other disclosures. Result, score, opponent and mode align in columns; below 24rem of available space the opponent moves onto its own line.
 - **The results feed** stacks each game onto two lines when its card is under 34rem wide.
 - **Long lists** open with their first few (5 recently-online players, 20 cards, 20 series) and a "Show all" that also folds them away again.
 - **Touch:** every control reaches 44px on coarse pointers, including player names in lists and tables.

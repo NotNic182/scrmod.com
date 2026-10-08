@@ -34,6 +34,7 @@ describe('Player', () => {
     await waitFor(() => expect(calls).toContain(`/players/${ME}?me=76561198040410653`))
     await userEvent.click(await screen.findByRole('button', { name: /this is me/i }))
     await waitFor(() => expect(screen.getByText(/\(you\)/)).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByRole('heading', { level: 1, name: new RegExp(p.display_name) })).toHaveFocus())
     localStorage.clear()
   })
 

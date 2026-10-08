@@ -106,6 +106,8 @@ export interface StreamVideo {
 
 export interface StreamData {
   live: StreamLive | null
+  /** Optional for older fixtures/clients; null live alone must not mask a failed provider check. */
+  live_status?: 'live' | 'offline' | 'unknown' | 'unavailable'
   recent: StreamVideo[]
   links: { twitch: string; youtube: string }
 }

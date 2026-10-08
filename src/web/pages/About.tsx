@@ -3,11 +3,11 @@ import { useTitle } from '../lib/title'
 import { useStatus } from '../api/hooks'
 import { LINKS } from '../../shared/links'
 import { pageMeta } from '../../shared/seo'
+import { QueryFeedback } from '../components/QueryState'
 
 export function About() {
   useTitle(pageMeta({ kind: 'about' }).title)
   const s = useStatus()
-  const st = s.data
   return (
     <>
       <h1>About SCRmod</h1>
@@ -55,13 +55,13 @@ export function About() {
       </div>
       <div className="card">
         <h2>Status</h2>
-        {st ? (
+        <QueryFeedback q={s} label="server status">
+          {(st) => (
           <p className="muted">
             Running in {st.mode} mode, version {st.app_version}. Talking to {st.upstream.base} as mod version {st.upstream.version.version ?? 'unknown'} ({st.upstream.version.source}).
           </p>
-        ) : (
-          <p className="faint">Loading status…</p>
-        )}
+          )}
+        </QueryFeedback>
         <p className="muted">
           Get the mod: <a href={LINKS.thunderstore}>Thunderstore</a> · <a href={LINKS.github}>GitHub</a>
         </p>
